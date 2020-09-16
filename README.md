@@ -34,7 +34,7 @@ Note: There are two things you need to do before you run above command. It may t
 
 Second way is to launch both services independently.
 
-1. Clone the code (you can use command `git clone https://github.nrel.gov/kduwadi/BYPL-NREL-Effort.git`)
+1. Clone the code (you can use command `git clone https://github.com/NREL/EVOLVE.git`)
 2. Create a virtual environment with preferably python 3.8 version
 3. Install dependencies using command `pip install -r requirements.txt`
 4. Install Node.js (https://nodejs.org/en/) 
@@ -57,7 +57,7 @@ From the react app directory, open up a command prompt and execute `npm start`
 ## Statistical model for profile and export prediction
 
 ```python
-    model_instance = LinearModel(config_json_path="BYPL-NREL-Effort\\generate_profile\\config.json")
+    model_instance = LinearModel(config_json_path="..\\generate_profile\\config.json")
     model_instance.create_dataframe()
     model_instance.execute_all_lm()
     model_instance.export_all()
@@ -70,10 +70,10 @@ From the react app directory, open up a command prompt and execute `npm start`
 
     df = pd.read_csv(r'toydata.csv',parse_dates=True)
     df = df.set_index('TimeStamps')
-    with open('BYPL-NREL-Effort//battery_use_case//battery.json','r') as json_file:
+    with open('..//battery_use_case//battery.json','r') as json_file:
         battery_dict = json.load(json_file)
 
-    with open('BYPL-NREL-Effort//battery_use_case//strategy.json','r') as json_file:
+    with open('..//battery_use_case//strategy.json','r') as json_file:
         strategy_dict = json.load(json_file)
     
     a = EnergyStorage(df,battery_dict,strategy_dict,0.5)
