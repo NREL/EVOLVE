@@ -1,0 +1,7 @@
+numpy==1.16.4
+statsmodels==0.10.0
+pandas==0.24.2
+matplotlib==3.1.0
+Flask_Cors==3.0.8
+OpenDSSDirect.py==0.3.7
+Flask==1.1.1

@@ -1,0 +1,11 @@
+{
+    "weatherdatapath":"C:\\Users\\KDUWADI\\Box\\BYPL-USAID research\\Data\\nreldata\\weatherdata16_20.csv",
+    "datedatapath":"C:\\Users\\KDUWADI\\Box\\BYPL-USAID research\\Data\\nreldata\\datedata16_20.csv",
+    "dtprofilepath":"C:\\Users\\KDUWADI\\Box\\BYPL-USAID research\\Data\\extractedbypldata\\transformers_netload.csv",
+    "consumerdatapath":"C:\\Users\\KDUWADI\\Box\\BYPL-USAID research\\Data\\extractedbypldata\\customers_energy_data.csv",
+    "dt_name":"TG-VNG072A-2",
+    "start_date": "2017-1-1 0:0:0",
+    "end_date": "2017-12-31 23:30:0",
+    "file_name": "TG-VNG072A-2.csv",
+    "export_folder": "C:\\Users\\KDUWADI\\Desktop\\NREL_Projects\\BYPL-USAID\\ProfileGeneration\\export_folder"
+}

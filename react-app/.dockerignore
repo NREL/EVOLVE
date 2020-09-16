@@ -1,0 +1,3 @@
+# ignore some files
+node_modules/
+.gitignore

@@ -1,0 +1,24 @@
+version: '2'
+
+services: 
+  back_end:
+    build: 
+      context: ./src
+      dockerfile: Dockerfile
+    container_name: evolve
+    volumes: 
+      - C:\Users\KDUWADI\Desktop\BYPL_docker_testing\Data:/evolve/data
+      - C:\Users\KDUWADI\Desktop\NREL_Projects\BYPL-USAID\EVOLVE\src:/evolve/src
+    ports: 
+      - "5000:5000"
+  front_end:
+    build:
+      context: ./react-app
+      dockerfile: Dockerfile
+    container_name: evolve_react
+    volumes: 
+      - C:\Users\KDUWADI\Desktop\NREL_Projects\BYPL-USAID\EVOLVE\react-app:/evolve/react_app
+    ports: 
+      - "3001:3000"
+    depends_on: 
+      - back_end

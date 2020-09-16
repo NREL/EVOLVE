@@ -1,0 +1,8 @@
+{
+    "project_path": "C:\\Users\\KDUWADI\\Desktop\\NREL_Projects\\BYPL-USAID\\DashboardProject",
+    "dtpower_file": "SlotWiseEnergy.csv",
+    "solar_irradiance_file": "SolarData.csv",
+    "customer_energy": "BYPLCustomersEnergy.csv",
+    "year_list": [2016,2017,2018,2019,2020],
+    "export_folder": ""
+}

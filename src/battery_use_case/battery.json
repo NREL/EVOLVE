@@ -1,0 +1,12 @@
+{
+    "Rated Capacity (kW)": 400,
+    "Energy Capacity (KWh)": 400,
+    "Initial SOC": 1,
+    "Charging Efficiency": 0.95,
+    "Discharging Efficiency": 0.95,
+    "Self Discharge": [[0,0],[24,5],[720,7]],
+    "Interpolation": "quadratic",
+    "Cycle Life": 500,
+    "MinSOC": 0.1,
+    "MaxSOC": 0.9
+}

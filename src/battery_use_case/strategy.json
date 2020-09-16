@@ -1,0 +1,10 @@
+{
+    "Charging Hour" : [3,4,5],
+    "Discharging Hour" : [9,10,11,12],
+    "Charging load" : 0.3,
+    "Discharging load" : 0.7,
+    "Charging Rate (kW)" : 200,
+    "Max Discharging Rate (kW)" : 200,
+    "Reverse flow": false,
+    "method":"time"
+}
