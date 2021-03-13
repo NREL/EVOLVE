@@ -54,6 +54,8 @@ Execute the command `python src\server\server.py`.
 
 From the react app directory, open up a command prompt and execute `npm start`
 
+NOTE: Images can also be direclty downloaded from Docker Hub
+
 
 
 
