@@ -68,10 +68,11 @@ class BatterySizing:
     def return_size(self):
 
         if self.battery_energy == 0 or self.battery_capacity ==0:
-            if self.battery_energy/self.battery_capacity> BATTERY_HOURS:
-                self.battery_capacity = self.battery_energy/BATTERY_HOURS       
-            else:
-                self.battery_energy=self.battery_capacity*BATTERY_HOURS
+            if self.battery_capacity !=0:
+                if self.battery_energy/self.battery_capacity> BATTERY_HOURS:
+                    self.battery_capacity = self.battery_energy/BATTERY_HOURS       
+                else:
+                    self.battery_energy=self.battery_capacity*BATTERY_HOURS
 
         return {
             'battery_power_kW': self.battery_capacity,

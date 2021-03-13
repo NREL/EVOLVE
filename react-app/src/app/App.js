@@ -20,6 +20,7 @@ import {Tooltip,} from 'react-tippy';
 class App extends Component {
 
     constructor() {
+      
       super()
       this.state = {
               'date': {
@@ -55,9 +56,39 @@ class App extends Component {
                 {'key':'charging_power', 'data': [0,0,0,0,0],'color': 'rgba(0,255,0,1)'},
                 {'key':'discharging_power', 'data': [0,0,0,0,0],'color': 'rgba(255,0,0,1)'},
               ],
-              'ev_output': [{'key':'ev_output', 'data': [0,0,0,0,0],'color': '#17a2b8'}]
+              'ev_output': [{'key':'ev_output', 'data': [0,0,0,0,0],'color': '#17a2b8'}],
+              'feeders': [],
+              'transformers': []
             }
+            // this.transformers = transformers
+            // this.feeders = feeders
+
+            fetch('http://127.0.0.1:5000/gettransformers')
+                .then(response => 
+                     response.json())
+                .then((data)=>{
+                    console.log(data)
+                    this.setState({"transformers": data.transformers})
+                })
+                .catch(error=>{
+                    console.log('error')
+                    console.log(error);
+                 });
+
+            fetch('http://127.0.0.1:5000/getfeeders')
+                 .then(response => 
+                      response.json())
+                 .then((data)=>{
+                     console.log('my', data.feeders)
+                     this.setState({"feeders": data.feeders})
+                 })
+                 .catch(error=>{
+                     console.log('error')
+                     console.log(error);
+                  });
+           
     }
+
 
     changeState (new_data) {
       this.setState(new_data);
@@ -87,7 +118,7 @@ class App extends Component {
                   </div>
                   
                   <div className='ml-3 mr-3'>
-                    <Form change_data={this.changeState.bind(this)} sweepmessage={this.state.sweepmessage} autocapacitymessage={this.state.autocapacitymessage} optimizedbatterymessage={this.state.optimizedbatterymessage}/>
+                    <Form change_data={this.changeState.bind(this)} sweepmessage={this.state.sweepmessage} autocapacitymessage={this.state.autocapacitymessage} optimizedbatterymessage={this.state.optimizedbatterymessage} transformers={this.state.transformers} feeders={this.state.feeders}/>
                   </div>
               </div>
           </div>

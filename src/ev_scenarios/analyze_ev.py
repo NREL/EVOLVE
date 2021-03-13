@@ -376,6 +376,7 @@ def generate_random_EV_numbers_arriving(simulation_tstep_sec=300, current_timepo
 
 def ev_profile(number_of_evs=300, adoption_percentage=12, res_percentage=100, number_of_days=365):
     #Inputs
+    res_percentage = int(res_percentage)
     initial_year_number_of_EVs = number_of_evs
     yearly_increment_percent = adoption_percentage  ## 10 for low, 26 for high EVs- ~2500 at 10th year
     number_of_years = 2

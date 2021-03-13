@@ -52,15 +52,22 @@ class ParametricSensor:
 
         max_index = self.sweep_result['peak_reduced'].index(max(self.sweep_result['peak_reduced']))
 
-        plt.plot(range(len(self.load_profile)),self.load_profile, label='original')
+        fig, ax = plt.subplots()
+        plt.plot(range(len(self.load_profile)),self.load_profile, label='original profile')
         
         for id, array in enumerate(self.sweep_result['modified_profile']):
             label_name = str(self.sweep_result['upper_threshold'][id]) + '_' + \
                         str(self.sweep_result['lower_threshold'][id])
+            label_name = 'new load profile'
             if id == max_index:
                 plt.plot(range(len(self.load_profile)),array,'--o', label=label_name)
 
-        plt.legend()
+        ax.legend(loc=1)
+
+        ax1 = ax.twinx()
+        ax1.plot(range(len(self.load_profile)),self.sweep_result['battery_energy'][max_index],'--ro', label='battery_energy')
+        ax1.set_ylabel('Battery energy (kWh)')
+        ax1.legend(loc=2)
         plt.show()
 
 
@@ -77,7 +84,8 @@ class ParametricSensor:
             'peak_reduced':[],
             'upper_threshold': [],
             'lower_threshold':[],
-            'modified_profile':[]
+            'modified_profile':[],
+            'battery_energy' : []
         }
 
         step_res_hr = self.time_step_min/60
@@ -114,6 +122,7 @@ class ParametricSensor:
                 self.sweep_result['upper_threshold'].append(upper_threshold)
                 self.sweep_result['lower_threshold'].append(lower_threshold)
                 self.sweep_result['modified_profile'].append(result['modified_profile'])
+                self.sweep_result['battery_energy'].append(result['battery_kwh'])
 
     def get_best_thresholds(self):
         
@@ -136,9 +145,9 @@ class ParametricTime:
                 load_profile='',
                 start_time= dt(2018,1,1,0,0,0),
                 time_step_min=30, 
-                top_percen=10, 
-                num_of_charging_hours=2,
-                num_of_discharging_hours=2,
+                top_percen=5, 
+                num_of_charging_hours=4,
+                num_of_discharging_hours=4,
                 battery_dict = None,
                 strategy_dict = None,
             ):
@@ -245,7 +254,7 @@ class ParametricTime:
         for thr in combinations(top_hours,self.num_of_discharging_hours):
             if self.peak_hour in thr:
                 for bhr in combinations(bottom_hours,self.num_of_charging_hours):
-                    self.logger.info(f'Scenario with discharging hours {thr} and charging hours {bhr}')
+                    #self.logger.info(f'Scenario with discharging hours {thr} and charging hours {bhr}')
                     self.strategy_dict['Charging Hour'] = list(bhr)
                     self.strategy_dict['Discharging Hour'] = list(thr)
 
@@ -282,20 +291,21 @@ class ParametricTime:
         max_index = self.sweep_result['peak_reduced'].index(max(self.sweep_result['peak_reduced']))
 
         fig,ax = plt.subplots()
-        ax.plot(range(len(self.load_profile)),self.load_profile, label='original')
+        ax.plot(range(len(self.load_profile)),self.load_profile, label='original profile')
         
         for id, array in enumerate(self.sweep_result['modified_profile']):
             label_name = ''.join(str(x) for x in self.sweep_result['charging_hours'][id]) + '_'\
                             + ''.join(str(x) for x in self.sweep_result['discharging_hours'][id])
+            label_name = 'new load profile'
             if id == max_index:
                 ax.plot(range(len(self.load_profile)),array,'--', label=label_name)
 
-        ax.legend()
+        ax.legend(loc=1)
         ax.set_ylabel('load (kW)')
         ax1 = ax.twinx()
         ax1.plot(range(len(self.load_profile)),self.sweep_result['battery_energy'][max_index],'--ro', label='battery_energy')
-        ax.set_ylabel('Battery energy (kWh)')
-        ax1.legend()
+        ax1.set_ylabel('Battery energy (kWh)')
+        ax1.legend(loc=2)
         plt.show()
 
 if __name__ == '__main__':
@@ -303,20 +313,20 @@ if __name__ == '__main__':
     load_profile = pd.read_csv(r'C:\Users\KDUWADI\Box\BRPL Demand Side Management\Data\brpl_data\brpl_transformerdata.csv')
     one_day_profile = load_profile['PeakLoad'].tolist()[:48*7]
 
-    instance = ParametricTime(load_profile=one_day_profile)
-    #instance.top_percen_sensitivity()
-    instance.analyze_ldc()
-    instance.parametric_sweep()
-    instance.get_best_hours()
-    print(instance.get_best_hours())
-    instance.plot_result()
+    # instance = ParametricTime(load_profile=one_day_profile)
+    # #instance.top_percen_sensitivity()
+    # instance.analyze_ldc()
+    # instance.parametric_sweep()
+    # instance.get_best_hours()
+    # print(instance.get_best_hours())
+    # instance.plot_result()
 
 
     
 
-    # instance = ParametricSensor(load_profile=one_day_profile)
-    # instance.parametric_sweep()
-    # instance.plot_result()
-    # print(instance.get_best_thresholds())
+    instance = ParametricSensor(load_profile=one_day_profile)
+    instance.parametric_sweep()
+    instance.plot_result()
+    print(instance.get_best_thresholds())
 
 

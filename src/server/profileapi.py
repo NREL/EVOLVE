@@ -33,34 +33,24 @@ class ProfileAPI:
                 {'key':'Hhindex', 'data': [0,0,0,0,0],'color': 'rgba(0,0,255,1)'},
                 {'key':'Hday', 'data':[0,0,0,0,0],'color': 'rgba(255,255,0,1)'},
                 {'key':'Domestic', 'data': [0,0,0,0,0],'color': 'rgba(255,0,255,1)'},
-                {'key':'NonDomestic', 'data':[0,0,0,0,0],'color': 'rgba(0,255,255,1)'},
+                {'key':'Commercial', 'data':[0,0,0,0,0],'color': 'rgba(0,255,255,1)'},
                 {'key':'Industrial', 'data': [0,0,0,0,0],'color': 'rgba(255,125,125,1)'},
             ],
             'load_data' : [
                 {'key':'DT_original', 'data': [0,0,0,0,0],'color': 'rgba(255,0,0,1)'},
                 {'key':'DT_prediction', 'data':[0,0,0,0,0],'color': 'rgba(0,255,0,1)'},
                 {'key':'Domestic_prediction', 'data': [0,0,0,0,0],'color': 'rgba(0,0,255,1)'},
-                {'key':'Nondomestic_prediction', 'data':[0,0,0,0,0],'color': 'rgba(255,255,0,1)'},
+                {'key':'Commercial_prediction', 'data':[0,0,0,0,0],'color': 'rgba(255,255,0,1)'},
                 {'key':'Industrial_prediction', 'data':[0,0,0,0,0],'color': 'rgba(0,255,255,1)'},
             ]
         }
 
-       
-        year = {
-            2016: ['2016-6-1 0:0:0','2016-12-31 23:30:0'],
-            2017: ['2017-1-1 0:0:0','2017-12-31 23:30:0'],
-            2018: ['2018-1-1 0:0:0','2018-12-31 23:30:0'],
-            2019: ['2019-1-1 0:0:0','2019-12-31 23:30:0'],
-            2020: ['2020-1-1 0:0:0','2020-3-1 23:30:0']
-        }
 
         self.change_date()
 
-        print(self.config_dict)
-
         self.profile_handler.create_dataframe(dt_name=self.config_dict['transformer'],
-                        start_date=dt.strptime(year[self.today.year][0], '%Y-%m-%d %H:%M:%S'), 
-                        end_date=dt.strptime(year[self.today.year][1], '%Y-%m-%d %H:%M:%S'))
+                        start_date=dt(self.today.year, 1,1,0,0,0), 
+                        end_date=dt(self.today.year,12,31,23,30,0))
         
         self.profile_handler.execute_all_lm()
 
@@ -69,7 +59,7 @@ class ProfileAPI:
             self.dashboard_data['weather_data'][id]['data'] = self.profile_handler.dataformodel[col_name][self.timestamps].to_list()
         logger.info('Finished accessing temperature and humidity')
         
-        for id, col_name in enumerate(['Month', 'Day', 'Hhindex','Hday','Domestic','NonDomestic','Industrial']):
+        for id, col_name in enumerate(['Month', 'Day', 'Hhindex','Hday','Domestic','Commercial','Industrial']):
             self.dashboard_data['date_data'][id]['data'] = self.profile_handler.dataformodel[col_name][self.timestamps].to_list()
 
         df = pd.DataFrame({'TransformerOriginal':self.profile_handler.dataformodel['TransformerPower']})
@@ -77,7 +67,7 @@ class ProfileAPI:
             df[group] = result
         df.index = self.profile_handler.dataformodel.index
 
-        for id, col_name in enumerate(['TransformerOriginal','TransformerPrediction','Domestic','NonDomestic','Industrial']):
+        for id, col_name in enumerate(['TransformerOriginal','TransformerPrediction','Domestic','Commercial','Industrial']):
             
             if col_name not in list(df.columns):
                 self.dashboard_data['load_data'][id]['data'] = [0]*len(self.dashboard_data['load_data'][0]['data'])
@@ -91,7 +81,6 @@ class ProfileAPI:
                     el if not math.isnan(el) else 0 for el in self.dashboard_data[col_name][id]['data']]
 
     def get_data(self):
-
 
         return self.dashboard_data
 

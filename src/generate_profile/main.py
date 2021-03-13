@@ -25,7 +25,12 @@ class LinearModel:
     weatherdata.
     """
 
-    def __init__(self,config_json_path="BYPL-NREL-Effort\\generate_profile\\config.json"):
+    def __init__(self, 
+            dt_dataframe, 
+            customer_dataframe, 
+            weather_dataframe,
+            date_dataframe,
+            ):
 
         """ Constructor """
 
@@ -33,44 +38,31 @@ class LinearModel:
         self.logger = logging.getLogger()
         logging.basicConfig(format=LOG_FORMAT,level='DEBUG')
 
-        # read settings 
-        if isinstance(config_json_path,str):
-            with open(config_json_path,'r') as json_file:
-                self.config = json.load(json_file)
-        
-        elif isinstance(config_json_path,dict):
-            self.config = config_json_path
-
-        else:
-            raise TypeError(f"Invalid type for 'config_json_path' can be only {dict,str}")
-        
-        # TODO: validate settings
 
         self.logger.info('Reading data .......')
 
-        # Read all data
+        # generate date_dataframe
+
         self.data = {
-            'weatherdata': pd.read_csv(self.config["weatherdatapath"],parse_dates=True,index_col='TimeStamps'),
-            'dtprofile':pd.read_csv(self.config["dtprofilepath"],parse_dates=True,index_col='TimeStamps'),
-            'datedata':pd.read_csv(self.config["datedatapath"],parse_dates=True,index_col='TimeStamps'),
-            'consumerenergydata':pd.read_csv(self.config["consumerdatapath"])
+            'weatherdata': weather_dataframe,
+            'dtprofile': dt_dataframe,
+            'consumerenergydata' : customer_dataframe,
+            'datedata': date_dataframe
         }
-
-        self.start_date = datetime.datetime.strptime(self.config["start_date"],DATE_FORMAT)
-        self.end_date = datetime.datetime.strptime(self.config["end_date"],DATE_FORMAT)
-
-        self.timelist = [date for date in self.data['dtprofile'].index \
-                            if date>=self.start_date and date <=self.end_date]
 
         self.logger.info('Imported data successfully.')
 
-    def create_dataframe(self, dt_name = '',start_date='', end_date=''):
+    def create_dataframe(self,dt_name, start_date, end_date):
+
+        self.dt_name = dt_name
+
+        self.logger.info(f"start_date: {start_date}, end date: {end_date}")
         
         if start_date != '' and end_date != '':
             self.timelist = [date for date in self.data['dtprofile'].index \
                             if date>=start_date and date <= end_date]
         
-        self.energy_proportion = self.generate_energy_proportion_dataframe()
+        self.energy_proportion = self.generate_energy_proportion_dataframe(self.dt_name)
                 
         self.dataformodel = pd.concat([
                 self.data['weatherdata'].loc[self.timelist],
@@ -78,18 +70,18 @@ class LinearModel:
                 self.energy_proportion
             ],axis=1,sort=False)
         
-        if dt_name =='': dt_name = self.config['dt_name']
 
-        self.dataformodel['TransformerPower'] = self.data['dtprofile'][dt_name] \
+        self.dataformodel['TransformerPower'] = self.data['dtprofile'][self.dt_name] \
                                                     .loc[self.timelist]
         
-        dataset_name = self.config['file_name'].split('.')[0] + '_dataframe.csv'
+        #dataset_name = self.config['file_name'].split('.')[0] + '_dataframe.csv'
         #self.dataformodel.to_csv(os.path.join(self.config['export_folder'],dataset_name))
         #self.normalizedtprofile()
+
         self.dataformodel['TransformerPower'] = [el if el>0 else 0.01 \
                                                 for el in self.dataformodel['TransformerPower']]
 
-        self.logger.info('Created dataframe successfully')
+        self.logger.info(f'Created dataframe successfully : {self.dt_name}')
     
     def normalizedtprofile(self):
 
@@ -135,7 +127,7 @@ class LinearModel:
         # predict for group 
         self.copydata = copy.deepcopy(self.dataformodel)
 
-        temp_dict = {'Domestic':0,'NonDomestic':0,'Industrial':0}
+        temp_dict = {'Domestic':0,'Commercial':0,'Industrial':0}
         temp_dict[self.group_name] = 1
 
         for key,value in temp_dict.items():
@@ -195,8 +187,8 @@ class LinearModel:
                                 + C(Hhindex)*C(Hday)*C(Month)"
     def get_ndommodel(self):
 
-        return "np.log(TransformerPower) ~ C(Hhindex)*NonDomestic*C(Month)\
-                                + Temperature*NonDomestic*C(Month) + Humidity*NonDomestic*C(Month) \
+        return "np.log(TransformerPower) ~ C(Hhindex)*Commercial*C(Month)\
+                                + Temperature*Commercial*C(Month) + Humidity*Commercial*C(Month) \
                                 + C(Hhindex)*C(Hday)*C(Month)"
 
     def get_indmodel(self):
@@ -224,7 +216,7 @@ class LinearModel:
 
         model_dict = {
             'Domestic': self.get_dommodel(),
-            'NonDomestic':self.get_ndommodel(),
+            'Commercial':self.get_ndommodel(),
             'Industrial': self.get_indmodel()
         }
 
@@ -235,6 +227,7 @@ class LinearModel:
             self.prediction_result[group] = self.get_group_prediction()
             self.prediction_result['TransformerPrediction'] = self.get_transformer_prediction()
         
+        self.logger.info('finished executing lms')
 
     def export_all(self):
 
@@ -242,24 +235,23 @@ class LinearModel:
         for group, result in self.prediction_result.items():
             df[group] = result
         df.index = self.dataformodel.index
-        df.to_csv(os.path.join(self.config['export_folder'],self.config['file_name']))
+        #df.to_csv(os.path.join(self.config['export_folder'],self.config['file_name']))
 
-        self.logger.info(f'exported all prediction for transformer {self.config["dt_name"]}')
+        #self.logger.info(f'exported all prediction for transformer {self.config["dt_name"]}')
 
 
-    def generate_energy_proportion_dataframe(self):
+    def generate_energy_proportion_dataframe(self, dt_name):
 
         """ For a specified dt, generates a time-series dataframe with proportion of energy
         consumption for three classes : domestic, non-domestic and industrial
         """
 
         # Extract dataframe for a dt
-        dt_name = self.config['dt_name']
-        energy_data_grouped = self.data['consumerenergydata'].groupby('DT_CODE')
+        energy_data_grouped = self.data['consumerenergydata'].groupby('Transformer Name')
         energydata = energy_data_grouped.get_group(dt_name)
 
         # Extract dataframe 
-        group_byclass = energydata.groupby('BILLING_CLASS')
+        group_byclass = energydata.groupby('Customer Type')
         class_dict = {group: [] for group in group_byclass.groups}
 
 
@@ -275,7 +267,7 @@ class LinearModel:
                 else:
                     class_dict[key].append(1)
 
-        mapper = {'DOM':'Domestic','NDOM':'NonDomestic','SIP':'Industrial'}
+        mapper = {'domestic':'Domestic','commercial':'Commercial','industrial':'Industrial'}
 
         df = pd.DataFrame()
         for id, key in enumerate(class_dict):
@@ -304,53 +296,5 @@ class LinearModel:
 
 if __name__ == '__main__':
 
-    # model_instance = LinearModel(config_json_path="BYPL-NREL-Effort\\generate_profile\\config.json")
-    # model_instance.create_dataframe()
-    # model_instance.execute_all_lm()
-    # model_instance.export_all()
-
-    with open("src\\generate_profile\\config.json",'r') as json_file:
-        config_dict = json.load(json_file)
-
-    trans_list = ['TG-LGR017A-1', 'TG-LGR017A-2', 'TG-LGR046A-1', 'TG-LGR046A-2', 'TG-LGR054A-1', 
-                'TG-LGR054A-2', 'TG-LGR080A-1', 'TG-PNR104A-1', 'TG-PNR104A-2', 'TG-PNR105A-1', 
-                'TG-PNR120A-1', 'TG-PNR120A-2', 'TG-PNR120A-3', 'TG-PNR121A-1', 'TG-PNR128A-1', 
-                'TG-PNR161A-1', 'TG-PNR189A-1', 'TG-VNG046A-1', 'TG-VNG046A-2', 'TG-VNG058A-1', 
-                'TG-VNG071A-1', 'TG-VNG071A-2', 'TG-VNG071A-3', 'TG-VNG072A-1', 'TG-VNG072A-2', 
-                'TG-VNG075A-1', 'TG-VNG075A-2', 'TG-VNG103A-1', 'TG-VNG103A-2', 'TG-VNG103A-3', 
-                'TG-VNG107A-1', 'TG-VNG107A-2']
-    
-    year_start_list = ['2016-6-1 0:0:0','2017-1-1 0:0:0','2018-1-1 0:0:0','2019-1-1 0:0:0','2020-1-1 0:0:0']
-    year_end_list = ['2016-12-31 23:30:0','2017-12-31 23:30:0','2018-12-31 23:30:0','2019-12-31 23:30:0','2020-3-1 0:0:0']
-    year = ['2016','2017','2018','2019','2020']
-
-    # for trans in trans_list:
-    #     for start_date, end_date, yr in zip(year_start_list,year_end_list,year):
-    #         config_dict["start_date"] = start_date
-    #         config_dict["end_date"] = end_date
-    #         config_dict['dt_name'] = trans
-    #         config_dict["export_folder"] = "C:\\Users\\KDUWADI\\Box\\BYPL-USAID research\\Data\\extracted_profile"
-    #         config_dict["file_name"] = trans + '-' + yr + '.csv'
-
-    #         model_instance = LinearModel(config_dict)
-    #         model_instance.create_dataframe()
-    #         model_instance.execute_all_lm()
-    #         model_instance.export_all()
-    #         del model_instance
-
-
-
-    trans = 'TG-LGR017A-1'
-    config_dict["start_date"] = '2019-1-1 0:0:0'
-    config_dict["end_date"] = '2019-12-31 23:30:0'
-    config_dict['dt_name'] = trans
-    config_dict["export_folder"] = "C:\\Users\\KDUWADI\\Desktop"
-    config_dict["file_name"] = trans + '-' + str(2019) + '.csv'
-    
-    model_instance = LinearModel(config_dict)
-    model_instance.create_dataframe()
-    model_instance.execute_all_lm()
-    model_instance.export_all()
-    model_instance.dataformodel.to_csv(os.path.join(config_dict['export_folder'],trans+'.csv'))
-    del model_instance
+   pass
     

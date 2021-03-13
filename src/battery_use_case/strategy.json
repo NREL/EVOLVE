@@ -3,8 +3,8 @@
     "Discharging Hour" : [9,10,11,12],
     "Charging load" : 0.3,
     "Discharging load" : 0.7,
-    "Charging Rate (kW)" : 200,
-    "Max Discharging Rate (kW)" : 200,
+    "Charging Rate (kW)" : 100,
+    "Max Discharging Rate (kW)" : 100,
     "Reverse flow": false,
     "method":"time"
 }

@@ -28,17 +28,30 @@ class Profile extends Component {
                 {'key':'Hhindex', 'data': [0,0,0,0,0],'color': 'rgba(0,0,255,1)'},
                 {'key':'Hday', 'data':[0,0,0,0,0],'color': 'rgba(255,255,0,1)'},
                 {'key':'Domestic', 'data': [0,0,0,0,0],'color': 'rgba(255,0,255,1)'},
-                {'key':'NonDomestic', 'data':[0,0,0,0,0],'color': 'rgba(0,255,255,1)'},
+                {'key':'Commercial', 'data':[0,0,0,0,0],'color': 'rgba(0,255,255,1)'},
                 {'key':'Industrial', 'data': [0,0,0,0,0],'color': 'rgba(255,125,125,1)'},
             ],
             'load_data' : [
                 {'key':'DT_original', 'data': [0,0,0,0,0],'color': 'rgba(255,0,0,1)'},
                 {'key':'DT_prediction', 'data':[0,0,0,0,0],'color': 'rgba(0,255,0,1)'},
                 {'key':'Domestic_prediction', 'data': [0,0,0,0,0],'color': 'rgba(0,0,255,1)'},
-                {'key':'Nondomestic_prediction', 'data':[0,0,0,0,0],'color': 'rgba(255,255,0,1)'},
+                {'key':'Commercial_prediction', 'data':[0,0,0,0,0],'color': 'rgba(255,255,0,1)'},
                 {'key':'Industrial_prediction', 'data':[0,0,0,0,0],'color': 'rgba(0,255,255,1)'},
-            ]
+            ],
+            'transformers': []
         }
+
+        fetch('http://127.0.0.1:5000/gettransformers')
+                .then(response => 
+                     response.json())
+                .then((data)=>{
+                    console.log(data)
+                    this.setState({"transformers": data.transformers})
+                })
+                .catch(error=>{
+                    console.log('error')
+                    console.log(error);
+                 });
     }
 
     changeState (new_data) {
@@ -66,7 +79,7 @@ class Profile extends Component {
                             </p>
                         </div>
                         <div className='ml-3 mr-3'>
-                            <ProfileForm change_data={this.changeState.bind(this)}/>
+                            <ProfileForm change_data={this.changeState.bind(this)} transformers={this.state.transformers}/>
                         </div>
                     </div>
                 </div>
@@ -99,7 +112,7 @@ class Profile extends Component {
                         <div className='col 12 shadow p-3 pl-0 mb-5 bg-white rounded'>
                         <Tooltip title="Month represnts month index from 1-12, day represents day index from 1 to last day,
                         Hhindex is half hourly index in a day from 0 to 47, Hday is 1 if holiday 0 otherwise, and Domestic,
-                        Non Domestic Industrial monthly contribution to energy consumption" 
+                        Commercial Industrial monthly contribution to energy consumption" 
                                             size='small' position="right" arrow={true} >
                             <h4><span className='badge badge-success'> Date related data</span></h4>
                         </Tooltip>

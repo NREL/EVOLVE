@@ -27,20 +27,45 @@ class Form extends Component {
                 transformer: 'TG-VNG072A-2'
             }
 
+           this.feeders = []
+           this.transformers = []
 
+            // fetch('http://127.0.0.1:5000/gettransformers')
+            //     .then(response => 
+            //          response.json())
+            //     .then((data)=>{
+            //         console.log(data)
+            //         this.transformers = data.transformers
+            //     })
+            //     .catch(error=>{
+            //         console.log('error')
+            //         console.log(error);
+            //      });
 
-            this.transformers = ['TG-LGR017A-1', 'TG-LGR017A-2', 'TG-LGR046A-1', 'TG-LGR046A-2', 'TG-LGR054A-1',
-                'TG-LGR054A-2', 'TG-LGR080A-1', 'TG-PNR104A-1', 'TG-PNR104A-2', 'TG-PNR105A-1', 'TG-PNR120A-1',
-                      'TG-PNR120A-2','TG-VNG072A-2','TG-PNR128A-1', 'TG-PNR161A-1', 'TG-PNR189A-1','TG-VNG046A-1', 'TG-VNG046A-2' ]
+            // fetch('http://127.0.0.1:5000/getfeeders')
+            //      .then(response => 
+            //           response.json())
+            //      .then((data)=>{
+            //          console.log('my', data.feeders)
+            //          this.feeders = data.feeders
+            //      })
+            //      .catch(error=>{
+            //          console.log('error')
+            //          console.log(error);
+            //       });
+ 
+            // console.log(this.transformers)
+            // console.log(this.feeders)
 
-            //this.feeders = ['Hargovind Enclave','Sohan Singh', 'Vishkarma Park']
-            this.feeders = ['Feeder1', 'Feeder2', 'Feeder3']
+            // this.transformers = ['TG-LGR017A-1', 'TG-LGR017A-2', 'TG-LGR046A-1', 'TG-LGR046A-2', 'TG-LGR054A-1',
+            //     'TG-LGR054A-2', 'TG-LGR080A-1', 'TG-PNR104A-1', 'TG-PNR104A-2', 'TG-PNR105A-1', 'TG-PNR120A-1',
+            //           'TG-PNR120A-2','TG-VNG072A-2','TG-PNR128A-1', 'TG-PNR161A-1', 'TG-PNR189A-1','TG-VNG046A-1', 'TG-VNG046A-2' ]
+
+            // this.feeders = ['Hargovind Enclave','Sohan Singh', 'Vishkarma Park']
+            //this.feeders = ['Feeder1', 'Feeder2', 'Feeder3']
 
             this.boolean_states = ['sweep','autocapacity','optimizecapacity']
                       
-                    // , 'TG-VNG058A-1', 'TG-VNG071A-1', 'TG-VNG071A-2', 'TG-VNG071A-3',
-                    //    'TG-VNG072A-1', 'TG-VNG072A-2', 'TG-VNG075A-1', 'TG-VNG075A-2', 'TG-VNG103A-1', 'TG-VNG103A-2',
-                    //     'TG-VNG103A-3', 'TG-VNG107A-1', 'TG-PNR121A-1','TG-PNR120A-3']
         }
 
         handleChange = (event) => {
@@ -149,7 +174,7 @@ class Form extends Component {
                         </Tooltip>
 
 
-                        {this.feeders.map((name)=>{
+                        {this.props.feeders.map((name)=>{
                             return (<div className="form-check">
                                 <input className="form-check-input" type="radio" name="feeder" value={name} defaultChecked={this.state.feeder===name} onChange={this.handleChange}/>
                                 <label className="form-check-label">{name}</label>
@@ -166,7 +191,7 @@ class Form extends Component {
                         </Tooltip>
 
 
-                        {this.transformers.map((name)=>{
+                        {this.props.transformers.map((name)=>{
                             return (<div className="form-check">
                                 <input className="form-check-input" type="radio" name="transformer" value={name} defaultChecked={this.state.transformer===name} onChange={this.handleChange}/>
                                 <label className="form-check-label">{name}</label>

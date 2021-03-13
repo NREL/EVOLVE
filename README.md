@@ -21,20 +21,24 @@ technologies such as electric vehicle, energy storage and solar on net load evol
 There are two ways you can use this tool. 
 
 First (recommeded) way is to use docker to launch the containers (front end as well as backend). It saves time and you can use single command to launch both containers.
-First clone or download the code and cd into that directory and run the following command.
+
+1. First clone or download the code and cd into that directory 
+2. Change the path of volume in `docker-compose.yml` file for backend pointing to where the data is located. If you do not have have just point to input_folder
+3. Run the following command.
 
 ```shell
     docker-compose up
 ```
-Note: There are two things you need to do before you run above command. It may take sometime to build images for first time but from second time it will be fast.
+4. Goto http://localhost:3001/dashboard in your browser
+5. Happy evolving  
 
-1. Change the path of volumes in `docker-compose.yml` file
-2. Make sure you have docker installed in your computer. (https://www.docker.com/)
+Note: Make sure to download docker in your computer. It may take sometime to build images for first time but from second time it will be fast.
+
 
 
 Second way is to launch both services independently.
 
-1. Clone the code (you can use command `git clone https://github.com/NREL/EVOLVE.git`)
+1. Clone the code (you can use command `git clone https://github.nrel.gov/kduwadi/BYPL-NREL-Effort.git`)
 2. Create a virtual environment with preferably python 3.8 version
 3. Install dependencies using command `pip install -r requirements.txt`
 4. Install Node.js (https://nodejs.org/en/) 
@@ -54,29 +58,6 @@ From the react app directory, open up a command prompt and execute `npm start`
 ### Usage: If you want to use python modules independently
 
 
-## Statistical model for profile and export prediction
 
-```python
-    model_instance = LinearModel(config_json_path="..\\generate_profile\\config.json")
-    model_instance.create_dataframe()
-    model_instance.execute_all_lm()
-    model_instance.export_all()
-```
 
-## Storage controller module
-
-```python
-    from battery_use_case.battery import EnergyStorage
-
-    df = pd.read_csv(r'toydata.csv',parse_dates=True)
-    df = df.set_index('TimeStamps')
-    with open('..//battery_use_case//battery.json','r') as json_file:
-        battery_dict = json.load(json_file)
-
-    with open('..//battery_use_case//strategy.json','r') as json_file:
-        strategy_dict = json.load(json_file)
-    
-    a = EnergyStorage(df,battery_dict,strategy_dict,0.5)
-    resultdf = a.get_result()
-```
 

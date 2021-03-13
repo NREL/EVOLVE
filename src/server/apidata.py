@@ -62,18 +62,13 @@ class APIData:
             'ev_output': [{'key':'ev_output', 'data': [0,0,0,0,0],'color': '#17a2b8'}]
         }
 
-        self.feedermapping_dict = {
-                'Hargovind Enclave': 'HARGOVIND ENCLAVE',
-                'Sohan Singh': 'O/G -3  SOHAN SINGH GALI NO. 4',
-                'Vishkarma Park': 'VISHKARMA PARK'
-            }
 
         if self.config_dict['dtorfeeder'] == 'DT':
             self.dashboard_data['number_by_group'] = self.data_handler.get_customernumber_bygroup(
             self.config_dict['transformer'],'DT')
         else:
             self.dashboard_data['number_by_group'] = self.data_handler.get_customernumber_bygroup(
-            self.feedermapping_dict[self.config_dict['feeder']],'Feeder')
+            self.config_dict['feeder'],'Feeder')
             
 
         # Update date
@@ -321,27 +316,16 @@ class APIData:
                                             self.config_dict['mode'],
                                             self.today) if self.config_dict['dtorfeeder'] == 'DT' else \
                                     self.data_handler.analyze_feeder(
-                                            self.feedermapping_dict[self.config_dict['feeder']],
+                                            self.config_dict['feeder'],
                                             self.today.year,
                                             self.config_dict['mode'],
                                             self.today)
 
-        pv_gen, pv_gen_highres = self.data_handler.dt_pv_profile(
-                                            self.config_dict['transformer'],
-                                            self.today, 
-                                            self.config_dict['mode']) if self.config_dict['dtorfeeder'] == 'Feeder' else \
-                                self.data_handler.feeder_pv_profile(
-                                            self.feedermapping_dict[self.config_dict['feeder']],
-                                            self.today,
-                                            self.config_dict['mode'])
-    
-        if pv_gen_highres==None: pv_gen_highres = [0]*len(net_load_highres)
-
-        baseload_highres = [np.nansum(x) for x in zip(net_load_highres,pv_gen_highres)] 
+        baseload_highres =  net_load_highres
         
         
-        self.trans_net_load = [el*2 for el in net_load_highres]
-        self.trans_base_load = [el*2 for el in baseload_highres]
+        #self.trans_net_load = [el*2 for el in net_load_highres]
+        self.trans_base_load = [el for el in baseload_highres]
 
         self.pvmultiplers = self.data_handler.return_solar_multiplier(
                                             self.today,
@@ -363,9 +347,14 @@ class APIData:
             self.ev_profile = [0]*len(self.pv_generation)
         else:
             if int(self.config_dict['evnumber']) == 1:  self.config_dict['evnumber'] = 2
-            self.ev_profile = ev_profile(number_of_evs=int(self.config_dict['evnumber']),
+            try:
+                self.ev_profile = ev_profile(number_of_evs=int(self.config_dict['evnumber']),
                              adoption_percentage=0, res_percentage = self.config_dict['respercentage'],number_of_days=num_days)
-
+            except Exception as e:
+                print('Error', str(e))
+                self.ev_profile = [0]*len(self.pv_generation)
+                
+                
         self.trans_new_load = [x[0]-x[1]+x[2] for x in zip(self.trans_base_load, self.pv_generation, self.ev_profile)]
 
         # Update data

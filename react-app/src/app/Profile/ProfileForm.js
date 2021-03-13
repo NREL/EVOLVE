@@ -9,12 +9,12 @@ class ProfileForm extends Component {
             this.state = {
                 day: '',
                 mode: 'Daily',
-                transformer: 'TG-VNG072A-2'
+                transformer: ''
             }
 
-            this.transformers = ['TG-LGR017A-1', 'TG-LGR017A-2', 'TG-LGR046A-1', 'TG-LGR046A-2', 'TG-LGR054A-1',
-                'TG-LGR054A-2', 'TG-LGR080A-1', 'TG-PNR104A-1', 'TG-PNR104A-2', 'TG-PNR105A-1', 'TG-PNR120A-1',
-                      'TG-PNR120A-2','TG-VNG072A-2','TG-PNR128A-1', 'TG-PNR161A-1', 'TG-PNR189A-1','TG-VNG046A-1', 'TG-VNG046A-2' ]
+            // this.transformers = ['TG-LGR017A-1', 'TG-LGR017A-2', 'TG-LGR046A-1', 'TG-LGR046A-2', 'TG-LGR054A-1',
+            //     'TG-LGR054A-2', 'TG-LGR080A-1', 'TG-PNR104A-1', 'TG-PNR104A-2', 'TG-PNR105A-1', 'TG-PNR120A-1',
+            //           'TG-PNR120A-2','TG-VNG072A-2','TG-PNR128A-1', 'TG-PNR161A-1', 'TG-PNR189A-1','TG-VNG046A-1', 'TG-VNG046A-2' ]
                       
                       
                     // , 'TG-VNG058A-1', 'TG-VNG071A-1', 'TG-VNG071A-2', 'TG-VNG071A-3',
@@ -42,7 +42,7 @@ class ProfileForm extends Component {
                 })
             }
 
-            fetch('http://127.0.0.1:5000/profile',options)
+            fetch('http://127.0.0.1:5000/get_profile_data',options)
                 .then(response => 
                     response.json())
                 .then((response)=>{
@@ -104,7 +104,7 @@ class ProfileForm extends Component {
                         </Tooltip>
 
 
-                        {this.transformers.map((name)=>{
+                        {this.props.transformers.map((name)=>{
                             return (<div className="form-check">
                                 <input className="form-check-input" type="radio" name="transformer" value={name} defaultChecked={this.state.transformer===name} onChange={this.handleChange}/>
                                 <label className="form-check-label">{name}</label>

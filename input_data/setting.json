@@ -1,0 +1,14 @@
+{
+    "project_path": "data",
+    "dtpower_file": "transformer_data.csv",
+    "solar_irradiance_file": "solar_data.csv",
+    "dt_metadata_file": "transformer_metadata.csv",
+    "optional_data": {
+        "folder_name": "optional",
+        "customer_energy_file": "customer_energy_data.csv",
+        "weather_file": "weather_data.csv",
+        "date_data_file": "date_data.csv"
+    }
+}
+
+

@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile
     container_name: evolve
     volumes: 
-      - C:\Users\KDUWADI\Desktop\BYPL_docker_testing\Data:/evolve/data
-      - C:\Users\KDUWADI\Desktop\NREL_Projects\BYPL-USAID\EVOLVE\src:/evolve/src
+      - C:\Users\KDUWADI\Desktop\NREL_Projects\BYPL-USAID\EVOLVE\input_data:/evolve/data
+      #- C:\Users\KDUWADI\Desktop\NREL_Projects\BYPL-USAID\EVOLVE\src:/evolve/src
     ports: 
       - "5000:5000"
   front_end:
@@ -16,8 +16,8 @@ services:
       context: ./react-app
       dockerfile: Dockerfile
     container_name: evolve_react
-    volumes: 
-      - C:\Users\KDUWADI\Desktop\NREL_Projects\BYPL-USAID\EVOLVE\react-app:/evolve/react_app
+    # volumes: 
+    #   - C:\Users\KDUWADI\Desktop\NREL_Projects\BYPL-USAID\EVOLVE\react-app:/evolve/react_app
     ports: 
       - "3001:3000"
     depends_on: 
