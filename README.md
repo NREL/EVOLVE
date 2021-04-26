@@ -3,7 +3,7 @@
 EVOLVE stands for evolution of net-load variation from emerging technologies. This tool allows user to visuallize impact of emerging
 technologies such as electric vehicle, energy storage and solar on net load evolution. Includes following features.
 
-1. Metrics: Peak reuction, Energy consumption reduction, Ramp Rate, Average to Peak Ratio,
+1. Metrics: Peak reduction, Energy consumption reduction, Ramp Rate, Average to Peak Ratio,
 2. Technology specific results: generation and/or consumption profile, peak generation and/or consumption, generation and/or consumption at peak
 3. Aggregated result: net load profile compared with base profile, load duration curve
 4. Ability to change time scale: Daily, Weekly, Yearly
