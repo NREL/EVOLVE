@@ -5,6 +5,7 @@ import json
 import math
 import numpy as np
 import calendar
+import logging
 
 # Thirs-party imports
 import pandas as pd
@@ -15,7 +16,11 @@ from battery_use_case.parametric_threshold import ParametricTime, ParametricSens
 from battery_use_case.battery_sizing_algorithm import BatterySizing
 from battery_use_case.optimized_battery_sizing import BTMsizing
 from ev_scenarios.analyze_ev import ev_profile
+from constants import TIME_RESOLUTION, FACTOR
 
+logger = logging.getLogger(__name__)
+LOG_FORMAT = '%(asctime)s: %(levelname)s: %(message)s'
+logging.basicConfig(format=LOG_FORMAT,level='DEBUG')
 
 class APIData:
 
@@ -116,7 +121,6 @@ class APIData:
 
     def get_battery_profile(self):
 
-        
         # Create a dataframe
         df = pd.DataFrame({
             'TimeStamps': self.timestamps,
@@ -162,10 +166,8 @@ class APIData:
 
         # change battery capacity if auto is selected
         if self.config_dict['autocapacity'] and not self.config_dict['optimizecapacity']:
-
-            
         
-            sizing_instance = BatterySizing(df['Load'].tolist(), self.data_handler.trans_capacity[self.config_dict['transformer']])
+            sizing_instance = BatterySizing(df['Load'].tolist(), self.data_handler.trans_capacity[self.config_dict['transformer']], resolution=1/FACTOR)
             #print(f"Capacity: {self.data_handler.trans_capacity[self.config_dict['transformer']]}, peak load: {max(self.trans_base_load)}")
             size_dict = sizing_instance.return_size()
             battery_dict['Rated Capacity (kW)'] = size_dict['battery_power_kW']
@@ -198,7 +200,7 @@ class APIData:
                     param_instance = ParametricTime(
                         load_profile=df['Load'].tolist(),
                         start_time = self.start_date,
-                        time_step_min = 30,
+                        time_step_min = TIME_RESOLUTION,
                         top_percen=top_percen,
                         num_of_charging_hours=charging_hours,
                         num_of_discharging_hours=discharging_hours,
@@ -222,7 +224,7 @@ class APIData:
                 param_instance = ParametricSensor(
                     load_profile=df['Load'].tolist(),
                     start_time = self.start_date,
-                    time_step_min = 30,
+                    time_step_min = TIME_RESOLUTION,
                     battery_dict=battery_dict,
                     strategy_dict=strategy_dict
                     )
@@ -238,7 +240,7 @@ class APIData:
                             + str(round(result['upper_threshold'],2))
 
 
-            storage_instance = EnergyStorage(df, battery_dict, strategy_dict, 0.5)
+            storage_instance = EnergyStorage(df, battery_dict, strategy_dict, 1/FACTOR)
             battery_result = storage_instance.get_result()
 
             self.latest_profile = battery_result['modified_profile']
@@ -247,13 +249,15 @@ class APIData:
             self.dashboard_data['battery_output'][1]['data'] = battery_result['battery_chargekw']
             self.dashboard_data['battery_output'][2]['data'] = battery_result['battery_dischargekw']
 
+            
+
             self.dashboard_data['battery_metric'] = {
-                'c_energy': int(np.nansum(battery_result['battery_chargekw'])*2/1000) if \
-                            int(np.nansum(battery_result['battery_chargekw'])*2/1000) !=0 else \
-                                round(np.nansum(battery_result['battery_chargekw'])*2/1000,3),
-                'd_energy': int(np.nansum(battery_result['battery_dischargekw'])*2/1000) if \
-                            int(np.nansum(battery_result['battery_dischargekw'])*2/1000) !=0 else \
-                                round(np.nansum(battery_result['battery_dischargekw'])*2/1000,3),
+                'c_energy': int(np.nansum(battery_result['battery_chargekw'])*FACTOR/1000) if \
+                            int(np.nansum(battery_result['battery_chargekw'])*FACTOR/1000) !=0 else \
+                                round(np.nansum(battery_result['battery_chargekw'])*FACTOR/1000,3),
+                'd_energy': int(np.nansum(battery_result['battery_dischargekw'])*FACTOR/1000) if \
+                            int(np.nansum(battery_result['battery_dischargekw'])*FACTOR/1000) !=0 else \
+                                round(np.nansum(battery_result['battery_dischargekw'])*FACTOR/1000,3),
                 'cd_cycle': self.count_cycle(battery_result['battery_chargekw'])
             }
 
@@ -263,7 +267,7 @@ class APIData:
         if self.config_dict['optimizecapacity']:
 
             self.pv_generation = [el if not math.isnan(el) else 0 for el in self.pv_generation]
-            instance = BTMsizing(df['Load'].tolist(),self.pv_generation,0.5, 20)
+            instance = BTMsizing(df['Load'].tolist(),self.pv_generation,1/FACTOR, 20)
             battery_profile = instance.get_battery_profile()
             netloadprofile = instance.get_netloadprofile()
             battery_energy_profile = instance.get_battery_energy_profile()
@@ -280,10 +284,10 @@ class APIData:
             self.latest_profile = netloadprofile
 
             self.dashboard_data['battery_metric'] = {
-                'c_energy': int(sum(charging_profile)*2/1000) if int(sum(charging_profile)*2/1000) !=0 else \
-                                round(sum(charging_profile)*2/1000,3),
-                'd_energy': int(sum(discharging_profile)*2/1000) if int(sum(discharging_profile)*2/1000) !=0 else \
-                                round(sum(discharging_profile)*2/1000,3),
+                'c_energy': int(sum(charging_profile)*FACTOR/1000) if int(sum(charging_profile)*FACTOR/1000) !=0 else \
+                                round(sum(charging_profile)*FACTOR/1000,3),
+                'd_energy': int(sum(discharging_profile)*FACTOR/1000) if int(sum(discharging_profile)*FACTOR/1000) !=0 else \
+                                round(sum(discharging_profile)*FACTOR/1000,3),
                 'cd_cycle': self.count_cycle(charging_profile)
             }
         
@@ -351,7 +355,7 @@ class APIData:
                 self.ev_profile = ev_profile(number_of_evs=int(self.config_dict['evnumber']),
                              adoption_percentage=0, res_percentage = self.config_dict['respercentage'],number_of_days=num_days)
             except Exception as e:
-                print('Error', str(e))
+                logger.error('Error', str(e))
                 self.ev_profile = [0]*len(self.pv_generation)
                 
                 
@@ -377,12 +381,13 @@ class APIData:
         }
 
         self.dashboard_data['solar_output'][0]['data'] = self.pv_generation
-        self.dashboard_data['solar_metric']['energy'] = int(np.nansum(self.pv_generation)*2/1000) if \
-               int(np.nansum(self.pv_generation)*2/1000) !=0 else round(np.nansum(self.pv_generation)*2/1000,3)
+        self.dashboard_data['solar_metric']['energy'] = int(np.nansum(self.pv_generation)*FACTOR/1000) if \
+               int(np.nansum(self.pv_generation)*FACTOR/1000) !=0 else round(np.nansum(self.pv_generation)*FACTOR/1000,3)
         self.dashboard_data['solar_metric']['peak_power'] = int(max(self.pv_generation))
         
         if not int(self.config_dict['evnumber']) <=0:
-            self.dashboard_data['ev_metric']['energy'] = round(sum(self.ev_profile/1000),2)
+            logger.info(self.ev_profile)
+            self.dashboard_data['ev_metric']['energy'] = round(sum(self.ev_profile)/1000,2)
             self.dashboard_data['ev_metric']['peak_power'] = int(max(self.ev_profile))
 
     def change_date(self):
@@ -392,20 +397,20 @@ class APIData:
             self.start_date = dt(self.today.year, self.today.month, self.today.day, 0,0,0)
             self.dashboard_data['date']['format'] = 'hour'
             self.timestamps = [dt(self.today.year, self.today.month, self.today.day, 0,0,0) \
-                        + timedelta(minutes=30)*i for i in range(48)]
+                        + timedelta(minutes=TIME_RESOLUTION)*i for i in range(FACTOR*24)]
             
         elif self.config_dict['mode'] == 'Yearly':
             self.start_date = dt(self.today.year, 1, 1, 0,0,0)
             self.dashboard_data['date']['format'] = 'month'
             num_of_days = 366 if calendar.isleap(self.today.year) else 365
             self.timestamps = [dt(self.today.year, 1,1, 0,0,0) \
-                        + timedelta(minutes=30)*i for i in range(48*num_of_days)]
+                        + timedelta(minutes=TIME_RESOLUTION)*i for i in range(FACTOR*24*num_of_days)]
 
         elif self.config_dict['mode'] == 'Weekly':
             self.start_date = dt(self.today.year, self.today.month, self.today.day, 0,0,0)
             self.dashboard_data['date']['format'] = 'day'
             self.timestamps = [dt(self.today.year, self.today.month, self.today.day, 0,0,0) \
-                        + timedelta(minutes=30)*i for i in range(48*7)]
+                        + timedelta(minutes=TIME_RESOLUTION)*i for i in range(FACTOR*24*7)]
         
         self.dashboard_data['date']['data'] = [date.strftime('%Y-%m-%d %H:%M:%S') \
            for date in self.timestamps]

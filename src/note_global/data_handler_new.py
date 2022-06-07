@@ -8,6 +8,8 @@ import logging
 
 # Third-party imports
 import pandas as pd
+from pandas.tseries.offsets import DateOffset
+from constants import TIME_RESOLUTION, FACTOR
 
 # Internal imports
 from generate_profile.main import LinearModel
@@ -123,18 +125,18 @@ class DataHandler:
         data = self.solar_data['Irradiance']
         
         if mode=='Daily':
-            date_range = pd.date_range(startdate,periods=48,freq='30min')
+            date_range = pd.date_range(startdate,periods=FACTOR*24,freq=DateOffset(minutes=TIME_RESOLUTION))
 
         if mode == 'Weekly':
-            date_range = pd.date_range(startdate,periods=48*7,freq='30min')
+            date_range = pd.date_range(startdate,periods=FACTOR*24*7,freq=DateOffset(minutes=TIME_RESOLUTION))
                     
         if mode == 'Monthly':
             date_range = pd.date_range(dt(startdate.year,startdate.month,1,0,0,0),\
-                periods=48*monthrange(startdate.year, startdate.month)[1],freq='30min')
+                periods=FACTOR*24*monthrange(startdate.year, startdate.month)[1],freq=DateOffset(minutes=TIME_RESOLUTION))
 
         if mode == 'Yearly':
             date_range = pd.date_range(dt(startdate.year,1,1,0,0,0),\
-                periods=48*num_of_days,freq='30min')
+                periods=FACTOR*24*num_of_days,freq=DateOffset(minutes=TIME_RESOLUTION))
 
 
         return [data[date] for date in date_range]
@@ -188,7 +190,7 @@ class DataHandler:
     
 
             # Let's find out missing time stamps
-            all_date_list = list(pd.date_range(startdate,enddate,freq='30min'))
+            all_date_list = list(pd.date_range(startdate,enddate,freq=DateOffset(minutes=TIME_RESOLUTION)))
             available_date_list =  self.dt_df_year['DATE'].tolist()
     
             # Replace missing time-stamps with zero or None value
@@ -211,7 +213,7 @@ class DataHandler:
             if mode == 'Weekly':
                 
                 weekbegin = dt(userdate.year, userdate.month, userdate.day, 0,0,0)
-                weekly_date_list = pd.date_range(weekbegin,periods=48*7,freq='30min')
+                weekly_date_list = pd.date_range(weekbegin,periods=FACTOR*24*7,freq=DateOffset(minutes=TIME_RESOLUTION))
 
                 weekly_dt_list = [self.dt_power_by_year[date] for date in weekly_date_list]
 

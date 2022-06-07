@@ -490,7 +490,7 @@ def ev_profile(number_of_evs=300, adoption_percentage=12, res_percentage=100, nu
     EV_multi_year_consumption = list()
     for EV_index_ in range(no_of_Res_EVs_to_consider):
         This_EV_multi_year = None
-        This_EV_consumption_profile_30min = np.mean(np.reshape(consumption_profile[EV_index_], (48*no_of_days,int(0.5*3600/system_tstep_width_sec))).T, axis=0)
+        This_EV_consumption_profile_30min = np.mean(np.reshape(consumption_profile[EV_index_], (96*no_of_days,int(0.5*3600/system_tstep_width_sec))).T, axis=0)
         if EV_index_ > number_of_EV_in_a_year[0]-1:
             This_EV_multi_year = (np.zeros(shape=int(24*no_of_days*60/30)))
         else:
@@ -519,7 +519,7 @@ def ev_profile(number_of_evs=300, adoption_percentage=12, res_percentage=100, nu
         multi_year_total_consumption.extend(sum(consumption_profile[0:(number_of_EV_in_a_year[year_]-1)]))
     This_year_total_consumption_res = multi_year_total_consumption[288 * no_of_days:len(multi_year_total_consumption)]
     This_year_total_consumption_res_30min = np.roll((np.mean(np.reshape(This_year_total_consumption_res,
-                                        (48 * no_of_days, int(0.5 * 3600 / system_tstep_width_sec))).T, axis=0)), 24)
+                                        (96 * no_of_days, int(0.5 * 3600 / system_tstep_width_sec))).T, axis=0)), 24)
 
     sum_of_all_stations_profile = 0
     factor_to_divide = 1
@@ -592,7 +592,7 @@ def ev_profile(number_of_evs=300, adoption_percentage=12, res_percentage=100, nu
 
 
             all_station_no_of_EVs_served[i_station].extend(total_no_EVs_served_save)  #total_no_EVs_served[1:]
-            all_station_profiles[i_station].extend(np.mean(np.reshape(consumption_profile_station, (48*no_of_days, int(0.5*3600/system_tstep_width_sec))).T, axis=0))
+            all_station_profiles[i_station].extend(np.mean(np.reshape(consumption_profile_station, (96*no_of_days, int(0.5*3600/system_tstep_width_sec))).T, axis=0))
 
             i_station = i_station + 1
 
@@ -627,6 +627,8 @@ def ev_profile(number_of_evs=300, adoption_percentage=12, res_percentage=100, nu
     # filename_ = 'EVs_' + str(no_of_EVs_to_consider) + '_res_' + str(res_percentage) + '_net_30min.csv'
     # np.savetxt((res_folder_ + filename_), This_year_total_consumption_all_30min, fmt='%4.4f',
     #            delimiter=",")
+    print('-------')
+    print(This_year_total_consumption_all_30min)
     return This_year_total_consumption_all_30min   #  This_year_total_consumption_res_30min
 
     # plt.plot(range(len(This_EV_consumption_profile_30min)),This_EV_consumption_profile_30min)
