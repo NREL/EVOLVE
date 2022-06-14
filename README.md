@@ -14,6 +14,7 @@ technologies such as electric vehicle, energy storage and solar on net load evol
 9. Generate profile of electric vehicle based on number of vehicles and adoption percentage
 10. Statistical profile dissaggration model 
 
+
 ![](images/dashboard.png)
 
 ### How to install ?
@@ -31,6 +32,7 @@ First (recommeded) way is to use docker to launch the containers (front end as w
 ```
 4. Goto http://localhost:3001/dashboard in your browser
 5. Happy evolving  
+6. Great Job!
 
 Note: Make sure to download docker in your computer. It may take sometime to build images for first time but from second time it will be fast.
 
