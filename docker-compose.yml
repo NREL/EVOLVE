@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile
     container_name: evolve
     volumes: 
-      - C:\Users\KDUWADI\Desktop\NREL_Projects\Tunishia\input_data:/evolve/data
-      - C:\Users\KDUWADI\Desktop\NREL_Projects\Tunishia\EVOLVE\src:/evolve/src
+      - C:\Users\KDUWADI\Desktop\NREL_Projects\Tunisia\input_data:/evolve/data
+      - C:\Users\KDUWADI\Desktop\NREL_Projects\Tunisia\EVOLVE\src:/evolve/src
     ports: 
       - "5000:5000"
   front_end:
