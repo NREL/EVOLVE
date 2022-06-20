@@ -23,6 +23,7 @@ LOG_FORMAT = '%(asctime)s: %(levelname)s: %(message)s'
 logging.basicConfig(format=LOG_FORMAT,level='DEBUG')
 
 class APIData:
+    """ Class for managing API data """
 
     def __init__(self, config_dict, data_handler):
 

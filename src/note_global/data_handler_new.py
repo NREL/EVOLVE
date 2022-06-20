@@ -17,6 +17,7 @@ from generate_profile.main import LinearModel
 LOG_FORMAT = '%(asctime)s: %(levelname)s: %(message)s'
 
 class DataHandler:
+    """ Handler for managing data """
 
     def __init__(self,config_dict,logger=None):
 
