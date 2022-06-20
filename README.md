@@ -13,7 +13,7 @@ Note EVOLVE is not a forecasting tool and operates only on historical load profi
 
 * [Instructions for installing using Docker ](docs/docker-installation.md)
 * [Installation instructions for developer/contributor](docs/developer-installation.md)
-
+* [Navigating Dashboard](docs/usage.md)
 
 
 
