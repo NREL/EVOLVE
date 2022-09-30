@@ -1,6 +1,0 @@
-{
-    "project_path": "C:\\Users\\KDUWADI\\Desktop\\BYPL_docker_testing\\Data\\extractedbypldata",
-    "dtpower_file": "transformer_data.csv",
-    "customer_energy": "customers_energy_data.csv",
-    "solar_irradiance_file": "solar_data.csv"
-}

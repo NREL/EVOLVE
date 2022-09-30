@@ -1,0 +1,11 @@
+fastapi
+pyjwt
+tortoise-orm
+uvicorn[standard]
+passlib
+bcrypt
+pyjwt
+python-multipart
+mkdocs
+mkdocstrings[python]
+mkdocs-material

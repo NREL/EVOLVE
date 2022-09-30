@@ -1,5 +1,0 @@
-
-# Ignore these files
-dashboard/
-**/*.pyc
-**/__pycache__

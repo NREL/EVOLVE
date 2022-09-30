@@ -18,7 +18,7 @@ There are four basic steps to download and begin using the EVOLVE tool:
 
 Visit https://www.docker.com/get-started/ to download the Docker software. Choose your operating system (OS) type, download, and follow installation prompts.
 
-![](../images/docker.png)
+![](images/docker.png)
 
 
 _What to do if you receive an error when downloading Docker ?_
@@ -32,7 +32,7 @@ There are two options to download EVOLVE.
 ###### :star2: Using GitHub clone
 Visit GitHub at https://github.com/nrel/evolve and “clone” the GitHub repository (see image). In order to clone you can use the command `git clone https://github.com/NREL/EVOLVE.git`
 
-   ![](../images/github.png)
+   ![](images/github.png)
 
 ###### :sparkles: Direct Download [recommended for beginners]
 Download the zipped program code directly from the GitHub repository (see image). Unzip this folder and save to your preferred file location (e.g., Desktop).  
@@ -42,7 +42,7 @@ Download the zipped program code directly from the GitHub repository (see image)
 
 Once you have downloaded and unzipped the EVOLVE code file folder (it should be called “EVOLVE-master or something similar), open the docker-compose.yml file. You will need to edit two lines of code to set up the EVOLVE file directories appropriately and run the EVOLVE tool on your machine. Please see the two example images provided below – the first illustrates directory set up with a Windows OS and the second with a Mac OS. There are some differeces, but the mechanics are generally the same. The next steps will walk you through the edits you need to make. 
 
-![](../images/docker-compose.png)
+![](images/docker-compose.png)
 
 
 #### 4. Launch EVOLVE dashboard
