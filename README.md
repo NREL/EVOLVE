@@ -3,6 +3,7 @@
 <p align="center">
 <img src="docs/images/evolve_logo.svg" width="350" style="display:flex;justify-content:center;">
 </p>
+
 ---
 
 [Click here for full documentation](https://nrel.github.io/EVOLVE/)
