@@ -335,9 +335,89 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Metrics
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Metrics
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#peak-load" class="md-nav__link">
+    Peak load
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#energy-consumption" class="md-nav__link">
+    Energy consumption
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maximum-ramp-rate" class="md-nav__link">
+    Maximum Ramp Rate
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#average-to-peak-ratio" class="md-nav__link">
+    Average to Peak Ratio
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#peak-reduction" class="md-nav__link">
+    Peak Reduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#energy-reduction" class="md-nav__link">
+    Energy Reduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ramp-reduction" class="md-nav__link">
+    Ramp Reduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avg2p-reduction" class="md-nav__link">
+    Avg2P Reduction
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -363,6 +443,70 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#peak-load" class="md-nav__link">
+    Peak load
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#energy-consumption" class="md-nav__link">
+    Energy consumption
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maximum-ramp-rate" class="md-nav__link">
+    Maximum Ramp Rate
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#average-to-peak-ratio" class="md-nav__link">
+    Average to Peak Ratio
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#peak-reduction" class="md-nav__link">
+    Peak Reduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#energy-reduction" class="md-nav__link">
+    Energy Reduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ramp-reduction" class="md-nav__link">
+    Ramp Reduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avg2p-reduction" class="md-nav__link">
+    Avg2P Reduction
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -382,7 +526,35 @@
 
 
 <h1 id="explanation-for-metrics">Explanation for Metrics</h1>
-<p><em>under development ...</em></p>
+<h3 id="peak-load">Peak load</h3>
+<p>Peak load is defined as maximum load for specified time duration. Mathematically it is represented as below. </p>
+<div class="arithmatex">\[
+\operatorname{max}\{p_1, p_2, ...., p_t, ...., p_T\}
+\]</div>
+<h3 id="energy-consumption">Energy consumption</h3>
+<p>Energy consumption is sum of power consumption at all time steps multiplied by time resolution. Note energy consumption shown in evolve dashboard is actually net energy consumption so negative value means energy is injected back to the grid. Default unit for energy consumption is MWh. Mathematically energy consumption is rereseneted as below. Here 
+<span class="arithmatex">\(p_t\)</span> is power consumtion at time <span class="arithmatex">\(t\)</span> and <span class="arithmatex">\(\delta T\)</span> is time resolution in hour.</p>
+<div class="arithmatex">\[
+\sum_{t=0}^{T} p_t \times \delta T
+\]</div>
+<h3 id="maximum-ramp-rate">Maximum Ramp Rate</h3>
+<p>Maximum ramp rate in evolve dashboard represents absolute maximum change in power per hour. It's unit is MW/hr. Mathematically it is represented as below.</p>
+<div class="arithmatex">\[
+\operatorname{max} \{\frac{|p_{t}- p_{t-1}|}{\delta T}  \forall t \}
+\]</div>
+<h3 id="average-to-peak-ratio">Average to Peak Ratio</h3>
+<p>It is mathematically represented as below.</p>
+<div class="arithmatex">\[
+\frac{\frac{1}{T}\sum_{t=0}^{T} p_t}{max\{p_1, p_2, ..., p_t, ..., p_T\}}
+\]</div>
+<h3 id="peak-reduction">Peak Reduction</h3>
+<p>Peak reduction is percentage reduction in peak power in evolved (or new) load profile compared to base or reference profile.</p>
+<h3 id="energy-reduction">Energy Reduction</h3>
+<p>Energy reduction is percentage reduction in net energy consumption in evolved (or new) load profile compared to base or reference profile.</p>
+<h3 id="ramp-reduction">Ramp Reduction</h3>
+<p>Ramp reduction is percentage reduction in maximum ramp rate of evolved (or new) load profile compared to base or reference profile.</p>
+<h3 id="avg2p-reduction">Avg2P Reduction</h3>
+<p>Avg2P reduction is percentage reduction in average to peak power of evolved (or new) load profile compared to base or reference profile.</p>
 
 
 
@@ -449,6 +621,12 @@
       <script src="../assets/javascripts/bundle.078830c0.min.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.33.1/plotly.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>
