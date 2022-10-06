@@ -7,6 +7,7 @@ connection.
 # standard imports
 
 # third-party imports
+from xml.etree.ElementInclude import include
 from tortoise import fields, models
 from tortoise.contrib.pydantic import pydantic_model_creator
 from passlib.hash import bcrypt
@@ -37,7 +38,7 @@ class TimeseriesData(models.Model):
     """ Time series data model. """
 
     id = fields.IntField(pk=True)
-    username = fields.CharField(max_length=100, unique=True)
+    username = fields.CharField(max_length=100)
     start_date = fields.DatetimeField()
     end_date = fields.DatetimeField()
     resolution_min = fields.DecimalField(max_digits=7, decimal_places=3)
@@ -47,6 +48,11 @@ class TimeseriesData(models.Model):
     image = fields.CharField(max_length=100)
     filename = fields.CharField(max_length=100)
     category = fields.CharField(max_length=100)
+
+ts_pydantic = pydantic_model_creator(TimeseriesData,
+name="ts_full")
+ts_minimal= pydantic_model_creator(TimeseriesData,
+name="ts_full", include=('name', 'filename', 'category'))
 
 class ScenarioMetadata(models.Model):
     """ Scenario metadata model. """

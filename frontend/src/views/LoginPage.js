@@ -1,8 +1,8 @@
-import { useRef, useState, useEffect } from 'react';
-import useAuth from '../hooks/useAuth';
-import { useNavigate, useLocation } from 'react-router-dom';
 import React, { Component } from 'react';
 import axios from 'axios';
+import {save_user} from '../actions';
+
+
 
 class Login extends Component {
     constructor(props){
@@ -16,21 +16,6 @@ class Login extends Component {
 
     handleLogin = (event) => {
         event.preventDefault();
-        
-        //  Validate username and password content
-        // var username_re = new RegExp("^\\w[\\w.]{2,18}\\w$");
-        // if (!username_re.test(this.state.username) {
-        //     this.state.bad_username = true
-        // }
-        // can contain . or _ from 4 to 18 characters
-
-        // var password_re = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
-        // if (!password_re.test(this.state.password)){
-        //     this.state.bad_password = true
-        // }
-        // 1 lowercase, 1 uppercase, 1 numeric, 1 special character (!@#$%^&*), at least 8 characters long
-
-       
        
         // Submit password 
         if (this.state.username && this.state.password) {
@@ -43,14 +28,19 @@ class Login extends Component {
             axios.post('/token',formBody).then((response)=> {
                 console.log(response)
                 let user = this.state.username
-                let accessToken = 'abcd'
-                this.props.setauth({ user, accessToken})
+                let accessToken = response.data.access_token
+                
+               
+                this.props.dispatch(save_user({user:user, accessToken:accessToken}))
+                // Save the access token in the localstorage
+                localStorage.setItem('token', accessToken)
+                
                 const from = this.props.location.state?.from?.pathname || "/";
                 this.props.navigation(from, { replace: true });
                 
             }).catch((error)=> {
                 console.log(error)
-                window.error("Login failed!")
+                window.alert("Login failed!")
             })
         }
     }

@@ -6,6 +6,9 @@ passlib
 bcrypt
 pyjwt
 python-multipart
+python-dotenv
+pytests
 mkdocs
+pandas
 mkdocstrings[python]
 mkdocs-material

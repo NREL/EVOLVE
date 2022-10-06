@@ -10,32 +10,34 @@ import axios from 'axios';
 import {Config} from './Config';
 import {ErrorPage} from "./views/ErrorPage";
 import { Navigate, useLocation, Outlet, useNavigate} from "react-router-dom";
-// import {Outlet} from "react-router"
-import useAuth from "./hooks/useAuth";
-
+import {useSelector, useDispatch} from 'react-redux';
+ 
 axios.defaults.baseURL = Config.baseURL
 
 const ProtectedRoutes = () => {
-  const {auth} = useAuth();
-  console.log('++++', auth)
+
+  const auth = useSelector(state => state.auth)
+  console.log('auth', auth)
   const location = useLocation()
-  return auth?.user 
+  return auth?.user
               ? <Outlet/> 
               : <Navigate to="/login" state={{ from: location}} replace />
 }
 
 function App () {
-  const navigation = useNavigate();
-  const location = useLocation();
-  const { setAuth } = useAuth();
+
+    const navigation = useNavigate();
+    const location = useLocation();
+    const dispatch = useDispatch();
+
 
     return (
       <div>
         <Nav />
         <div class="px-20">
           <Routes>
-            <Route path='/login' element={<Login navigation={navigation} location={location} setauth={setAuth}/>} />
-            <Route element={<ProtectedRoutes />}>
+            <Route path='/login' element={<Login navigation={navigation} location={location} dispatch={dispatch}/>} />
+            <Route element={<ProtectedRoutes/>}>
               <Route path='/' element={<HomePage navigation={navigation}/>} />
               <Route path='/scenarios' element={<ScenarioPage/>} />
               <Route path='/data' element={<DataPage navigation={navigation}/>} />

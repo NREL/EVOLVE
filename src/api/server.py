@@ -6,20 +6,25 @@ REST API implementation on top of evolve package.
 # standard imports
 import datetime
 from datetime import timezone
+from typing import List
+import os
 
 # third-party imports
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, File, Form, BackgroundTasks
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import register_tortoise
 from passlib.hash import bcrypt
 import jwt
+from dotenv import load_dotenv
 
 # internal imports
 import models
+import timeseries_data
 
-
-JWT_SECRET = 'Kapil'
+load_dotenv()
+JWT_SECRET = os.getenv('JWT_KEY')
+DATA_PATH = os.getenv('DATA_PATH')
 
 app = FastAPI(title="EVOLVE API")
 
@@ -49,11 +54,19 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
             detail="Invalid username or password!")
     return await models.user_pydantic.from_tortoise_orm(user)
 
+
+@app.get('/health')
+async def get_health():
+    return {"message": "healthy"}
+
 @app.post('/token')
 async def generate_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await autheticate_user(form_data.username, form_data.password)
     if not user:
-        return {"error": "invalid credentials"}
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Invalid username or password!")
+            
     user_obj = await models.user_token_pydantic.from_tortoise_orm(user)
     user_obj_json = user_obj.dict()
     user_obj_json.update({
@@ -75,6 +88,41 @@ async def create_user(user: models.userin_pydantic):
 @app.get('/users', response_model=models.user_pydantic)
 async def get_user(user: models.user_pydantic = Depends(get_current_user)):
     return user
+
+
+@app.post('/data/upload', response_model=List[models.ts_minimal])
+async def upload_timeseries_data(
+    # background_tasks: BackgroundTasks,
+    file: bytes = File(),
+    metadata: str = Form(),
+    user: models.user_pydantic = Depends(get_current_user),
+):
+
+    metadata_pydantic = timeseries_data.TSFormInput.parse_raw(metadata)
+    response = await timeseries_data.handle_timeseries_data_upload(
+        file, metadata_pydantic, user
+    )
+    if response:
+        # for ts_data in response:
+        #     background_tasks.add_task(timeseries_data.create_ts_image, ts_data.filename, ts_data.name)
+        return response
+
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Bad input data or validation failed!"
+        )
+
+@app.get('/data', response_model=List[models.ts_pydantic])
+async def get_timeseries_data(user: models.user_pydantic = Depends(get_current_user)):
+    
+    ts_data = await models.TimeseriesData.all().filter(username=user.username)
+    if not ts_data:
+        ts_data = []
+    if not isinstance(ts_data, list):
+        ts_data = [ts_data]
+    ts_data_pydantic = [await models.ts_pydantic.from_tortoise_orm(data) for data in ts_data]
+    return ts_data_pydantic
 
 
 register_tortoise(
