@@ -446,6 +446,67 @@
     Solar metrics
   </a>
   
+    <nav class="md-nav" aria-label="Solar metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#energy-generation" class="md-nav__link">
+    Energy Generation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generation-at-peak" class="md-nav__link">
+    Generation at Peak
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peak-generation" class="md-nav__link">
+    Peak Generation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#energy-storage-metrics" class="md-nav__link">
+    Energy storage metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Energy storage metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#charging-energy" class="md-nav__link">
+    Charging energy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discharging-energy" class="md-nav__link">
+    Discharging energy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cd-cycles" class="md-nav__link">
+    C/D Cycles
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -543,6 +604,67 @@
     Solar metrics
   </a>
   
+    <nav class="md-nav" aria-label="Solar metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#energy-generation" class="md-nav__link">
+    Energy Generation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generation-at-peak" class="md-nav__link">
+    Generation at Peak
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peak-generation" class="md-nav__link">
+    Peak Generation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#energy-storage-metrics" class="md-nav__link">
+    Energy storage metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Energy storage metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#charging-energy" class="md-nav__link">
+    Charging energy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discharging-energy" class="md-nav__link">
+    Discharging energy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cd-cycles" class="md-nav__link">
+    C/D Cycles
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -566,39 +688,100 @@
 
 
 <h1 id="explanation-for-metrics">Explanation for Metrics</h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Images used are just a toy data set and do not represent any real system data and is used only for
+demonstration purpose.</p>
+</div>
 <h3 id="peak-load">Peak load</h3>
 <p>Peak load is defined as maximum load for specified time duration. Mathematically it is represented as below. </p>
 <div class="arithmatex">\[
 \operatorname{max}\{p_1, p_2, ...., p_t, ...., p_T\}
 \]</div>
+<p align="center">
+<img src="../images/peak_load.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
 <h3 id="energy-consumption">Energy consumption</h3>
 <p>Energy consumption is sum of power consumption at all time steps multiplied by time resolution. Note energy consumption shown in evolve dashboard is actually net energy consumption so negative value means energy is injected back to the grid. Default unit for energy consumption is MWh. Mathematically energy consumption is rereseneted as below. Here 
 <span class="arithmatex">\(p_t\)</span> is power consumtion at time <span class="arithmatex">\(t\)</span> and <span class="arithmatex">\(\delta T\)</span> is time resolution in hour.</p>
 <div class="arithmatex">\[
 \sum_{t=0}^{T} p_t \times \delta T
 \]</div>
+<p align="center">
+<img src="../images/energy_generation.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
 <h3 id="maximum-ramp-rate">Maximum Ramp Rate</h3>
 <p>Maximum ramp rate in evolve dashboard represents absolute maximum change in power per hour. It's unit is MW/hr. Mathematically it is represented as below.</p>
 <div class="arithmatex">\[
 \operatorname{max} \{\frac{|p_{t}- p_{t-1}|}{\delta T}  \forall t \}
 \]</div>
+<p align="center">
+<img src="../images/ramp_rate.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
 <h3 id="average-to-peak-ratio">Average to Peak Ratio</h3>
 <p>It is mathematically represented as below.</p>
 <div class="arithmatex">\[
 \frac{\frac{1}{T}\sum_{t=0}^{T} p_t}{max\{p_1, p_2, ..., p_t, ..., p_T\}}
 \]</div>
+<p align="center">
+<img src="../images/peak2avg_ratio.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
 <h3 id="peak-reduction">Peak Reduction</h3>
 <p>Peak reduction is percentage reduction in peak power in evolved (or new) load profile compared to base or reference profile.</p>
+<p align="center">
+<img src="../images/peak_reduction.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
 <h3 id="energy-reduction">Energy Reduction</h3>
 <p>Energy reduction is percentage reduction in net energy consumption in evolved (or new) load profile compared to base or reference profile.</p>
+<p align="center">
+<img src="../images/energy_reduction.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
 <h3 id="ramp-reduction">Ramp Reduction</h3>
 <p>Ramp reduction is percentage reduction in maximum ramp rate of evolved (or new) load profile compared to base or reference profile.</p>
+<p align="center">
+<img src="../images/ramp_reduction.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
 <h3 id="avg2p-reduction">Avg2P Reduction</h3>
 <p>Avg2P reduction is percentage reduction in average to peak power of evolved (or new) load profile compared to base or reference profile.</p>
+<p align="center">
+<img src="../images/avg2peak_reduction.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
 <h2 id="solar-metrics">Solar metrics</h2>
 <hr />
-<h1 id="energy-generation">Energy Generation</h1>
+<h3 id="energy-generation">Energy Generation</h3>
 <p>Solar energy generation is just a sum of solar power at all time steps in a given duration multiplied by resolution. Unit of solar energy generation expressed in EVOLVE is kWh. </p>
+<p align="center">
+<img src="../images/solar_energy.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
+<h3 id="generation-at-peak">Generation at Peak</h3>
+<p>This metric represents solar power generation in kW at the time of evolved load profile peak time for a specified duration.</p>
+<p align="center">
+<img src="../images/solar_at_peak.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
+<h3 id="peak-generation">Peak Generation</h3>
+<p>This metric represents peak solar power in kW for a user specified duration.</p>
+<p align="center">
+<img src="../images/peak_solar.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
+<h2 id="energy-storage-metrics">Energy storage metrics</h2>
+<hr />
+<h3 id="charging-energy">Charging energy</h3>
+<p>This metrics represents total energy spent charging energy storage for a user specified duration in kWhr.</p>
+<h3 id="discharging-energy">Discharging energy</h3>
+<p>This metrics represents total energy discharged from energy storage for a user specified duration in kWhr.</p>
+<h3 id="cd-cycles">C/D Cycles</h3>
+<p>This metric represents number of charging/discharging cycles for energy storage.</p>
 
 
 
