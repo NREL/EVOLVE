@@ -33,7 +33,7 @@ class Login extends Component {
                
                 this.props.dispatch(save_user({user:user, accessToken:accessToken}))
                 // Save the access token in the localstorage
-                localStorage.setItem('token', accessToken)
+                // localStorage.setItem('token', accessToken)
                 
                 const from = this.props.location.state?.from?.pathname || "/";
                 this.props.navigation(from, { replace: true });

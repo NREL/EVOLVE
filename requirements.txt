@@ -12,3 +12,4 @@ mkdocs
 pandas
 mkdocstrings[python]
 mkdocs-material
+mkdocs-static-i18n

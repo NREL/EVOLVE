@@ -26,15 +26,28 @@ theme:
 plugins:
   - mkdocstrings
   - search
+  - i18n:
+      default_language: en
+      languages:
+        en:
+          name: English
+          build: true
+        es:
+          name: Español
+          build: true
+
+
 
 repo_url: https://github.com/NREL/EVOLVE.git
 repo_name: nrel/evolve
+material_alternate: true
 
 extra_javascript:
   - https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.33.1/plotly.min.js
   - javascripts/mathjax.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
 
 
 markdown_extensions:
@@ -47,15 +60,31 @@ markdown_extensions:
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - admonition
   - codehilite
+  - abbr
   - pymdownx.details
   - pymdownx.arithmatex:
       generic: true
+  - toc:
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
 
 
 nav:
+  # - Languages:
+  #   - en: /
+  #   - es: /es/
   - Welcome: index.md
   - Installation:
     - Docker installation: docker-installation.md 
     - Developer installation: developer-installation.md 
     - Legacy dashboard: usage.md
   - Metrics: metrics.md
+# extra:
+#   alternate:
+#     - name: English
+#       link: / 
+#       lang: en
+#     - name: Spanish
+#       link: /es/
+#       lang: es
