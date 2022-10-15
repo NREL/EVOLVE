@@ -30,7 +30,7 @@ function HomePage(props) {
     
 
     return (
-        <div>
+        <div class="px-20">
             <h1 class="my-10 text-xl"> Welcome to EVOLVE! </h1>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-10 mb-10">
                 { 

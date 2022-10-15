@@ -8,10 +8,12 @@ import datetime
 from datetime import timezone
 from typing import List
 import os
+from pathlib import Path
 
 # third-party imports
 from fastapi import FastAPI, HTTPException, Depends, status, File, Form, BackgroundTasks
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import register_tortoise
 from passlib.hash import bcrypt
@@ -124,6 +126,24 @@ async def get_timeseries_data(user: models.user_pydantic = Depends(get_current_u
     ts_data_pydantic = [await models.ts_pydantic.from_tortoise_orm(data) for data in ts_data]
     return ts_data_pydantic
 
+@app.delete('/data/{id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_ts_data(id: int, user: models.user_pydantic = Depends(get_current_user)):
+
+    ts_data = await models.TimeseriesData.get(id=id, username=user.username)
+    file_name = ts_data.filename + '.csv'
+    file_path = Path(DATA_PATH) / user.username / 'timeseries_data' / file_name
+    await ts_data.delete()
+    file_path.unlink(missing_ok=True)
+
+    return 
+
+@app.get('/data/{id}/file')
+async def get_data_for_download(id:int, user: models.user_pydantic = Depends(get_current_user)):
+    
+    ts_data = await models.TimeseriesData.get(id=id, username=user.username)
+    file_name = ts_data.filename + '.csv'
+    file_path = Path(DATA_PATH) / user.username / 'timeseries_data' / file_name
+    return FileResponse(file_path)
 
 register_tortoise(
     app,

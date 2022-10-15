@@ -34,7 +34,7 @@ function App () {
     return (
       <div>
         <Nav />
-        <div class="px-20">
+        <div>
           <Routes>
             <Route path='/login' element={<Login navigation={navigation} location={location} dispatch={dispatch}/>} />
             <Route element={<ProtectedRoutes/>}>
