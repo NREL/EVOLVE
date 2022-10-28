@@ -23,6 +23,8 @@ from dotenv import load_dotenv
 # internal imports
 import models
 import timeseries_data
+import custom_models
+
 
 load_dotenv()
 JWT_SECRET = os.getenv('JWT_KEY')
@@ -144,6 +146,55 @@ async def get_data_for_download(id:int, user: models.user_pydantic = Depends(get
     file_name = ts_data.filename + '.csv'
     file_path = Path(DATA_PATH) / user.username / 'timeseries_data' / file_name
     return FileResponse(file_path)
+
+
+@app.post('/data/{data_id}/comments', response_model=models.data_comments_pydantic)
+async def create_data_comment(
+    comment: custom_models.DataCommentInput,
+    data_id: int,
+    user: models.user_pydantic = Depends(get_current_user)):
+    
+    comment_obj = models.DataComments(
+        data_id = data_id,
+        username = user.username,
+        comment=comment.comment,
+        edited=False
+    )
+    await comment_obj.save()
+    return await models.data_comments_pydantic.from_tortoise_orm(comment_obj)
+
+@app.get('/data/{data_id}/comments', response_model=List[models.data_comments_pydantic])
+async def get_comments_for_data(data_id:int, user: models.user_pydantic = Depends(get_current_user)):
+    
+    comments = await models.DataComments.all().filter(data_id=data_id)
+    return [await models.data_comments_pydantic.from_tortoise_orm(comment) \
+        for comment in comments]
+
+@app.delete('/data/{data_id}/comments/{comment_id}', status_code=status.HTTP_204_NO_CONTENT)
+async def get_comments_for_data(
+    data_id:int, 
+    comment_id: int,
+    user: models.user_pydantic = Depends(get_current_user)):
+    
+    comment = await models.DataComments.get(data_id=data_id, 
+        id=comment_id, username=user.username)
+    await comment.delete()
+
+@app.put('/data/{data_id}/comments/{comment_id}', response_model=models.data_comments_pydantic)
+async def get_comments_for_data(
+    data_id:int, 
+    comment_id: int,
+    updated_comment: custom_models.DataCommentInput,
+    user: models.user_pydantic = Depends(get_current_user)):
+    
+    comment = await models.DataComments.get(data_id=data_id, 
+        id=comment_id, username=user.username)
+    comment.comment = updated_comment.comment
+    comment.edited = True
+    await comment.save()
+    return await models.data_comments_pydantic.from_tortoise_orm(comment)
+    
+
 
 register_tortoise(
     app,

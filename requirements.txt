@@ -10,6 +10,7 @@ python-dotenv
 pytests
 mkdocs
 pandas
+aerich
 mkdocstrings[python]
 mkdocs-material
 mkdocs-static-i18n

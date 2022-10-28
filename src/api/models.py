@@ -52,7 +52,7 @@ class TimeseriesData(models.Model):
 ts_pydantic = pydantic_model_creator(TimeseriesData,
 name="ts_full")
 ts_minimal= pydantic_model_creator(TimeseriesData,
-name="ts_full", include=('name', 'filename', 'category'))
+name="ts_full_minimal", include=('name', 'filename', 'category'))
 
 class ScenarioMetadata(models.Model):
     """ Scenario metadata model. """
@@ -107,4 +107,19 @@ class ReportLabels(models.Model):
     username = fields.CharField(max_length=100, unique=True)
     created_at = fields.DatetimeField(auto_now_add=True)
     labelname = fields.CharField(max_length=100)
+
+class DataComments(models.Model):
+    """ Report labels model ."""
+
+    id = fields.IntField(pk=True)
+    data_id = fields.IntField()
+    comment = fields.CharField(max_length=1000)
+    edited = fields.BooleanField()
+    username = fields.CharField(max_length=100)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+    
+
+data_comments_pydantic = pydantic_model_creator(DataComments,
+name="data_comment")
 

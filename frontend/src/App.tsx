@@ -1,23 +1,28 @@
 import { Routes, Route} from "react-router-dom";
-import {HomePage} from "./views/HomePage";
-import {Nav} from "./components/Navigation";
-import {ScenarioPage} from "./views/ScenarioPage";
-import {DataUpload} from "./views/DataUploadPage";
-import {Login} from "./views/LoginPage";
-import {DataPage} from "./views/DataPage";
+import {HomePage} from "./views/home-page";
+import {Nav} from "./components/navigation-view";
+import {ScenarioPage} from "./views/scenario-page";
+import {DataUpload} from "./views/data-upload-page";
+import {Login} from "./views/login-page";
+import {DataPage} from "./views/datapage/data-page-controller";
 import React, { Component } from 'react';
 import axios from 'axios';
-import {Config} from './Config';
-import {ErrorPage} from "./views/ErrorPage";
+import {Config} from './helpers/config';
+import {ErrorPage} from "./views/error-page-view";
 import { Navigate, useLocation, Outlet, useNavigate} from "react-router-dom";
 import {useSelector, useDispatch} from 'react-redux';
+import {StateModel} from "./interfaces/redux-state";
  
 axios.defaults.baseURL = Config.baseURL
 
+// axios.interceptors.response.use(undefined, error => {
+//   console.log("error")
+// })
+
 const ProtectedRoutes = () => {
 
-  const auth = useSelector(state => state.auth)
-  console.log('auth', auth)
+  const auth:any = useSelector( (state: StateModel) => state.auth)
+  
   const location = useLocation()
   return auth?.user
               ? <Outlet/> 
@@ -40,7 +45,7 @@ function App () {
             <Route element={<ProtectedRoutes/>}>
               <Route path='/' element={<HomePage navigation={navigation}/>} />
               <Route path='/scenarios' element={<ScenarioPage/>} />
-              <Route path='/data' element={<DataPage navigation={navigation}/>} />
+              <Route path='/data' element={<DataPage/>} />
               <Route path='/data/upload' element={<DataUpload navigation={navigation}/>} />
             </Route>
             <Route path='*' element={<ErrorPage/>}/>
