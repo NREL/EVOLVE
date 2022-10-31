@@ -5,6 +5,7 @@ import { useNavigate} from "react-router-dom";
 import React from 'react';
 import { TimeSeriesDataCategory } from "../interfaces/data-manage-interfaces";
 import { StateModel } from "../interfaces/redux-state";
+import { ErrorNotification } from "../components/error-notification-vew";
 
 function DataUpload(props:any) {
 
@@ -14,6 +15,9 @@ function DataUpload(props:any) {
     const [dataFile, setFile] = useState({
         file: null
     })
+    const [closeNotification, setCloseNotification] = useState(true)
+    const [errorMessage, setErrorMessage] = useState('')
+
     const navigation = useNavigate();
     
     const handleChange = (event:any) => {
@@ -39,6 +43,8 @@ function DataUpload(props:any) {
             navigation('/data')
         }).catch((error)=> {
             console.log(error)
+            setCloseNotification(false)
+            setErrorMessage(error.response.data.detail)
             if (error.response.status === 401) {
                 localStorage.removeItem('state')
             }
@@ -48,7 +54,12 @@ function DataUpload(props:any) {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="w-1/2 mt-16 mb-5 mx-auto bg-white p-10">
+            {!closeNotification && <ErrorNotification 
+                        err_text={errorMessage} 
+                        setCloseNotification={setCloseNotification}
+                    />
+            }
+            <div className="w-1/2 mt-10 mb-5 mx-auto bg-white p-10">
                 <h1 className="text-center text-blue-500 font-bold text-xl pb-5"> Upload data</h1>
 
                 <div className="grid grid-cols-2 gap-y-3 gap-x-3">
@@ -103,6 +114,7 @@ function DataUpload(props:any) {
 
                 </div>
 
+                <div>
                 <input 
                     className="mt-4" 
                     type="file"
@@ -111,6 +123,8 @@ function DataUpload(props:any) {
                         setFile({ ...dataFile, [event.target.name]: event.target.files[0] });
                       }}
                 />
+                <p className="text-sm"> Only csv file is accepted! </p>
+                </div>
 
                 <div className="flex justify-center mt-5 text-white">
                     <button className="bg-blue-500 mr-3 px-2 py-1 rounded-md" type="submit"> Submit</button>

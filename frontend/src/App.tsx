@@ -12,11 +12,11 @@ import {ErrorPage} from "./views/error-page-view";
 import { Navigate, useLocation, Outlet, useNavigate} from "react-router-dom";
 import {useSelector, useDispatch} from 'react-redux';
 import {StateModel} from "./interfaces/redux-state";
- 
+
+
 axios.defaults.baseURL = Config.baseURL
 
 // axios.interceptors.response.use(undefined, error => {
-//   console.log("error")
 // })
 
 const ProtectedRoutes = () => {
