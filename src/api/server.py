@@ -22,7 +22,11 @@ from dotenv import load_dotenv
 # internal imports
 import models
 from dependencies.dependency import get_current_user
-from routes import timeseries_data_routes
+from routes import (
+    timeseries_data_routes, 
+    timeseries_data_comment_routes,
+    timeseries_data_sharing_routes
+)
 
 
 
@@ -41,6 +45,8 @@ app.add_middleware(
 )
 
 app.include_router(timeseries_data_routes.router)
+app.include_router(timeseries_data_comment_routes.router)
+app.include_router(timeseries_data_sharing_routes.router)
 
 async def autheticate_user(username: str, password: str):
     user = await models.Users.get(username=username)
