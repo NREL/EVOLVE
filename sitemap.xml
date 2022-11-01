@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
     <url>
          <loc>Nonedeveloper-installation/</loc>
-         <lastmod>2022-10-11</lastmod>
+         <lastmod>2022-11-01</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/developer-installation/"/>
          <xhtml:link rel="alternate" hreflang="es" href="Nonees/developer-installation/"/>
@@ -10,7 +10,7 @@
     </url>
     <url>
          <loc>Nonedocker-installation/</loc>
-         <lastmod>2022-10-11</lastmod>
+         <lastmod>2022-11-01</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/docker-installation/"/>
          <xhtml:link rel="alternate" hreflang="es" href="Nonees/docker-installation/"/>
@@ -18,7 +18,7 @@
     </url>
     <url>
          <loc>None.</loc>
-         <lastmod>2022-10-11</lastmod>
+         <lastmod>2022-11-01</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/"/>
          <xhtml:link rel="alternate" hreflang="es" href="Nonees/"/>
@@ -26,7 +26,7 @@
     </url>
     <url>
          <loc>Nonemetrics/</loc>
-         <lastmod>2022-10-11</lastmod>
+         <lastmod>2022-11-01</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/metrics/"/>
          <xhtml:link rel="alternate" hreflang="es" href="Nonees/metrics/"/>
@@ -34,7 +34,7 @@
     </url>
     <url>
          <loc>Noneusage/</loc>
-         <lastmod>2022-10-11</lastmod>
+         <lastmod>2022-11-01</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/usage/"/>
          <xhtml:link rel="alternate" hreflang="es" href="Nonees/usage/"/>
