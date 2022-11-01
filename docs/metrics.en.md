@@ -125,15 +125,55 @@ This metric represents peak solar power in kW for a user specified duration.
 
 This metrics represents total energy spent charging energy storage for a user specified duration in kWhr.
 
+<p align="center">
+<img src="../images/charging_energy.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
 ### Discharging energy
 
 This metrics represents total energy discharged from energy storage for a user specified duration in kWhr.
+
+<p align="center">
+<img src="../images/discharging_energy.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
 
 ### C/D Cycles
 
 This metric represents number of charging/discharging cycles for energy storage.
 
+<p align="center">
+<img src="../images/cd_cyles.png" width="450" style="display:flex;justify-content:center;">
+</p>
 
+## Energy vehicle metrics
+
+---
+
+### Energy consumed
+
+This metrics represents total energy consumed by electric vehicle for a user specified duration in kWhr.
+
+<p align="center">
+<img src="../images/ev_energy_consumed.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
+### Max power consumed
+
+This metrics represents maximum power consumed by electric vehicle for a user specified duration in kW.
+
+<p align="center">
+<img src="../images/ev_peak_power.png" width="450" style="display:flex;justify-content:center;">
+</p>
+
+
+### Power consumed at peak
+
+This metric represents power consumed by electric vehicle at the time of system peak for a user specified duration in kW.
+
+<p align="center">
+<img src="../images/ev_kw_at_peak.png" width="450" style="display:flex;justify-content:center;">
+</p>
 
 
 

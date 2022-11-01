@@ -33,6 +33,21 @@ userin_pydantic = pydantic_model_creator(Users, name="userin",
 user_token_pydantic = pydantic_model_creator(Users, name="user_token",
     include=('username', 'id', 'email'))
 
+class UserSharedTimeSeriesData(models.Model):
+    """ Time series data shared with users """
+
+    id = fields.IntField(pk=True)
+    timeseriesdata = fields.ForeignKeyField('models.TimeseriesData', related_name='usr_shared_data')
+    user = fields.ForeignKeyField('models.Users')
+    shared_date = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together=(("timeseriesdata", "user"), )
+
+user_shared_ts_data_pydantic = pydantic_model_creator(
+    UserSharedTimeSeriesData, name="usr_shr_ts_data"
+)
+
 class TimeseriesData(models.Model):
     """ Time series data model. """
 
@@ -48,9 +63,14 @@ class TimeseriesData(models.Model):
     filename = fields.CharField(max_length=100)
     category = fields.CharField(max_length=100)
 
+    usr_shared_data: fields.ReverseRelation["UserSharedTimeSeriesData"]
+
 
 ts_minimal= pydantic_model_creator(TimeseriesData,
 name="ts_full_minimal", include=('name', 'filename', 'category'))
+ts_pydantic = pydantic_model_creator(TimeseriesData,
+name="ts_full")
+
 
 class ScenarioMetadata(models.Model):
     """ Scenario metadata model. """
@@ -120,26 +140,11 @@ class DataComments(models.Model):
 data_comments_pydantic = pydantic_model_creator(DataComments,
 name="data_comment", include=("id", "comment", "user.username"))
 
-class UserSharedTimeSeriesData(models.Model):
-    """ Time series data shared with users """
-
-    id = fields.IntField(pk=True)
-    timeseries_data = fields.ForeignKeyField('models.TimeseriesData')
-    user = fields.ForeignKeyField('models.Users')
-    shared_date = fields.DatetimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together=(("timeseries_data", "user"), )
-
-user_shared_ts_data_pydantic = pydantic_model_creator(
-    UserSharedTimeSeriesData, name="usr_shr_ts_data"
-)
-
-Tortoise.init_models(["models"], "models")
 
 
-ts_pydantic = pydantic_model_creator(TimeseriesData,
-name="ts_full")
+# Tortoise.init_models(["models"], "models")
+
+
 
 if __name__ == '__main__':
     pass

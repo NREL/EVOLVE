@@ -28,8 +28,6 @@ from routes import (
     timeseries_data_sharing_routes
 )
 
-
-
 load_dotenv()
 JWT_SECRET = os.getenv('JWT_KEY')
 DATA_PATH = os.getenv('DATA_PATH')
@@ -77,6 +75,8 @@ async def generate_token(form_data: OAuth2PasswordRequestForm = Depends()):
 
 @app.post('/users', response_model=models.user_pydantic)
 async def create_user(user: models.userin_pydantic):
+    """ Creates a user."""
+
     user_obj = models.Users(
         username=user.username,
         hashed_password = bcrypt.hash(user.hashed_password),
@@ -87,6 +87,7 @@ async def create_user(user: models.userin_pydantic):
 
 @app.get('/users', response_model=models.user_pydantic)
 async def get_user(user: models.user_pydantic = Depends(get_current_user)):
+    """ Gets user info. """
     return user
 
 
