@@ -90,6 +90,15 @@ async def get_user(user: models.user_pydantic = Depends(get_current_user)):
     """ Gets user info. """
     return user
 
+@app.get('/users/{searchtext}/limit/{limit}')
+async def get_users_from_search_string(
+    searchtext: str,
+    limit: int,
+    user: models.user_pydantic = Depends(get_current_user)
+):
+    users = await models.Users.filter(username__icontains=searchtext).limit(limit)
+    return [user.username for user in users]
+
 
 register_tortoise(
     app,

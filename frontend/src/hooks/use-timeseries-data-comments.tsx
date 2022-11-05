@@ -18,7 +18,15 @@ const useTimeseriesDataComments = (
             `/data/${data_id}/comments`,
             {headers: {'Authorization': 'Bearer ' + accessToken}}
         ).then((response)=> {
-            let comments_data = response.data.map((d: TimeSeriesDataCommentModel)=> {
+            let data_sorted = response.data.sort(
+                (
+                    a: TimeSeriesDataCommentModel,
+                    b: TimeSeriesDataCommentModel
+                ) => {
+                    return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+                }
+            )
+            let comments_data = data_sorted.map((d: TimeSeriesDataCommentModel)=> {
                     return {
                         ...d, updated_at: dateFormat(d.updated_at, 
                             "dddd, mmmm dS, yyyy, h:MM:ss TT")

@@ -21,7 +21,7 @@ class DataCommentResponseModel(BaseModel):
 class SharedUserInfoModel(BaseModel):
     username: str 
     shared_date: datetime.datetime
-    
+
 class TimeSeriesDataResponseModel(BaseModel):
     id: int
     start_date: datetime.datetime
@@ -33,4 +33,5 @@ class TimeSeriesDataResponseModel(BaseModel):
     image: str 
     filename: str 
     category: str 
+    owner: str
     shared_users: List[SharedUserInfoModel]

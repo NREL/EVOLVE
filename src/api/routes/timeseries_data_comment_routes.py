@@ -94,7 +94,7 @@ async def get_comments_for_data(
 
     try:
         comment = await models.DataComments.get(
-            timeseries_data=await models.TimeseriesData.get(id=data_id), 
+            timeseriesdata=await models.TimeseriesData.get(id=data_id), 
             id=comment_id, 
             user=await models.Users.get(username=user.username)
         )

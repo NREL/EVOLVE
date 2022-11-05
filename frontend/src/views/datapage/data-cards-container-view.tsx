@@ -48,7 +48,8 @@ export function DataCardsContainer(props:any) {
 
             { filterHover ? 
                     <div 
-                        className="absolute right-0 top-5 right-5 px-3 py-3 bg-gray-100 w-1/4 shadow-md z-25 hover:cursor-pointer"
+                        className="absolute right-0 top-5 right-5 px-3 py-3 
+                        bg-gray-100 w-1/4 shadow-md z-25 hover:cursor-pointer"
                         onMouseOver={()=> setFilterHover(true)}
                         onMouseLeave={()=> setFilterHover(false)}
                     >

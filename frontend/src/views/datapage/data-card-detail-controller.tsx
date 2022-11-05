@@ -21,11 +21,13 @@ function DataCardDetail(props: {
     handleInsertComment: any;
     handleCommentDelete: any;
     handleUpdateComment: any;
+    handleAddSharedUser:any;
+    handleDeleteSharedUser: any;
 }){
 
     const {data, setIsClicked, setcardData, handleDeleteData,
          comments, handleInsertComment, handleCommentDelete,
-        handleUpdateComment} = props
+        handleUpdateComment, handleAddSharedUser, handleDeleteSharedUser} = props
 
     const [deleteLabel, setDeleteLabel] = useState(false)
     const [downloadLabel, setDownloadLabel] =  useState(false)
@@ -83,7 +85,11 @@ function DataCardDetail(props: {
             <div className="px-3 py-3">
                 
                 <DataCardDetailView data={data} />
-                <SharedUser />
+                <SharedUser 
+                    data={data} 
+                    handleAddSharedUser={handleAddSharedUser}
+                    handleDeleteSharedUser={handleDeleteSharedUser}
+                />
                 <DataCardDetailControlView 
                     data={data}
                     deleteLabel={deleteLabel}

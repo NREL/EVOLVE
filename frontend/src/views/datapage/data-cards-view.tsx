@@ -17,8 +17,6 @@ export function DataCards(props: {
         setcardData(d)
     }
 
-    const users = ["kapil", "erik", "suchana", "damn", "h"]
-
     return (
             <div className="grid grid-cols-3 gap-y-3 gap-x-3 lg:grid-cols-3 sm:grid-cols-2">
                 {
@@ -43,15 +41,15 @@ export function DataCards(props: {
                                         <h1 className="text-xl"> {d_mod.name.length>8 ? d_mod.name.slice(0,8) + ' ...': d_mod.name  }</h1>
                                         <div className="flex">
                                             {
-                                                users.slice(0,3).map((u, id)=> {
+                                                d.shared_users.slice(0,3).map((u, id)=> {
                                                     return (
                                                         id <= 1 ? <div className="bg-blue-500 w-6 h-6 rounded-full flex justify-center 
                                                             items-center text-white font-bold ring-2 ring-white">
-                                                            {u[0].toUpperCase()}
+                                                            {u.username[0].toUpperCase()}
                                                         </div> :
                                                         <div className="bg-blue-500 w-6 h-6 rounded-full flex justify-center 
                                                             items-center text-white font-bold ring-2 ring-white text-sm">
-                                                            <p>{users.length - 2}+</p>
+                                                            <p>{d.shared_users.length - 2}+</p>
                                                         </div>
                                                     )
                                                 })

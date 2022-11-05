@@ -8,11 +8,16 @@ interface TimeSeriesDataInfoModel {
     end_date: string;
     resolution_min: number;
     category: string | null;
+    owner: string;
+    shared_users: {
+       username: string;
+       shared_date: string; 
+    }[]
 };
 
 interface TimeSeriesDataCommentModel {
     id: number;
-    data_id: number;
+    timeseriesdata_id: number;
     comment: string;
     edited: boolean;
     username: string;

@@ -46,6 +46,7 @@ async def share_data_with_user(
     shared_data = await models.TimeseriesData.get(id=data_id).prefetch_related(
         "user__user"
     )
+    print(shared_data.user.username, user.username)
 
     if shared_data.user.username != user.username:
         raise HTTPException(
@@ -62,6 +63,27 @@ async def share_data_with_user(
         usr_shared
     )
 
+@router.delete('/{username}')
+async def delete_user_sharing(
+    data_id: int,
+    username: str,
+    user: models.user_pydantic = Depends(get_current_user)
+):
+    """ Delete user from sharing the data!"""
+    ts_data = await models.TimeseriesData.get(id=data_id).prefetch_related('user__user')
+    shared_data = await models.UserSharedTimeSeriesData.get(
+        timeseriesdata=ts_data,
+        user=await models.Users.get(username=username)
+    )
+    if ts_data.user.username == user.username or user.username == username:
+        await shared_data.delete()
+        return 
+
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, 
+        detail="Unauthorized!"
+    )
 
 
 

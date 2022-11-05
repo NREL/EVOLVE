@@ -10,13 +10,14 @@ import {StateModel} from "../../interfaces/redux-state";
 import {useTimeSeriesData,
     useFilterTimeSeriesData,
     useTimeseriesDataComments} from "../../hooks";
-    import { useNavigate} from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 
 function DataPage() {
-    
+
+    const [reload, setReload] = useState(0)
     const [timeseriesData, timeseriesDataBackup, 
-        isLoading, setTimeseriesData] = useTimeSeriesData()
+        isLoading, setTimeseriesData] = useTimeSeriesData(reload)
     
     const navigation = useNavigate();
 
@@ -28,18 +29,21 @@ function DataPage() {
         start_date: Date.now().toString(),
         end_date: Date.now().toString(),
         resolution_min: 0,
-        category: null
+        category: null,
+        owner: 'dummy',
+        shared_users: []
     }
 
     const [cardData, setcardData] = useState<TimeSeriesDataInfoModel>(defaultCardData)
     const [isClicked, setIsClicked] = useState(false)
-    const [reload, setReload] = useState(0)
+    
     const [filterHover, setFilterHover] = useState(false)
     const [kWCheck, setkWCheck] = useState(true)
     const [irrCheck, setIrrCheck] = useState(true)
     const [sortDate, setSortDate] = useState<DateSortString>(DateSortString.descending)
     
     const accessToken = useSelector( (state: StateModel) => state.auth.accessToken)
+    const user = useSelector( (state: StateModel) => state.auth.user)
 
     useFilterTimeSeriesData(
         kWCheck, 
@@ -78,6 +82,68 @@ function DataPage() {
             })
             
         }
+
+    const handleAddSharedUser = (
+        username: string,
+        data_id: number
+    ) => {
+        
+        axios.post(
+            `/data/${data_id}/share/${username}`,
+            {},
+            {headers: {'Authorization': 'Bearer ' + accessToken}}
+        ).then((response)=>{
+            console.log("shared user!", response.data)
+
+            axios.get(
+                `/data/${data_id}`,
+                {headers: {'Authorization': 'Bearer ' + accessToken}}
+            ).then((response)=> {
+                setcardData(response.data)
+            }).catch((error)=> {
+                console.log(error)
+            })
+            setReload((value)=> value + 1)
+
+        }).catch((error)=> {
+            console.log('Not successful', error)
+            if (error.response.status === 401) {
+                localStorage.removeItem('state')
+            }
+        })
+    }
+
+    const handleDeleteSharedUser = (
+        username: string,
+        data_id: number
+    ) => {
+        
+        axios.delete(
+            `/data/${data_id}/share/${username}`,
+            {headers: {'Authorization': 'Bearer ' + accessToken}}
+        ).then((response)=>{
+            if (username === user){
+                setIsClicked(false)
+            } else {
+                axios.get(
+                    `/data/${data_id}`,
+                    {headers: {'Authorization': 'Bearer ' + accessToken}}
+                ).then((response)=> {
+                    setcardData(response.data)
+                }).catch((error)=> {
+                    console.log(error)
+                })
+            }
+            
+            setReload((value)=> value + 1)
+
+        }).catch((error)=> {
+            console.log('Not successful', error)
+            if (error.response.status === 401) {
+                localStorage.removeItem('state')
+            }
+        })
+    }
     
     // View for data card container
     const dataCardContainer = <DataCardsContainer
@@ -107,7 +173,7 @@ function DataPage() {
                         {dataCardContainer}
                     </div>
                     
-                    <div className="h-screen overflow-y-scroll bg-white w-80 shadow-md 
+                    <div className="h-screen overflow-y-scroll bg-white w-1/3 shadow-md 
                         opacity-98 p-2 z-10 transition duration-150 ease-linear">
                         <DataCardDetail 
                             data={cardData} 
@@ -118,6 +184,8 @@ function DataPage() {
                             handleInsertComment={handleInsertComment}
                             handleCommentDelete={handleCommentDelete}
                             handleUpdateComment={handleUpdateComment}
+                            handleAddSharedUser={handleAddSharedUser}
+                            handleDeleteSharedUser={handleDeleteSharedUser}
                         />
                     </div> 
                 </div> : <div>

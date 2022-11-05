@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import axios from 'axios';
 import {useSelector} from 'react-redux';
 
-const useTimeSeriesData = () => {
+const useTimeSeriesData = (reload: number) => {
 
     const [timeseriesData, setTimeseriesData] = useState<TimeSeriesDataInfoModel[]>([])
     const [timeseriesDataBackup, setTimeseriesDataBackup] = useState<TimeSeriesDataInfoModel[]>([])
@@ -41,7 +41,7 @@ const useTimeSeriesData = () => {
                 localStorage.removeItem('state')
             }
         })
-    }, [])
+    }, [reload])
 
     return [timeseriesData, timeseriesDataBackup, 
         isLoading, setTimeseriesData]
