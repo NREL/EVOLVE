@@ -22,6 +22,7 @@ router = APIRouter(
 )
 
 
+
 async def convert_ts_data_to_pydantic(ts_data: List):
 
     ts_data_updated = []
@@ -84,6 +85,17 @@ async def convert_shared_ts_to_pydantic(ts_shared_data: List):
         )
 
     return ts_data_updated
+
+
+# @router.get('/{searchtext}/limit/{limit}', response_model=List[models.ts_pydantic])
+# async def get_data_from_search_string(
+#     searchtext: str,
+#     limit: int,
+#     user: models.user_pydantic = Depends(get_current_user)
+# ):
+#     ts_data = await models.TimeseriesData.filter(category='kW').filter(name__icontains=searchtext).limit(limit)
+#     return [await models.ts_pydantic.from_tortoise_orm(data) for data in ts_data]
+
 
 @router.get('/', response_model=List[TimeSeriesDataResponseModel])
 async def get_timeseries_data(user: models.user_pydantic = Depends(get_current_user)):

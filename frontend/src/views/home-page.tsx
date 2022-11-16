@@ -12,7 +12,7 @@ const HomePage = (props:any) => {
             title: "Create Scenarios",
             description: "Manage creation of DER scenarios.",
             image: "./images/create_scenario.svg",
-            to: "/"
+            to: "/create-scenario"
         },
         {
             title: "Manage Scenarios",

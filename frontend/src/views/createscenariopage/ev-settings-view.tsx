@@ -12,10 +12,11 @@ export function EVSettingsView (props:any) {
                     <p className="text-white pl-2"> Electric Vehicles </p>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 mx-10 my-3 gap-y-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 mx-10 my-3 gap-y-2 gap-x-5">
 
                     <div>
                         <p> Number of vehicles </p>
+                        <p className='text-sm text-gray-500 pb-2'> Estimated number of electric vehicles.</p>
                         <TextField 
                                 error={errors.numberOfEV}
                                 name="numberOfEV"
@@ -27,6 +28,7 @@ export function EVSettingsView (props:any) {
                     
                     <div>
                         <p> Percentage of residential vehicles </p>
+                        <p className='text-sm text-gray-500 pb-2'> Percentage of residential vehicles in the mix.</p>
                         <TextField 
                             error={errors.pctResEV}
                             name="pctResEV"
