@@ -12,7 +12,6 @@ interface newSolarDataInterface {
 interface newESDataInterface {
     id: string
     name: string
-    isESOptimal: boolean
     esPowerCapacity: number
     esEnergyCapacity: number
     esStrategy: string
@@ -21,13 +20,30 @@ interface newESDataInterface {
     chargingPrice: number
     disChargingPrice: number
     priceProfile: string
-    esChargingThreshold: number
-    esDischargingThreshold: number
     chargingPowerThreshold: number
     dischargingPowerThreshold: number
 }
 
+interface newEVDataInterface {
+    id: string
+    name: string 
+    numberOfEV: number
+    pctResEV: number
+}
+
+interface newBasicDataInterface {
+    scenarioName: string
+    technologies: string[]
+    loadProfile: string
+    startDate: Date | null
+    endDate: Date | null
+    resolution: number
+    dataFillingStrategy: string
+}
+
 export {
     newSolarDataInterface,
-    newESDataInterface
+    newESDataInterface,
+    newEVDataInterface,
+    newBasicDataInterface
 }

@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { TextField } from '../../components/text-field';
 import { debounce } from "lodash";
 import { SearchDataView } from './search-data-view';
-import {useDebouncedSearch} from '../../hooks/use-debounced-search-create-scenarios';
+import { useDebouncedSearch } from '../../hooks/use-debounced-search-create-scenarios';
 
 
-export function BaseSettingsView (props:any) {
-    const {formData, handleChange, errors, allTSdata,
+export function BaseSettingsView(props: any) {
+    const { formData, handleChange, errors, allTSdata,
         selectedProfile, setSelectedProfile, dateRange, fillData } = props;
     const [searchProfiles, setSearchProfiles] = useState<Record<string, any>>([])
     const [isClicked, setIsClicked] = useState(false)
 
-    const loadProfileExist = allTSdata.filter((d:any)=> d.category=== 'kW') 
+    const loadProfileExist = allTSdata.filter((d: any) => d.category === 'kW')
 
     useDebouncedSearch(
         allTSdata,
@@ -25,7 +25,7 @@ export function BaseSettingsView (props:any) {
         <React.Fragment>
             <div className="bg-gray-300 w-full my-10 pb-5">
                 <div className="bg-blue-500 h-8 flex items-center px-2">
-                    <img src="./images/solar_icon.svg" width="25"/>
+                    <img src="./images/solar_icon.svg" width="25" />
                     <p className="text-white pl-2"> Basic settings </p>
                 </div>
 
@@ -34,35 +34,35 @@ export function BaseSettingsView (props:any) {
                     <div className='relative'>
                         <p> Load profile </p>
 
-                        <p className='text-sm text-gray-500 pb-2'> Search for a profle and select one. 
+                        <p className='text-sm text-gray-500 pb-2'> Search for a profle and select one.
                             {
                                 loadProfileExist.length === 0 && <span className="text-red-500 pl-1 ">
                                     Note Load profile does not exist yet consider uploading data first.
                                 </span>
                             }
                         </p>
-                        
-                        { !isClicked  ? <TextField 
-                                error={errors.loadProfile}
-                                name="loadProfile"
-                                value={formData.loadProfile}
-                                onChange={handleChange}
-                            />:
+
+                        {!isClicked ? <TextField
+                            error={errors.loadProfile}
+                            name="loadProfile"
+                            value={formData.loadProfile}
+                            onChange={handleChange}
+                        /> :
                             <div className="flex py-1">
                                 <p> {selectedProfile.name} <span className="bg-blue-500 px-1 rounded-md 
-                                text-white text-sm text-center"> {selectedProfile.owner} </span> 
-                                </p>  
+                                text-white text-sm text-center"> {selectedProfile.owner} </span>
+                                </p>
                                 <p className="ml-3 bg-gray-200 text-center w-6 h-6 rounded-full text-sm 
                                 items-center flex justify-center hover:bg-gray-400 hover:cursor-pointer"
-                                onClick={()=> {
-                                    setIsClicked(false)
-                                    setSelectedProfile({})
-                                }}
+                                    onClick={() => {
+                                        setIsClicked(false)
+                                        setSelectedProfile({})
+                                    }}
                                 > X </p>
                             </div>
                         }
-                        
-                        {searchProfiles.length >0 && !isClicked && <SearchDataView
+
+                        {searchProfiles.length > 0 && !isClicked && <SearchDataView
                             searchProfiles={searchProfiles}
                             setSelectedProfile={setSelectedProfile}
                             setIsClicked={setIsClicked}
@@ -70,13 +70,13 @@ export function BaseSettingsView (props:any) {
                         />
                         }
 
-                        
+
                     </div>
-                    
+
                     <div>
                         <p> Start date </p>
                         <p className='text-sm text-gray-500 pb-2'> Allowed date range is {dateRange.min} - {dateRange.max}</p>
-                        <TextField 
+                        <TextField
                             error={errors.startDate}
                             name="startDate"
                             type="date"
@@ -90,7 +90,7 @@ export function BaseSettingsView (props:any) {
                     <div>
                         <p> End date </p>
                         <p className='text-sm text-gray-500 pb-2'> Allowed date range is {dateRange.min} - {dateRange.max}</p>
-                        <TextField 
+                        <TextField
                             error={errors.endDate}
                             name="endDate"
                             type="date"
@@ -104,7 +104,7 @@ export function BaseSettingsView (props:any) {
                     <div>
                         <p> Data resolution </p>
                         <p className='text-sm text-gray-500 pb-2'> Choose data resolution in minute. </p>
-                        <TextField 
+                        <TextField
                             error={errors.resolution}
                             name="resolution"
                             type="number"
@@ -113,16 +113,16 @@ export function BaseSettingsView (props:any) {
                         />
                     </div>
 
-                   {
-                     fillData && <div>
-                        <p> Strategy for data filling </p>
-                        <p className='text-sm text-gray-500 pb-2'> Choose a strategy to fll missing data point. </p>
-                        <select className="rounded-md h-8 w-40 px-2" name="dataFillingStrategy" value={formData.dataFillingStrategy} onChange={handleChange}>
-                            <option value="interpolation">Linear interpolation</option>
-                            <option value="staircase">Staircase fill</option>
-                        </select>
-                    </div>
-                   }
+                    {
+                        fillData && <div>
+                            <p> Strategy for data filling </p>
+                            <p className='text-sm text-gray-500 pb-2'> Choose a strategy to fll missing data point. </p>
+                            <select className="rounded-md h-8 w-40 px-2" name="dataFillingStrategy" value={formData.dataFillingStrategy} onChange={handleChange}>
+                                <option value="interpolation">Linear interpolation</option>
+                                <option value="staircase">Staircase fill</option>
+                            </select>
+                        </div>
+                    }
 
                 </div>
             </div>

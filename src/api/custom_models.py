@@ -35,3 +35,5 @@ class TimeSeriesDataResponseModel(BaseModel):
     category: str 
     owner: str
     shared_users: List[SharedUserInfoModel]
+
+

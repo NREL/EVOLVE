@@ -1,7 +1,7 @@
 import { Routes, Route} from "react-router-dom";
 import {HomePage} from "./views/home-page";
 import {Nav} from "./components/navigation-view";
-import {ScenarioPage} from "./views/scenario-page";
+import {ScenarioPage} from "./views/scenariopage/scenario-page";
 import {DataUpload} from "./views/data-upload-page";
 import {Login} from "./views/login-page";
 import {DataPage} from "./views/datapage/data-page-controller";
@@ -46,7 +46,7 @@ function App () {
             <Route element={<ProtectedRoutes/>}>
               <Route path='/' element={<HomePage navigation={navigation}/>} />
               <Route path='/scenarios' element={<ScenarioPage/>} />
-              <Route path='/create-scenario' element={<CreateScenario/>} />
+              <Route path='/create-scenario' element={<CreateScenario navigation={navigation}/>}  />
               <Route path='/data' element={<DataPage/>} />
               <Route path='/data/upload' element={<DataUpload navigation={navigation}/>} />
             </Route>

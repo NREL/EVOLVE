@@ -21,8 +21,6 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-
-
 async def convert_ts_data_to_pydantic(ts_data: List):
 
     ts_data_updated = []

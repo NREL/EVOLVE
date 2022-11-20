@@ -85,6 +85,8 @@ class ScenarioMetadata(models.Model):
     storage = fields.BooleanField()
     filename = fields.CharField(max_length=100)
 
+scenmeta_pydantic = pydantic_model_creator(ScenarioMetadata, name="scen_full")
+
 
 class ReportMetadata(models.Model):
     """ Report metadata model. """

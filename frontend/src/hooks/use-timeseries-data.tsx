@@ -15,7 +15,6 @@ const useTimeSeriesData = (reload: number) => {
         (state:StateModel) => state.auth.accessToken
     )
 
-
     useEffect(()=> {
         axios.get(
             '/data',

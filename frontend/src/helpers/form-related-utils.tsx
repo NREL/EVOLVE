@@ -6,21 +6,19 @@ const getCheckedItems = (e:any, items: any) => {
     } else if (!e.target.checked && items.includes(e.target.value)){
         items.splice(items.indexOf(e.target.value))
     }
-
     return items
-
 }
 
 const handleChangeArray = (e: any, id: string, dataArray: any,  setData:any) => {
     
-    let data = dataArray.filter((item:any) => item.id === id)
+    let data = dataArray.filter((item:any) => item.id === id)[0]
     let name = e.target.name
-
     if (e.target.type == 'checkbox') {
 
         if (data[e.target.name] instanceof Array) {
             let items = data[e.target.name];
             items = getCheckedItems(e, items)
+            
             setData((arr:any)=> arr.map((x:any)=> id === x.id ? {
                 ...x, [name]: items
             }: x))
@@ -78,12 +76,78 @@ const validateInput = (data:any, schema: any, setErrorFunc: any) => {
     })
 }
 
-const validateInputArray = (data:any, schema: any, setErrorFunc: any) => {
+const validateSolarInputArray = (
+    data:any, 
+    schema: any, 
+    setErrorFunc: any,
+    selectedIrrProfile: any
+) => {
 
     data.map((item:any, index:any)=> {
         schema.validate(item, { abortEarly: false }).then(
             (value:any)=> {
-                setErrorFunc((arr:any)=> arr.map((x:any, innerIndex: any)=> innerIndex === index ? {}: x))
+                selectedIrrProfile[index].data.name ? setErrorFunc((arr:any)=> arr.map(
+                    (x:any, innerIndex: any)=> innerIndex === index ? {}: x)):
+                setErrorFunc((arr:any)=> arr.map(
+                    (x:any, innerIndex: any)=> innerIndex === index ? 
+                    {'irradianceData': 'Profile can not be empty!'}: x))
+            }
+        ).catch((err:any)=> {
+            setErrorFunc(
+                (arr:any) => arr.map( (x:any, innerIndex:any) => innerIndex === index ?
+                    {...x, ...err.inner.reduce((result:any, el:any)=> {
+                    result[el.path] = el.message
+                    return result
+                    }, {})}: x
+                )
+            )
+        })
+    })
+    
+}
+
+const validateESInputArray = (
+    data:any, 
+    schema: any, 
+    setErrorFunc: any,
+    selectedPriceProfile: any
+) => {
+
+    data.map((item:any, index:any)=> {
+        schema.validate(item, { abortEarly: false }).then(
+            (value:any)=> {
+                value.esStrategy === 'price' && !selectedPriceProfile[index].data.name ?
+                setErrorFunc((arr:any)=> arr.map(
+                    (x:any, innerIndex: any)=> innerIndex === index ? 
+                    {'priceProfile': 'Profile can not be empty!'}: x)):
+                setErrorFunc((arr:any)=> arr.map(
+                        (x:any, innerIndex: any)=> innerIndex === index ? {}: x))
+            }
+        ).catch((err:any)=> {
+            setErrorFunc(
+                (arr:any) => arr.map( (x:any, innerIndex:any) => innerIndex === index ?
+                    {...x, ...err.inner.reduce((result:any, el:any)=> {
+                    result[el.path] = el.message
+                    return result
+                    }, {})}: x
+                )
+            )
+        })
+    })
+    
+}
+
+const validateInputArray = (
+    data:any, 
+    schema: any, 
+    setErrorFunc: any,
+) => {
+
+    data.map((item:any, index:any)=> {
+        schema.validate(item, { abortEarly: false }).then(
+            (value:any)=> {
+                setErrorFunc((arr:any)=> arr.map(
+                    (x:any, innerIndex: any)=> innerIndex === index ? {}: x))
             }
         ).catch((err:any)=> {
             setErrorFunc(
@@ -100,4 +164,4 @@ const validateInputArray = (data:any, schema: any, setErrorFunc: any) => {
 }
 
 export {handleChangeArray, handleChange, validateInput, 
-    validateInputArray};
+    validateSolarInputArray, validateInputArray, validateESInputArray};

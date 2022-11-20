@@ -25,7 +25,8 @@ from dependencies.dependency import get_current_user
 from routes import (
     timeseries_data_routes, 
     timeseries_data_comment_routes,
-    timeseries_data_sharing_routes
+    timeseries_data_sharing_routes,
+    scenario_metadata_routes
 )
 
 load_dotenv()
@@ -45,6 +46,7 @@ app.add_middleware(
 app.include_router(timeseries_data_routes.router)
 app.include_router(timeseries_data_comment_routes.router)
 app.include_router(timeseries_data_sharing_routes.router)
+app.include_router(scenario_metadata_routes.router)
 
 async def autheticate_user(username: str, password: str):
     user = await models.Users.get(username=username)

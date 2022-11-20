@@ -5,7 +5,6 @@ import {newESDataInterface} from '../../interfaces/create-scenario-interfaces';
 const UseESForm = () => {
     
     const newESData = {
-        isESOptimal: false,
         esPowerCapacity: 10,
         esEnergyCapacity: 10,
         esStrategy: 'time',
@@ -16,8 +15,6 @@ const UseESForm = () => {
         priceProfile: '',
         chargingPowerThreshold: 70,
         dischargingPowerThreshold: 80,
-        esChargingThreshold: 0.6,
-        esDischargingThreshold: 0.5
     }
 
     const [counter, setCounter] = useState(2)
@@ -27,6 +24,12 @@ const UseESForm = () => {
     }])
 
     const [esErrorsArray, setESErrorsArray] = useState<Record<string, any>[]>([{}])
+    const [selectedPriceProfile, setSelectedPriceProfile] = useState<Record<string, any>[]>([
+        {
+            name: 'Energy Storage 1',
+            data: {}
+        }
+    ])
 
     const handleAddEnergyStorage = () => {
         setCounter(val=> val+1)
@@ -45,7 +48,7 @@ const UseESForm = () => {
 
     return [esFormDataArray, setESFormDataArray,
         esErrorsArray, setESErrorsArray, handleAddEnergyStorage, 
-        handleEnergyStorageDelete] as const;
+        handleEnergyStorageDelete, selectedPriceProfile, setSelectedPriceProfile] as const;
 
 }
 
