@@ -1,3 +1,5 @@
+import { TimeSeriesDataInfoModel } from "./data-manage-interfaces"
+
 interface newSolarDataInterface {
     id: string
     name: string
@@ -26,7 +28,7 @@ interface newESDataInterface {
 
 interface newEVDataInterface {
     id: string
-    name: string 
+    name: string
     numberOfEV: number
     pctResEV: number
 }
@@ -41,9 +43,31 @@ interface newBasicDataInterface {
     dataFillingStrategy: string
 }
 
+interface scenarioJSONInterface {
+    basic: {
+        scenarioName: string;
+        technologies: string[];
+        loadProfile: number;
+        startDate: string;
+        endDate: string;
+        resolution: number;
+        dataFillingStrategy: string;
+    };
+    solar?: newSolarDataInterface[];
+    ev?: newEVDataInterface[];
+    energy_storage?: newESDataInterface[];
+}
+
+interface profileInterface {
+    name: string;
+    data: TimeSeriesDataInfoModel | null;
+}
+
 export {
     newSolarDataInterface,
     newESDataInterface,
     newEVDataInterface,
-    newBasicDataInterface
+    newBasicDataInterface,
+    scenarioJSONInterface,
+    profileInterface
 }

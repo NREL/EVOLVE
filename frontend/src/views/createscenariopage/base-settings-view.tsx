@@ -7,9 +7,9 @@ import { useDebouncedSearch } from '../../hooks/use-debounced-search-create-scen
 
 export function BaseSettingsView(props: any) {
     const { formData, handleChange, errors, allTSdata,
-        selectedProfile, setSelectedProfile, dateRange, fillData } = props;
+        selectedProfile, setSelectedProfile, dateRange, fillData, updateFlag } = props;
     const [searchProfiles, setSearchProfiles] = useState<Record<string, any>>([])
-    const [isClicked, setIsClicked] = useState(false)
+    const [isClicked, setIsClicked] = useState(updateFlag)
 
     const loadProfileExist = allTSdata.filter((d: any) => d.category === 'kW')
 
@@ -49,17 +49,18 @@ export function BaseSettingsView(props: any) {
                             onChange={handleChange}
                         /> :
                             <div className="flex py-1">
-                                <p> {selectedProfile.name} <span className="bg-blue-500 px-1 rounded-md 
-                                text-white text-sm text-center"> {selectedProfile.owner} </span>
+                                <p> {selectedProfile && selectedProfile.name} <span className="bg-blue-500 px-1 rounded-md 
+                                    text-white text-sm text-center"> {selectedProfile && selectedProfile.owner} </span>
                                 </p>
                                 <p className="ml-3 bg-gray-200 text-center w-6 h-6 rounded-full text-sm 
-                                items-center flex justify-center hover:bg-gray-400 hover:cursor-pointer"
+                                    items-center flex justify-center hover:bg-gray-400 hover:cursor-pointer"
                                     onClick={() => {
                                         setIsClicked(false)
                                         setSelectedProfile({})
                                     }}
                                 > X </p>
                             </div>
+
                         }
 
                         {searchProfiles.length > 0 && !isClicked && <SearchDataView

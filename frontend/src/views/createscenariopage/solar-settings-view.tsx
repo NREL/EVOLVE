@@ -5,11 +5,14 @@ import { useDebouncedSearch } from '../../hooks/use-debounced-search-create-scen
 
 export function SolarSettingsView(props: any) {
     const { formData, handleChange, errors,
-        allTSdata, selectedIrrProfile, setSelectedIrrProfile, handleSolarDelete } = props;
+        allTSdata, selectedIrrProfile, setSelectedIrrProfile, handleSolarDelete,
+        updateFlag } = props;
 
     const [searchProfiles, setSearchProfiles] = useState<Record<string, any>>([])
-    const [isClicked, setIsClicked] = useState(false)
+    const [isClicked, setIsClicked] = useState(updateFlag)
     const [collpased, setCollapsed] = useState(false)
+
+    console.log('solar irradiance ', selectedIrrProfile)
 
     const irrProfileExist = allTSdata.filter((d: any) => d.category === 'irradiance')
 
@@ -73,8 +76,8 @@ export function SolarSettingsView(props: any) {
                                         value={formData.irradianceData}
                                         onChange={handleChange}
                                     /> : <div className="flex py-1">
-                                        <p> {selectedIrrProfile.data.name} <span className="bg-blue-500 px-1 rounded-md 
-                                        text-white text-sm text-center"> {selectedIrrProfile.data.owner} </span>
+                                        <p> {selectedIrrProfile.data && selectedIrrProfile.data.name} <span className="bg-blue-500 px-1 rounded-md 
+                                        text-white text-sm text-center"> {selectedIrrProfile.data && selectedIrrProfile.data.owner} </span>
                                         </p>
                                         <p className="ml-3 bg-gray-200 text-center w-6 h-6 rounded-full text-sm 
                                         items-center flex justify-center hover:bg-gray-400 hover:cursor-pointer"

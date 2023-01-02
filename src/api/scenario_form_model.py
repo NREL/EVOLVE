@@ -65,8 +65,11 @@ class SolarFormData(BaseModel):
 class EVFormData(BaseModel):
     numberOfEV: conint(gt=0)
     pctResEV: confloat(gt=0)
+    id: str
+    name: str 
 
 class ESFormData(BaseModel):
+    esStrategy: str 
     chargingHours: Optional[List[str]]
     disChargingHours: Optional[List[str]]
     chargingPowerThreshold: Optional[confloat(gt=0, le=100)] 
@@ -75,7 +78,6 @@ class ESFormData(BaseModel):
     disChargingPrice: Optional[float]
     esEnergyCapacity: confloat(gt=0) 
     esPowerCapacity: confloat(gt=0) 
-    esStrategy: str 
     id: str 
     name: str
     priceProfile: Optional[int]

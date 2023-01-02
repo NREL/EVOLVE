@@ -6,6 +6,7 @@ from typing import List
 
 from fastapi import (APIRouter, HTTPException, status, Depends)
 import tortoise
+import pydantic
 
 import models
 from dependencies.dependency import get_current_user
@@ -29,6 +30,24 @@ async def get_all_scenarios(
 
     return [await models.scenmeta_pydantic.from_tortoise_orm(scen) 
         for scen in scen_data]
+
+@router.get('/{id}', response_model=ScenarioData)
+async def get_scenario_metadata(
+    id: int,
+    user: models.user_pydantic = Depends(get_current_user)
+):
+    """ Get JSON scenario metadata by ID."""
+    scen_data = await models.ScenarioMetadata.get(
+            id=id,
+            user=await models.Users.get(username=user.username)
+        )
+
+    file_path = Path(DATA_PATH) / user.username / 'scenarios' / scen_data.filename
+    if not file_path.exists():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+        detail='Item not found!')
+
+    return pydantic.parse_file_as(ScenarioData, file_path)
 
 @router.post('/', response_model=models.scenmeta_pydantic)
 async def create_scenario_metadta(
@@ -68,3 +87,22 @@ async def create_scenario_metadta(
         await scenario_obj.save()
         return await models.scenmeta_pydantic.from_tortoise_orm(scenario_obj)
         
+
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_scenario_data(id: int, user: models.user_pydantic = Depends(get_current_user)):
+    """ Delete scenario data by id. """
+
+    try:
+        scen_data = await models.ScenarioMetadata.get(
+            id=id, 
+            user=await models.Users.get(username=user.username)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Unauthorized!")
+
+    file_name = scen_data.filename
+    file_path = Path(DATA_PATH) / user.username / 'scenarios' / file_name
+    await scen_data.delete()
+    file_path.unlink(missing_ok=True)
