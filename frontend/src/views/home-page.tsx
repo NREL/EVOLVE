@@ -25,7 +25,14 @@ const HomePage = (props:any) => {
             description: "Manage scenario reports in one place.",
             image: "./images/manage_report.svg",
             to: "/"
+        },
+        {
+            title: "Manage Labels",
+            description: "Manage labels for scenarios and reports and use it to filter.",
+            image: "./images/label_icon.svg",
+            to: "/labels"
         }
+
     ];
 
     

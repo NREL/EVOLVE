@@ -6,6 +6,7 @@ import { useScenarioJSON } from '../../hooks/scenariomanagepage/use-scen-json';
 import { ScenarioDataInterface } from "../../interfaces/scenario-data-interfaces";
 import { ScenarioTableView } from "./scenario-table-view";
 import { ScenarioEditView } from "./scenario-edit-view";
+import { ScenarioCloneView } from "./scenario-clone-view";
 
 type ScenarioPageCtrlProps = {};
 
@@ -14,6 +15,7 @@ const ScenarioPageController: React.FC<ScenarioPageCtrlProps> = ({ }) => {
     const [isClicked, setIsClicked] = useState<ScenarioDataInterface | null>(null);
     const [isViewClicked, setIsViewClicked] = useState(false)
     const [isEditClicked, setIsEditClicked] = useState(false)
+    const [isCloneClicked, setIsCloneClicked] = useState(false)
     const [scenarios, isLoading, setReload] = useScenarioData()
     const [scenJSON, handleFetchJSON] = useScenarioJSON(isClicked)
 
@@ -23,6 +25,7 @@ const ScenarioPageController: React.FC<ScenarioPageCtrlProps> = ({ }) => {
         scenarios={scenarios}
         clickedData={isClicked}
     />
+
 
     return isClicked ? (
         <React.Fragment>
@@ -37,6 +40,7 @@ const ScenarioPageController: React.FC<ScenarioPageCtrlProps> = ({ }) => {
                         setReload={setReload}
                         setIsViewClicked={setIsViewClicked}
                         setIsEditClicked={setIsEditClicked}
+                        setCloneClicked={setIsCloneClicked}
                     />
                 </div>
             </div>
@@ -53,6 +57,20 @@ const ScenarioPageController: React.FC<ScenarioPageCtrlProps> = ({ }) => {
                 <ScenarioEditView
                     scenJSON={scenJSON}
                     setIsEditClicked={setIsEditClicked}
+                    scenarioId={isClicked.id}
+                    setIsClicked={setIsClicked}
+                    setReload={setReload}
+                />
+            </div>
+            }
+            {isCloneClicked && <div className="absolute w-full bg-gray-900 
+                top-0 opacity-95 h-[calc(100vh+100px)] flex items-center justify-center">
+                <ScenarioCloneView
+                    setIsCloneClicked={setIsCloneClicked}
+                    scenarioId={isClicked.id}
+                    setIsClicked={setIsClicked}
+                    setReload={setReload}
+                    scenarioName={isClicked.name}
                 />
             </div>
             }

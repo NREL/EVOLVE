@@ -22,7 +22,6 @@ import { useFormValidation } from '../../hooks/createscenariopage/use-form-valid
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { StateModel } from "../../interfaces/redux-state";
-// import { TimeSeriesDataInfoModel } from '../../interfaces/data-manage-interfaces';
 
 
 export function CreateScenario(props: any) {
@@ -162,21 +161,25 @@ export function CreateScenario(props: any) {
         }
 
         console.log(fullFormData)
-
-        axios.post(
-            '/scenario',
-            fullFormData,
-            { headers: { 'Authorization': 'Bearer ' + accessToken } },
-        ).then((response) => {
-            console.log(response)
-            navigation('/scenarios')
-        }).catch((error) => {
-            console.log(error)
-            if (error.response.status === 401) {
-                localStorage.removeItem('state')
+        if (props.updateFlag) {
+            props.onUpdate(fullFormData)
+        } else {
+            axios.post(
+                '/scenario',
+                fullFormData,
+                { headers: { 'Authorization': 'Bearer ' + accessToken } },
+            ).then((response) => {
+                console.log(response)
+                navigation('/scenarios')
+            }).catch((error) => {
+                console.log(error)
+                if (error.response.status === 401) {
+                    localStorage.removeItem('state')
+                }
             }
+            )
         }
-        )
+
 
     }
 

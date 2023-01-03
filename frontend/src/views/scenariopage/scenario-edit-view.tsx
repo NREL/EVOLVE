@@ -11,14 +11,18 @@ import { profileInterface } from '../../interfaces/create-scenario-interfaces';
 import { newSolarDataInterface } from '../../interfaces/create-scenario-interfaces';
 import { AxiosResponse } from 'axios';
 import { newESDataInterface } from '../../interfaces/create-scenario-interfaces';
+import { ScenarioDataInterface } from '../../interfaces/scenario-data-interfaces';
 
 interface ScenarioEditViewProps {
     scenJSON: scenarioJSONInterface;
     setIsEditClicked: React.Dispatch<React.SetStateAction<boolean>>;
+    scenarioId: number;
+    setIsClicked: React.Dispatch<React.SetStateAction<ScenarioDataInterface | null>>;
+    setReload: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const ScenarioEditView: React.FC<ScenarioEditViewProps> = ({
-    scenJSON, setIsEditClicked
+    scenJSON, setIsEditClicked, scenarioId, setIsClicked, setReload
 }) => {
 
     const [loadProfile, setLoadProfile] = useState<TimeSeriesDataInfoModel | null>(null)
@@ -103,6 +107,27 @@ export const ScenarioEditView: React.FC<ScenarioEditViewProps> = ({
 
     }, [])
 
+
+    const handleUpdateScenario = (item: any) => {
+        axios.patch(
+            `/scenario/${scenarioId}`,
+            item,
+            { headers: { 'Authorization': 'Bearer ' + accessToken } },
+        ).then((response) => {
+            console.log(response)
+            setIsEditClicked(false)
+            setIsClicked(null)
+            setReload((value: number) => value + 1)
+        }).catch((error) => {
+            console.log(error)
+            if (error.response.status === 401) {
+                localStorage.removeItem('state')
+            }
+        }
+        )
+    }
+
+
     return (
         <div className="m-10 bg-gray-100 h-[calc(100vh-50px)] 
             overflow-y-scroll shadow-md relative">
@@ -115,6 +140,7 @@ export const ScenarioEditView: React.FC<ScenarioEditViewProps> = ({
                 initialLoadProfile={loadProfile}
                 irrProfiles={irrProfiles}
                 priceProfiles={priceProfiles}
+                onUpdate={handleUpdateScenario}
             />
         </div>
     );

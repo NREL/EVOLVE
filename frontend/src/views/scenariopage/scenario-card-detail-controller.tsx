@@ -18,6 +18,7 @@ type ControllerProps = {
     setReload: React.Dispatch<React.SetStateAction<number>>;
     setIsViewClicked: React.Dispatch<React.SetStateAction<boolean>>;
     setIsEditClicked: React.Dispatch<React.SetStateAction<boolean>>;
+    setCloneClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type BasicDetailProps = {
@@ -107,7 +108,7 @@ const ScenarioControlsView: React.FC<ScenarioControlsProps> = ({ controls }) => 
 
 const ScenarioDetailController: React.FC<ControllerProps> = ({
     data, setIsClicked, setReload, setIsViewClicked,
-    setIsEditClicked
+    setIsEditClicked, setCloneClicked
 
 }) => {
 
@@ -143,11 +144,15 @@ const ScenarioDetailController: React.FC<ControllerProps> = ({
         setIsEditClicked(true)
     }
 
+    const handleScenarioClone = () => {
+        setCloneClicked(true)
+    }
+
     let controls = [
         { id: 'delete_ctrl', image: './images/delete_light.svg', label: 'Delete scen', handlerFunc: handleScenarioDelete },
         { id: 'view_ctrl', image: './images/view_light.svg', label: 'View Scen.', handlerFunc: handleScenarioView },
         { id: 'edit_ctrl', image: './images/edit_light.svg', label: 'Edit Scen.', handlerFunc: handleScenarioEdit },
-        { id: 'clone_ctrl', image: './images/clone_light.svg', label: 'Clone Scen.', handlerFunc: handleControl },
+        { id: 'clone_ctrl', image: './images/clone_light.svg', label: 'Clone Scen.', handlerFunc: handleScenarioClone },
         { id: 'run_ctrl', image: './images/run_icon.svg', label: 'Run Scen.', handlerFunc: handleControl },
     ]
 

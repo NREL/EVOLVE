@@ -126,3 +126,6 @@ class ScenarioData(BaseModel):
     solar: List[SolarFormData]
     ev: List[EVFormData]
     energy_storage: List[ESFormData]
+
+class CloneScenarioInputModel(BaseModel):
+    name: str

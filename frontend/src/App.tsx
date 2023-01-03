@@ -13,7 +13,7 @@ import { Navigate, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { StateModel } from "./interfaces/redux-state";
 import { CreateScenario } from "./views/createscenariopage/create-scenario-controller";
-
+import { LabelPageController } from "./views/labelpage/label-page-controller";
 
 axios.defaults.baseURL = Config.baseURL
 
@@ -48,6 +48,7 @@ function App() {
             <Route path='/scenarios' element={<ScenarioPageController />} />
             <Route path='/create-scenario' element={<CreateScenario navigation={navigation} />} />
             <Route path='/data' element={<DataPage />} />
+            <Route path='/labels' element={<LabelPageController />} />
             <Route path='/data/upload' element={<DataUpload navigation={navigation} />} />
           </Route>
           <Route path='*' element={<ErrorPage />} />

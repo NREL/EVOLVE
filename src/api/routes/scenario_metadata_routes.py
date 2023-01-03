@@ -3,6 +3,7 @@ import uuid
 import os
 from pathlib import Path
 from typing import List
+import json
 
 from fastapi import (APIRouter, HTTPException, status, Depends)
 import tortoise
@@ -10,7 +11,7 @@ import pydantic
 
 import models
 from dependencies.dependency import get_current_user
-from scenario_form_model import ScenarioData
+from scenario_form_model import ScenarioData, CloneScenarioInputModel
 
 DATA_PATH = os.getenv('DATA_PATH')
 
@@ -87,6 +88,85 @@ async def create_scenario_metadta(
         await scenario_obj.save()
         return await models.scenmeta_pydantic.from_tortoise_orm(scenario_obj)
         
+@router.patch('/{id}', response_model=models.scenmeta_pydantic)
+async def create_scenario_metadta(
+    id: int,
+    body: ScenarioData,
+    user: models.user_pydantic = Depends(get_current_user)
+):
+    """ Update scenario. """
+    try:
+        scenario_obj = await models.ScenarioMetadata.get(
+            id=id,
+            user=await models.Users.get(username=user.username)
+        )
+
+        filename = str(uuid.uuid4()) + '.json'
+        folder_path = Path(DATA_PATH) / user.username / 'scenarios'
+        filepath = folder_path / scenario_obj.filename
+        filepath.unlink(missing_ok=True)
+
+        scenario_obj.update_from_dict({
+            'name':body.basic.scenarioName,
+            'solar': 'solar' in body.basic.technologies,
+            'ev': 'ev' in body.basic.technologies,
+            'storage': 'energy_storage' in body.basic.technologies,
+            'filename':  filename
+        })
+
+        await scenario_obj.save()
+
+        with open(folder_path / filename, 'w') as fout:
+            fout.write(body.json())
+
+        return await models.scenmeta_pydantic.from_tortoise_orm(scenario_obj)
+
+    except tortoise.exceptions.DoesNotExist as e: 
+
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Scenario with id {id} does not exist!')
+
+@router.post('/clone/{id}', response_model=models.scenmeta_pydantic)
+async def create_scenario_metadta(
+    id: int,
+    body: CloneScenarioInputModel,
+    user: models.user_pydantic = Depends(get_current_user)
+):
+    """ Clone scenario. """
+    try:
+        scenario_obj = await models.ScenarioMetadata.get(
+            id=id,
+            user=await models.Users.get(username=user.username)
+        )
+
+        filename = str(uuid.uuid4()) + '.json'
+        
+        folder_path = Path(DATA_PATH) / user.username / 'scenarios'
+        with open(folder_path / scenario_obj.filename, "r") as fp:
+            json_body = json.load(fp)
+
+        json_body['basic']['scenarioName'] = body.name
+
+        scenario_obj_clone = models.ScenarioMetadata(
+            user= await models.Users.get(username=user.username),
+            name=body.name,
+            description='Description not yet passed from UI.',
+            solar = scenario_obj.solar,
+            ev = scenario_obj.ev,
+            storage = scenario_obj.storage,
+            filename = filename
+        )
+
+        with open(folder_path / filename, 'w') as fout:
+            json.dump(json_body, fout)
+
+        await scenario_obj_clone.save()
+        return await models.scenmeta_pydantic.from_tortoise_orm(scenario_obj_clone)
+
+    except tortoise.exceptions.DoesNotExist as e: 
+
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Scenario with id {id} does not exist!')
 
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_scenario_data(id: int, user: models.user_pydantic = Depends(get_current_user)):
