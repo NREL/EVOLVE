@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {CreateLabelButton} from './create-label-button-view';
 import {LabelTableView} from './label-table-view';
 import {CreateLabelView} from './create-label-view';
+import { useLabelData } from '../../hooks/labelpage/use-label-data';
 
 interface LabelPageControllerProps {
 
@@ -10,6 +11,7 @@ interface LabelPageControllerProps {
 export const LabelPageController: React.FC<LabelPageControllerProps> = ({}) => {
         
     const [labelCreateView, setLabelCreateView] = useState(false)
+    const [labelData, isLoading, setReload] = useLabelData()
     
     return (
         <React.Fragment>
@@ -26,7 +28,9 @@ export const LabelPageController: React.FC<LabelPageControllerProps> = ({}) => {
                 <div onClick={()=> setLabelCreateView(true)}>
                     <CreateLabelButton />
                 </div>
-                <LabelTableView />
+                <LabelTableView 
+                    labelData={labelData}
+                />
             </div>
         </React.Fragment>
         );

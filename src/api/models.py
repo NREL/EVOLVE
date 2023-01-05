@@ -107,8 +107,12 @@ class Labels(models.Model):
 
     id = fields.IntField(pk=True)
     labelname = fields.CharField(max_length=100)
+    description = fields.CharField(max_length=1000)
     user = fields.ForeignKeyField('models.Users')
     created_at = fields.DatetimeField(auto_now_add=True)
+
+label_pydantic = pydantic_model_creator(Labels, name="label_full")
+
 
 class ScenarioLabels(models.Model):
     """ Scenario label model. """
