@@ -7,7 +7,8 @@ import {LabelDataInterface} from '../../interfaces/label-interfaces';
 const useLabelData = (): [
     LabelDataInterface[], 
     boolean, 
-    React.Dispatch<React.SetStateAction<number>>
+    React.Dispatch<React.SetStateAction<number>>,
+    (id: number) => void
 ] => {
 
     const [labelData, setLabelData] = useState<LabelDataInterface[]>([])
@@ -17,6 +18,20 @@ const useLabelData = (): [
     const accessToken = useSelector(
         (state: StateModel) => state.auth.accessToken
     )
+
+    const handleDeleteLabel = (id: number) => {
+        axios.delete(
+            `/label/${id}`,
+            { headers: { 'Authorization': 'Bearer ' + accessToken } }
+        ).then((response) => {
+            console.log(response.data)
+            setReload((value:number)=> value + 1)
+        }).catch((error) => {
+            if (error.response.status === 401) {
+                localStorage.removeItem('state')
+            }
+        })
+    }
 
     const fetchLabels = () => {
         setIsLoading(true)
@@ -44,7 +59,7 @@ const useLabelData = (): [
         fetchLabels()
     }, [])
 
-    return [labelData, isLoading, setReload];
+    return [labelData, isLoading, setReload, handleDeleteLabel];
 
 }
 

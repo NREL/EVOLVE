@@ -1,5 +1,5 @@
 interface LabelDataInterface {
-    id: string;
+    id: number;
     labelname: string;
     description: string;
     created_at:string;

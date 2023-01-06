@@ -51,4 +51,45 @@ async def create_label(
         return await models.label_pydantic.from_tortoise_orm(label_obj)
         
 
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_label(id: int, user: models.user_pydantic = Depends(get_current_user)):
+    """ Delete label data by id. """
 
+    try:
+        label_data = await models.Labels.get(
+            id=id, 
+            user=await models.Users.get(username=user.username)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Unauthorized!")
+
+    await label_data.delete()
+
+@router.patch('/{id}', response_model=models.label_pydantic)
+async def create_scenario_metadta(
+    id: int,
+    body: LabelCreateFormModel,
+    user: models.user_pydantic = Depends(get_current_user)
+):
+    """ Update label by id. """
+    try:
+        label_obj = await models.Labels.get(
+            id=id,
+            user=await models.Users.get(username=user.username)
+        )
+
+        label_obj.update_from_dict({
+            'labelname':body.name,
+            'description': body.description
+        })
+
+        await label_obj.save()
+
+        return await models.label_pydantic.from_tortoise_orm(label_obj)
+
+    except tortoise.exceptions.DoesNotExist as e: 
+
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Scenario with id {id} does not exist!')
