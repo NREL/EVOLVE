@@ -19,10 +19,12 @@ type ControllerProps = {
     setIsViewClicked: React.Dispatch<React.SetStateAction<boolean>>;
     setIsEditClicked: React.Dispatch<React.SetStateAction<boolean>>;
     setCloneClicked: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsAddLabelClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type BasicDetailProps = {
     data: ScenarioDataInterface;
+    handleScenariolabelDelete: (labelid: string) => void;
 }
 
 type ScenarioControlsProps = {
@@ -34,17 +36,40 @@ type SingleControlProps = {
     imagePath: string
 }
 
-const ScenarioBasicDetailView: React.FC<BasicDetailProps> = ({ data }) => {
+const ScenarioBasicDetailView: React.FC<BasicDetailProps> = ({ 
+    data, handleScenariolabelDelete
+ }) => {
     return (
         <div>
 
             <h1 className="font-bold text-blue-500 border-b-2 w-max">
                 {data.name}
             </h1>
-
             <p className="pt-2 text-sm text-gray-500"> {data.description} </p>
 
-            <p className="pt-2"> Created at </p>
+            <h1 className="font-bold text-blue-500 border-b-2 w-max my-3">
+                Labels
+            </h1>
+
+            <div className="flex flex-wrap">
+                {
+                    data.labels.map((label: {labelname: string})=> {
+                        return <div className="w-max mr-2 mb-2 bg-orange-500 text-white 
+                            rounded-md px-2 py-1 text-sm font-bold flex justify-center items-center">
+                            <p className="pr-2"> 
+                            { label.labelname }  </p>
+                            {/* <img src="./images/delete_light.svg" width="15"/> */}
+                            <p className='w-4 h-4 border-2 border-gray-200 rounded-full 
+                            flex justify-center items-center pb-1 hover:cursor-pointer 
+                            hover:border-gray-800 hover:text-gray-800'
+                            onClick={()=> handleScenariolabelDelete(label.labelname)}
+                            > - </p>
+                        </div>
+                    })
+                }
+            </div>
+
+            <p className="pt-2 mt-2"> Created at </p>
 
             <p className="px-2 rounded-md bg-blue-500 text-white w-fit">
                 {new Date(data.created_at).toDateString()}  </p>
@@ -108,7 +133,7 @@ const ScenarioControlsView: React.FC<ScenarioControlsProps> = ({ controls }) => 
 
 const ScenarioDetailController: React.FC<ControllerProps> = ({
     data, setIsClicked, setReload, setIsViewClicked,
-    setIsEditClicked, setCloneClicked
+    setIsEditClicked, setCloneClicked, setIsAddLabelClicked
 
 }) => {
 
@@ -136,6 +161,22 @@ const ScenarioDetailController: React.FC<ControllerProps> = ({
 
     }
 
+    // Handle deleteing the scenario label
+    const handleScenariolabelDelete = (labelid: string) => {
+
+        data && axios.delete(`/scenario/${data.id}/label/${labelid}`,
+            { headers: { 'Authorization': 'Bearer ' + accessToken } }).then((response) => {
+                console.log(response.data)
+                setReload((value: number) => value + 1)
+                setIsClicked(null)
+            }).catch((error) => {
+                if (error.response.status === 401) {
+                    localStorage.removeItem('state')
+                }
+            })
+
+    }
+
     const handleScenarioView = () => {
         setIsViewClicked(true)
     }
@@ -148,12 +189,17 @@ const ScenarioDetailController: React.FC<ControllerProps> = ({
         setCloneClicked(true)
     }
 
+    const handleAddLabel = () => {
+        setIsAddLabelClicked(true)
+    }
+
     let controls = [
         { id: 'delete_ctrl', image: './images/delete_light.svg', label: 'Delete scen', handlerFunc: handleScenarioDelete },
         { id: 'view_ctrl', image: './images/view_light.svg', label: 'View Scen.', handlerFunc: handleScenarioView },
         { id: 'edit_ctrl', image: './images/edit_light.svg', label: 'Edit Scen.', handlerFunc: handleScenarioEdit },
         { id: 'clone_ctrl', image: './images/clone_light.svg', label: 'Clone Scen.', handlerFunc: handleScenarioClone },
         { id: 'run_ctrl', image: './images/run_icon.svg', label: 'Run Scen.', handlerFunc: handleControl },
+        { id: 'add_label', image: './images/add_light.svg', label: 'Add Tag', handlerFunc: handleAddLabel}
     ]
 
     return data && (
@@ -164,7 +210,10 @@ const ScenarioDetailController: React.FC<ControllerProps> = ({
             >X
             </div>
 
-            <ScenarioBasicDetailView data={data} />
+            <ScenarioBasicDetailView 
+                data={data}
+                handleScenariolabelDelete={handleScenariolabelDelete}
+            />
             <ScenarioControlsView controls={controls} />
         </div>
     )

@@ -62,7 +62,6 @@ class TimeseriesData(models.Model):
     image = fields.CharField(max_length=100)
     filename = fields.CharField(max_length=100)
     category = fields.CharField(max_length=100)
-
     usr_shared_data: fields.ReverseRelation["UserSharedTimeSeriesData"]
 
 
@@ -71,6 +70,16 @@ name="ts_full_minimal", include=('name', 'filename', 'category'))
 ts_pydantic = pydantic_model_creator(TimeseriesData,
 name="ts_full")
 
+class ScenarioLabels(models.Model):
+    """ Scenario label model. """
+    
+    id = fields.IntField(pk=True)
+    scenario = fields.ForeignKeyField('models.ScenarioMetadata', related_name="scen_meta")
+    user = fields.ForeignKeyField('models.Users')
+    created_at = fields.DatetimeField(auto_now_add=True)
+    label = fields.ForeignKeyField('models.Labels')
+
+scen_label_pydantic = pydantic_model_creator(ScenarioLabels,name='scen_label_full')
 
 class ScenarioMetadata(models.Model):
     """ Scenario metadata model. """
@@ -84,6 +93,7 @@ class ScenarioMetadata(models.Model):
     ev = fields.BooleanField()
     storage = fields.BooleanField()
     filename = fields.CharField(max_length=100)
+    scen_meta: fields.ReverseRelation["ScenarioLabels"]
 
 scenmeta_pydantic = pydantic_model_creator(ScenarioMetadata, name="scen_full")
 
@@ -111,17 +121,13 @@ class Labels(models.Model):
     user = fields.ForeignKeyField('models.Users')
     created_at = fields.DatetimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together=(("labelname", "user"), )
+
 label_pydantic = pydantic_model_creator(Labels, name="label_full")
 
 
-class ScenarioLabels(models.Model):
-    """ Scenario label model. """
-    
-    id = fields.IntField(pk=True)
-    scenario_id = fields.IntField()
-    user = fields.ForeignKeyField('models.Users')
-    created_at = fields.DatetimeField(auto_now_add=True)
-    labelname = fields.CharField(max_length=100)
+
 
 class ReportLabels(models.Model):
     """ Report labels model ."""

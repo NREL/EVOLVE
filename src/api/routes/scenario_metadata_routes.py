@@ -12,6 +12,7 @@ import pydantic
 import models
 from dependencies.dependency import get_current_user
 from scenario_form_model import ScenarioData, CloneScenarioInputModel
+from custom_models import ScenarioMetaDataResponseModel, SimpleLabelModel
 
 DATA_PATH = os.getenv('DATA_PATH')
 
@@ -21,16 +22,36 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-@router.get('/', response_model=List[models.scenmeta_pydantic])
+@router.get('/', response_model=List[ScenarioMetaDataResponseModel])
 async def get_all_scenarios(
     user: models.user_pydantic = Depends(get_current_user)):
 
     scen_data = await models.ScenarioMetadata.all().filter(
         user=await models.Users.get(username=user.username)
-    )
+    ).prefetch_related('scen_meta')
 
-    return [await models.scenmeta_pydantic.from_tortoise_orm(scen) 
-        for scen in scen_data]
+
+    all_scenarios = []
+    for scen in scen_data:
+        scen_dict = dict(scen)
+        scen_labels = list(scen.scen_meta)
+
+        scen_labels_pydantic = []
+        for scen_label in scen_labels:
+            await scen_label.fetch_related('label')
+
+            scen_labels_pydantic.append(
+                SimpleLabelModel(labelname=scen_label.label.labelname)
+            )
+
+        all_scenarios.append(
+            ScenarioMetaDataResponseModel(
+                **scen_dict,
+                labels=scen_labels_pydantic
+            )
+        )
+
+    return all_scenarios
 
 @router.get('/{id}', response_model=ScenarioData)
 async def get_scenario_metadata(

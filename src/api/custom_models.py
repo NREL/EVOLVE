@@ -37,3 +37,18 @@ class TimeSeriesDataResponseModel(BaseModel):
     shared_users: List[SharedUserInfoModel]
 
 
+class SimpleLabelModel(BaseModel):
+    labelname: str 
+
+class ScenarioMetaDataResponseModel(BaseModel):
+    id: int
+    created_at: datetime.datetime 
+    name: str
+    description: str 
+    solar: bool
+    ev: bool
+    storage: bool 
+    filename: str 
+    labels: List[SimpleLabelModel]
+
+
