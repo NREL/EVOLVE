@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  influx_db:
+    image: "influxdb:2.0"
+    ports:
+      - '8086:8086'
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup 
+      - DOCKER_INFLUXDB_INIT_USERNAME=evolve
+      - DOCKER_INFLUXDB_INIT_PASSWORD=evolve2022
+      - DOCKER_INFLUXDB_INIT_ORG=NREL
+      - DOCKER_INFLUXDB_INIT_BUCKET=evolve
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=5356bc92-b4e7-494c-bfcf-07684a090993
+      # - DOCKER_INFLUXDB_INIT_RETENTION=1000w
+    volumes:
+      - C:\Users\KDUWADI\Desktop\NREL_Projects\TUNISIA\data\evolve_docker_data\influxdb_data:/var/lib/influxdb2

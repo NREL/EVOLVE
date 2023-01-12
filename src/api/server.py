@@ -36,6 +36,7 @@ load_dotenv()
 JWT_SECRET = os.getenv('JWT_KEY')
 DATA_PATH = os.getenv('DATA_PATH')
 
+
 app = FastAPI(title="EVOLVE API")
 
 app.add_middleware(

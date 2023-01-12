@@ -11,6 +11,7 @@ pytests
 mkdocs
 pandas
 aerich
+influxdb-client
 mkdocstrings[python]
 mkdocs-material
 mkdocs-static-i18n

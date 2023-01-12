@@ -3,7 +3,7 @@ from pathlib import Path
 import os
 
 from fastapi import (APIRouter, HTTPException, status, Depends,
-    File, Form)
+    File, Form, BackgroundTasks, UploadFile)
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 
@@ -172,19 +172,20 @@ async def get_data_for_download(id:int, user: models.user_pydantic = Depends(get
     return FileResponse(file_path)
 
 
-@router.post('/upload', response_model=List[models.ts_minimal])
+@router.post('/upload', 
+    status_code=status.HTTP_202_ACCEPTED
+)
 async def upload_timeseries_data(
-    file: bytes = File(),
+    background_tasks: BackgroundTasks,
+    file: UploadFile,
     metadata: str = Form(),
     user: models.user_pydantic = Depends(get_current_user),
 ):
     """ Create a data item for a user. """
-    metadata_pydantic = timeseries_data.TSFormInput.parse_raw(metadata)
-    response = await timeseries_data.handle_timeseries_data_upload(
-        file, metadata_pydantic, user.username
-    )
-    return response
 
+    metadata_pydantic = timeseries_data.TSFormInput.parse_raw(metadata)
+    background_tasks.add_task(timeseries_data.handle_timeseries_data_upload, file, 
+        metadata_pydantic, user.username )
 
 
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
