@@ -9,7 +9,6 @@ import {useSelector} from 'react-redux';
 import {DataCardDetailView} from './data-card-detail-view';
 import {DataCardDetailControlView} from './data-card-detail-controls-view';
 import {DataCardDetailCommentsView} from './data-card-detail-comments-view';
-import { DataDownloadForm } from "./data-download-form";
 
 
 
@@ -100,7 +99,6 @@ function DataCardDetail(props: {
                     setDownloadLabel={setDownloadLabel}
                     handleDataDownload={handleDataDownload}
                 />
-                <DataDownloadForm />
                 <DataCardDetailCommentsView
                     comments = {comments}
                     editCommentFlag = {editCommentFlag}

@@ -29,7 +29,8 @@ from routes import (
     timeseries_data_sharing_routes,
     scenario_metadata_routes,
     label_routes,
-    scenario_labels_routes
+    scenario_labels_routes,
+    notification_routes
 )
 
 load_dotenv()
@@ -53,6 +54,7 @@ app.include_router(timeseries_data_sharing_routes.router)
 app.include_router(scenario_metadata_routes.router)
 app.include_router(label_routes.router)
 app.include_router(scenario_labels_routes.router)
+app.include_router(notification_routes.router)
 
 async def autheticate_user(username: str, password: str):
     user = await models.Users.get(username=username)

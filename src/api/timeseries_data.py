@@ -1,13 +1,13 @@
 """ Module for managing time series data for EVOLVE api."""
 
 # Standard imports
-import io
-from pathlib import Path
 import uuid
 import os
+import datetime
+from pathlib import Path
 
 # third-party imports
-import pandas as pd
+import polars
 from pydantic import BaseModel
 import numpy as np
 from dotenv import load_dotenv
@@ -15,7 +15,6 @@ from fastapi import HTTPException, status
 
 # internal imports
 import models
-from influxdb.influx_client import InfluxDBClient, InfluxDBConfigModel
 
 load_dotenv()
 DATA_PATH = os.getenv('DATA_PATH')
@@ -26,6 +25,16 @@ class TSFormInput(BaseModel):
     category: str
     description: str
 
+
+async def post_notification(username: str, message: str):
+
+    not_obj = models.Notifications(
+        user= await models.Users.get(username=username),
+        message = message,
+        archived = False,
+        visited  = False
+    )
+    await not_obj.save()
 
 async def handle_timeseries_data_upload(
     file,
@@ -39,21 +48,36 @@ async def handle_timeseries_data_upload(
 
     try:
         # io.BytesIO(input_csv_bytes)
-        df = pd.read_csv(file.file,
-            encoding='utf-8', index_col=metadata.timestamp, parse_dates=True)
+        df = polars.read_csv(file.file, parse_dates=True)
+
     except Exception as e:
+        await post_notification(username, 
+        f"Wrong column name and/or unrecognized input! : `{file.filename}`")
+
         raise HTTPException(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, 
-        detail=f"Wrong column name and/or unrecognized input!"
+        detail=f"Unrecognized input!"
     )
-
 
     # Do some validation on dataframe 
     # If not valid throw exception
-    df = df.sort_index()
-    all_timestamps = list(df.index)
-    diff_timestamps = np.array(all_timestamps[1:])  - np.array(all_timestamps[:-1])
-    if not all(diff_timestamps == np.timedelta64(int(metadata.resolution), 'm')):
+
+    try:
+        diff_timestamps = df.select(polars.col(metadata.timestamp).diff(null_behavior='drop'))
+    except Exception as e:
+        await post_notification(username, 
+        f"Wrong column name passed : `{file.filename}` column passed is `{metadata.timestamp}`")
+
+        raise HTTPException(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, 
+        detail=f"Unrecognized input!")
+
+    if len(diff_timestamps.filter(polars.col(metadata.timestamp)==datetime.timedelta(minutes=metadata.resolution))) \
+        != len(diff_timestamps):
+
+        await post_notification(username, 
+        f"Specified time resolution does not match! `{file.filename}`")
+
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, 
             detail=f"Specified time resolution does not match!"
@@ -65,47 +89,35 @@ async def handle_timeseries_data_upload(
     ts_pydantics = []
 
 
-    # First upload data to TimeSeries Database
-    db_instance = InfluxDBClient(config=InfluxDBConfigModel(
-        org=os.getenv('INFLUXDB_ORG'),
-        token=os.getenv('INFLUXDB_TOKEN'),
-        url=os.getenv('INFLUXDB_URL'),
-        bucket=os.getenv('INFLUXDB_BUCKET')
-    ))
-
     # Let's save files
     column_names = list(df.columns)
-    df.index = pd.to_datetime(df.index, unit='s')
+    timeseries_data_path = Path(DATA_PATH) / username / 'timeseries_data'
+    if not timeseries_data_path.exists():
+        timeseries_data_path.mkdir(parents=True)
 
+    tagging_dict = {}
     if metadata.category != 'irradiance':
-
-        tagging_dict = {}
         for column in column_names:
-
             # Save each column data into separate csv files
-            data_uuid = str(uuid.uuid4())
-            tagging_dict[column] = data_uuid
+            if column != metadata.timestamp:
+                data_uuid = str(uuid.uuid4())
+                tagging_dict[column] = data_uuid
+                df.select(polars.col(column)).write_csv(
+                    timeseries_data_path / (data_uuid + '.csv')
+                )
 
-    else: 
-        tagging_dict = str(uuid.uuid4())
-
-    db_instance.insert_dataframe(
-        df,
-        username,
-        tagging_dict,
-        metadata.category
-    )
-
-
-    # Now insert metadata in SQL database
-    if isinstance(tagging_dict, str):
-        tagging_dict  = {file.filename.split('.')[0]: tagging_dict}   
+    else:
+        data_uuid = str(uuid.uuid4()) 
+        tagging_dict = {file.filename.split('.')[0]: data_uuid} 
+        df.write_csv(
+            timeseries_data_path / (data_uuid + '.csv')
+        )
 
     for name, uuid_ in tagging_dict.items():
         data_model = models.TimeseriesData(
             user=user,
-            start_date= all_timestamps[0].to_pydatetime(),
-            end_date= all_timestamps[-1].to_pydatetime(),
+            start_date= df.select(polars.col(metadata.timestamp)).min()[0,0],
+            end_date=df.select(polars.col(metadata.timestamp)).max()[0,0],
             resolution_min=metadata.resolution,
             name=name,
             description=metadata.description,
@@ -119,8 +131,8 @@ async def handle_timeseries_data_upload(
         data_pydantic = await models.ts_minimal.from_tortoise_orm(data_model)
         ts_pydantics.append(data_pydantic)
     
-    db_instance.close_client()
-    
+    await post_notification(username, 
+        f"Uploaded successfully `{file.filename}`")
     return ts_pydantics
 
     

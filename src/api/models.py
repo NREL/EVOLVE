@@ -127,6 +127,17 @@ class Labels(models.Model):
 label_pydantic = pydantic_model_creator(Labels, name="label_full")
 
 
+class Notifications(models.Model):
+    """ Notification model. """
+
+    id = fields.IntField(pk=True)
+    user = fields.ForeignKeyField('models.Users')
+    created_at = fields.DatetimeField(auto_now_add=True)
+    message = fields.TextField()
+    archived = fields.BooleanField()
+    visited = fields.BooleanField()
+
+notification_pydantic = pydantic_model_creator(Notifications, name="notification_full")
 
 
 class ReportLabels(models.Model):
