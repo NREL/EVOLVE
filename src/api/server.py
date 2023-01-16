@@ -30,7 +30,8 @@ from routes import (
     scenario_metadata_routes,
     label_routes,
     scenario_labels_routes,
-    notification_routes
+    notification_routes,
+    report_routes
 )
 
 load_dotenv()
@@ -55,6 +56,7 @@ app.include_router(scenario_metadata_routes.router)
 app.include_router(label_routes.router)
 app.include_router(scenario_labels_routes.router)
 app.include_router(notification_routes.router)
+app.include_router(report_routes.router)
 
 async def autheticate_user(username: str, password: str):
     user = await models.Users.get(username=username)
@@ -112,7 +114,7 @@ async def get_users_from_search_string(
 
 register_tortoise(
     app,
-    db_url='sqlite://db.sqlite3',
+    db_url= 'postgres://postgres:password@localhost:5433/evolve', #'sqlite://db.sqlite3',
     modules={'models': ['models']},
     generate_schemas=True,
     add_exception_handlers=True

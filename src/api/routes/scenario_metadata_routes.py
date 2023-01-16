@@ -110,7 +110,7 @@ async def create_scenario_metadta(
         return await models.scenmeta_pydantic.from_tortoise_orm(scenario_obj)
         
 @router.patch('/{id}', response_model=models.scenmeta_pydantic)
-async def create_scenario_metadta(
+async def update_scenario_metadta(
     id: int,
     body: ScenarioData,
     user: models.user_pydantic = Depends(get_current_user)

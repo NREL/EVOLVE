@@ -107,10 +107,9 @@ class ReportMetadata(models.Model):
     name = fields.CharField(max_length=100)
     description = fields.CharField(max_length=255)
     status = fields.CharField(max_length=100)
-    scenario_name = fields.CharField(max_length=100)
-    report_file = fields.CharField(max_length=100)
-    report_data_file = fields.CharField(max_length=100)
+    scenario = fields.ForeignKeyField('models.ScenarioMetadata')
 
+report_pydantic = pydantic_model_creator(ReportMetadata, name="report_full")
 
 class Labels(models.Model):
     """ Labels model. """
@@ -139,15 +138,6 @@ class Notifications(models.Model):
 
 notification_pydantic = pydantic_model_creator(Notifications, name="notification_full")
 
-
-class ReportLabels(models.Model):
-    """ Report labels model ."""
-
-    id = fields.IntField(pk=True)
-    report_id = fields.IntField()
-    user = fields.ForeignKeyField('models.Users')
-    created_at = fields.DatetimeField(auto_now_add=True)
-    labelname = fields.CharField(max_length=100)
 
 class DataComments(models.Model):
     """ Report labels model ."""

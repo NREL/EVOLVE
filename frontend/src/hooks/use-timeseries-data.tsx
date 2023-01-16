@@ -39,6 +39,7 @@ const useTimeSeriesData = (reload: number) => {
             if (error.response.status === 401) {
                 localStorage.removeItem('state')
             }
+            setIsLoading(false)
         })
     }, [reload])
 

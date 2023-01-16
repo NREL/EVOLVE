@@ -12,6 +12,8 @@ mkdocs
 pandas
 aerich
 polars
+pika
+tortoise-orm[asyncpg]
 mkdocstrings[python]
 mkdocs-material
 mkdocs-static-i18n
