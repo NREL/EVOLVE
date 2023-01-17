@@ -3,6 +3,8 @@ import { ScenarioDataInterface } from '../../interfaces/scenario-data-interfaces
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { StateModel } from "../../interfaces/redux-state";
+import { ReportListView } from '../reportpage/report-list-view';
+import { ReportDataInterface } from '../../interfaces/report-interfaces';
 
 
 interface ControlDataInterface {
@@ -20,6 +22,8 @@ type ControllerProps = {
     setIsEditClicked: React.Dispatch<React.SetStateAction<boolean>>;
     setCloneClicked: React.Dispatch<React.SetStateAction<boolean>>;
     setIsAddLabelClicked: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsRunClicked: React.Dispatch<React.SetStateAction<boolean>>;
+    reports: ReportDataInterface[];
 }
 
 type BasicDetailProps = {
@@ -133,7 +137,8 @@ const ScenarioControlsView: React.FC<ScenarioControlsProps> = ({ controls }) => 
 
 const ScenarioDetailController: React.FC<ControllerProps> = ({
     data, setIsClicked, setReload, setIsViewClicked,
-    setIsEditClicked, setCloneClicked, setIsAddLabelClicked
+    setIsEditClicked, setCloneClicked, setIsAddLabelClicked, setIsRunClicked,
+    reports
 
 }) => {
 
@@ -141,9 +146,6 @@ const ScenarioDetailController: React.FC<ControllerProps> = ({
         (state: StateModel) => state.auth.accessToken
     )
 
-    const handleControl = () => {
-
-    }
 
     // Handle deleteing the scenario
     const handleScenarioDelete = () => {
@@ -193,12 +195,16 @@ const ScenarioDetailController: React.FC<ControllerProps> = ({
         setIsAddLabelClicked(true)
     }
 
+    const handleRunReport = () => {
+        setIsRunClicked(true)
+    }
+
     let controls = [
         { id: 'delete_ctrl', image: './images/delete_light.svg', label: 'Delete scen', handlerFunc: handleScenarioDelete },
         { id: 'view_ctrl', image: './images/view_light.svg', label: 'View Scen.', handlerFunc: handleScenarioView },
         { id: 'edit_ctrl', image: './images/edit_light.svg', label: 'Edit Scen.', handlerFunc: handleScenarioEdit },
         { id: 'clone_ctrl', image: './images/clone_light.svg', label: 'Clone Scen.', handlerFunc: handleScenarioClone },
-        { id: 'run_ctrl', image: './images/run_icon.svg', label: 'Run Scen.', handlerFunc: handleControl },
+        { id: 'run_ctrl', image: './images/run_icon.svg', label: 'Run Scen.', handlerFunc: handleRunReport },
         { id: 'add_label', image: './images/add_light.svg', label: 'Add Tag', handlerFunc: handleAddLabel}
     ]
 
@@ -215,6 +221,7 @@ const ScenarioDetailController: React.FC<ControllerProps> = ({
                 handleScenariolabelDelete={handleScenariolabelDelete}
             />
             <ScenarioControlsView controls={controls} />
+            <ReportListView reports={reports}/>
         </div>
     )
 }

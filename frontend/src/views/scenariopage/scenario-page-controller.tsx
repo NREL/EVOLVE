@@ -12,6 +12,8 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { StateModel } from "../../interfaces/redux-state";
 import { useLabelData } from '../../hooks/labelpage/use-label-data';
+import { ScenarioReportView } from "./scenario-report-view";
+import { useReportData } from "../../hooks/reportpage/use-report-data";
 
 type ScenarioPageCtrlProps = {};
 
@@ -22,8 +24,10 @@ const ScenarioPageController: React.FC<ScenarioPageCtrlProps> = ({ }) => {
     const [isEditClicked, setIsEditClicked] = useState(false)
     const [isCloneClicked, setIsCloneClicked] = useState(false)
     const [isAddLabelClicked, setIsAddLabelClicked] = useState(false)
+    const [isRunClicked, setIsRunClicked] = useState(false)
     const [scenarios, isLoading, setReload] = useScenarioData()
     const [scenJSON, handleFetchJSON] = useScenarioJSON(isClicked)
+    const [reportsData, setReportsData] = useReportData(isClicked)
 
     const initialFilterStates = localStorage.getItem('filterTags')
     const [filterTags, setFilterTags] = useState<string[]>(
@@ -93,6 +97,8 @@ const ScenarioPageController: React.FC<ScenarioPageCtrlProps> = ({ }) => {
                         setIsEditClicked={setIsEditClicked}
                         setCloneClicked={setIsCloneClicked}
                         setIsAddLabelClicked={setIsAddLabelClicked}
+                        setIsRunClicked={setIsRunClicked}
+                        reports={reportsData}
                     />
                 </div>
             </div>
@@ -131,6 +137,17 @@ const ScenarioPageController: React.FC<ScenarioPageCtrlProps> = ({ }) => {
                 top-0 opacity-95 h-[calc(100vh+100px)] flex items-center justify-center">
                 <ScenarioCloneView
                     setIsCloneClicked={setIsCloneClicked}
+                    scenarioId={isClicked.id}
+                    setIsClicked={setIsClicked}
+                    setReload={setReload}
+                    scenarioName={isClicked.name}
+                />
+            </div>
+            }
+            {isRunClicked && <div className="absolute w-full bg-gray-900 
+                top-0 opacity-95 h-[calc(100vh+100px)] flex items-center justify-center">
+                <ScenarioReportView
+                    setIsRunClicked={setIsRunClicked}
                     scenarioId={isClicked.id}
                     setIsClicked={setIsClicked}
                     setReload={setReload}

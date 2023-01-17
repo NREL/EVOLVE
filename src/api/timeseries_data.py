@@ -8,6 +8,7 @@ from pathlib import Path
 
 # third-party imports
 import polars
+import pandas as pd
 from pydantic import BaseModel
 import numpy as np
 from dotenv import load_dotenv
@@ -48,6 +49,7 @@ async def handle_timeseries_data_upload(
 
     try:
         # io.BytesIO(input_csv_bytes)
+        # df  =pd.read_csv(file.file, parse_dates=[metadata.timestamp])
         df = polars.read_csv(file.file, parse_dates=True)
 
     except Exception as e:
@@ -102,7 +104,9 @@ async def handle_timeseries_data_upload(
             if column != metadata.timestamp:
                 data_uuid = str(uuid.uuid4())
                 tagging_dict[column] = data_uuid
-                df.select(polars.col(column)).write_csv(
+                df.select([polars.col(column), polars.col(metadata.timestamp)]).rename(
+                    {column: metadata.category, metadata.timestamp: 'timestamp'}
+                ).write_csv(
                     timeseries_data_path / (data_uuid + '.csv')
                 )
 

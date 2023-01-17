@@ -3,10 +3,12 @@ from typing import List
 import os
 from pathlib import Path
 import json
+import datetime
 
 from fastapi import (APIRouter, HTTPException, status, Depends)
 from pydantic import BaseModel
 import tortoise
+import polars
 
 from dependencies.dependency import get_current_user
 import models
@@ -39,6 +41,56 @@ async def get_all_reports(
 
     return [await models.report_pydantic.from_tortoise_orm(report) 
         for report in reports]
+
+
+@router.get('/report/{id}/load/base') # response_model=LoadTimeSeriesDataResponse
+async def get_timeseries_baseload(
+    id: int, 
+    resolution: int,
+    user: models.user_pydantic = Depends(get_current_user)
+):
+    report_data = await models.ReportMetadata.get(
+        id=id, 
+        user=await models.Users.get(username=user.username)
+    )
+
+    report_json_path = Path(DATA_PATH) / user.username / 'reports' / f"{id}.json"
+
+    if not report_json_path.exists():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='JSON file not found!'
+        )
+
+    with open(report_json_path, "r") as fp:
+        json_content = json.load(fp)
+
+    data_obj = await models.TimeseriesData.get(
+        id=json_content['basic']['loadProfile']
+    )
+
+    csv_file_path = Path(DATA_PATH) / user.username / 'timeseries_data' / f'{data_obj.filename}.csv'
+    if not csv_file_path.exists():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Data CSV file not found!'
+        )
+
+    df = polars.read_csv(csv_file_path, parse_dates=True)
+
+    df = df.groupby_dynamic("timestamp", every=f"{resolution}m").agg(polars.col("kW").mean()).filter(
+        (polars.col('timestamp') > datetime.datetime.strptime(json_content['basic']['startDate'] + ' 00:00:00', '%Y-%m-%d %H:%M:%S'))  & \
+        (polars.col('timestamp') < datetime.datetime.strptime(json_content['basic']['endDate'] + ' 00:00:00', '%Y-%m-%d %H:%M:%S'))
+    )
+
+    df_to_dict = df.to_dict(as_series=False)
+
+    return {
+        'data': [round(el, 2) for el in df_to_dict['kW']],
+        'start_date': str(df.select(polars.col('timestamp')).min()[0,0]),
+        'end_date':str(df.select(polars.col('timestamp')).max()[0,0]),
+        'resolution': resolution
+    }
 
 @router.post('/scenario/{id}/report', response_model=models.report_pydantic)
 async def create_report(
@@ -74,6 +126,16 @@ async def create_report(
             "data": scen_dict
         })
     )
+
+    output_path = Path(DATA_PATH) / user.username / 'reports'
+
+    if not output_path.exists():
+        output_path.mkdir(parents=True)
+
+    output_json_path = output_path / f"{report_response.id}.json"
+    with open(output_json_path, "w") as fp:
+        json.dump(scen_dict,fp)
+
     return report_response
         
 
