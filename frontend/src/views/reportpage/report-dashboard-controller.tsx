@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTimeSeriesBaseLoad } from '../../hooks/reportpage/use-base-load';
 import { useScenDataFromId } from '../../hooks/reportpage/use-single-scen';
 import { useParams } from 'react-router-dom';
 import { NativeLoadView} from './native-load-view';
+import { ESView } from './energy-storage-view';
 
 interface ReportDashboardControllerProps {
 
@@ -28,9 +29,11 @@ export const ReportDashboardController: React.FC<ReportDashboardControllerProps>
 }) => {
 
         const {id} = useParams();
-        const [baseLoad, baseEnergyMetrics, basePeakPowerMetrics]  = useTimeSeriesBaseLoad(id)
+        const [baseLoad, baseEnergyMetrics, basePeakPowerMetrics,
+            netLoad, netEnergyMetrics, netPeakPowerMetrics, batteryPower ]  = useTimeSeriesBaseLoad(id)
         const [scenJSON, handleFetchJSON] = useScenDataFromId(2)
-        
+        const [activePage, setActivePage] = useState('base')
+    
 
         return (
             <div className="mx-10 my-5">
@@ -43,17 +46,32 @@ export const ReportDashboardController: React.FC<ReportDashboardControllerProps>
                     </p>
                 } */}
                 <div className="flex border-b border-blue-500 mb-5">
-                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"> Native load </p>
-                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"> Solar </p>
-                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"> Energy Storage </p>
-                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"> Electric Vehicle </p>
+                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"
+                        onClick={()=> setActivePage('base')}> Native load </p>
+                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"
+                        onClick={()=> setActivePage('solar')}> Solar </p>
+                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"
+                        onClick={()=> setActivePage('storage')}> Energy Storage </p>
+                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"
+                        onClick={()=> setActivePage('ev')}> Electric Vehicle </p>
                 </div>
 
-                <NativeLoadView 
+                {
+                    activePage === 'base' && <NativeLoadView 
                     baseLoad={baseLoad}
                     baseEnergyMetrics={baseEnergyMetrics}
                     basePeakPowerMetrics={basePeakPowerMetrics}
-                />
+                    netLoad={netLoad}
+                    netEnergyMetrics={netEnergyMetrics}
+                    netPeakPowerMetrics={netPeakPowerMetrics} />
+                }
+                
+                {
+                    activePage === 'storage' && <ESView 
+                        batteryPower={batteryPower}
+                    />
+                }
+                
             
             </div>
         );

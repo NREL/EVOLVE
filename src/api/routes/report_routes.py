@@ -54,7 +54,11 @@ async def get_timeseries_baseload(
     data_type_to_file_name_mapping  = {
         'base_timeseries': 'base_load.csv',
         'base_energy_metrics': 'base_load_energy_metrics.csv',
-        'base_power_metrics': 'base_load_peak_power_metrics.csv'
+        'base_power_metrics': 'base_load_peak_power_metrics.csv',
+        'net_timeseries': 'net_load.csv',
+        'net_energy_metrics': 'net_load_energy_metrics.csv',
+        'net_power_metrics': 'net_load_peak_power_metrics.csv',
+        'battery_power': 'battery_power_timeseries.csv'
     }
     try:
         df = polars.read_csv(Path(DATA_PATH) / user.username/ 'reports_data' / str(id)/ data_type_to_file_name_mapping.get(

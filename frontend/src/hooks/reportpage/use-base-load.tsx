@@ -5,47 +5,26 @@ import { StateModel } from "../../interfaces/redux-state";
 import { BaseLoadTSDataInterface } from '../../interfaces/report-interfaces';
 
 const useTimeSeriesBaseLoad = (id:any): 
-    [BaseLoadTSDataInterface| null, any, any] => {
+    [BaseLoadTSDataInterface| null, any, any, any, any, any,
+    any] => {
 
     const [baseLoad, setBaseLoad] = useState<BaseLoadTSDataInterface| null>(null)
     const [baseEnergyMetrics, setBaseEnergyMetrics] = useState<any>(null)
     const [basePeakPowerMetrics, setBasePeakPowerMetrics] = useState<any>(null)
+    const [netLoad, setNetLoad] = useState<any>(null)
+    const [netEnergyMetrics, setNetEnergyMetrics] = useState<any>(null)
+    const [netPeakPowerMetrics, setNetPeakPowerMetrics] = useState<any>(null)
+    const [batteryPower, setBatteryPower] = useState<any>(null)
     
     const accessToken = useSelector(
         (state: StateModel) => state.auth.accessToken
     )
-    const handleFetchLoadTSData = (id: number) => {
+    const handleFetchLoadTSData = (url: string, setter: React.Dispatch<any> ) => {
         axios.get(
-            `/report/${id}/load/?data_type=base_timeseries`,
+            url,
             { headers: { 'Authorization': 'Bearer ' + accessToken } }
         ).then((response) => {
-            setBaseLoad(response.data)
-        }).catch((error) => {
-            if (error.response.status === 401) {
-                localStorage.removeItem('state')
-            }
-        })
-    }
-
-    const handleFetchEnergyMetricsData = (id: number) => {
-        axios.get(
-            `/report/${id}/load/?data_type=base_energy_metrics`,
-            { headers: { 'Authorization': 'Bearer ' + accessToken } }
-        ).then((response) => {
-            setBaseEnergyMetrics(response.data)
-        }).catch((error) => {
-            if (error.response.status === 401) {
-                localStorage.removeItem('state')
-            }
-        })
-    }
-
-    const handleFetchPeakPowerData = (id: number) => {
-        axios.get(
-            `/report/${id}/load/?data_type=base_power_metrics`,
-            { headers: { 'Authorization': 'Bearer ' + accessToken } }
-        ).then((response) => {
-            setBasePeakPowerMetrics(response.data)
+            setter(response.data)
         }).catch((error) => {
             if (error.response.status === 401) {
                 localStorage.removeItem('state')
@@ -54,12 +33,17 @@ const useTimeSeriesBaseLoad = (id:any):
     }
 
     useEffect(()=> {
-        handleFetchLoadTSData(id)
-        handleFetchEnergyMetricsData(id)
-        handleFetchPeakPowerData(id)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=base_timeseries`, setBaseLoad)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=base_energy_metrics`, setBaseEnergyMetrics )
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=base_power_metrics`, setBasePeakPowerMetrics)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=net_timeseries`, setNetLoad)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=net_energy_metrics`, setNetEnergyMetrics )
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=net_power_metrics`, setNetPeakPowerMetrics)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=battery_power`, setBatteryPower)
     }, [])
 
-    return [baseLoad, baseEnergyMetrics, basePeakPowerMetrics]
+    return [baseLoad, baseEnergyMetrics, basePeakPowerMetrics,
+        netLoad, netEnergyMetrics, netPeakPowerMetrics, batteryPower]
 
 }
 
