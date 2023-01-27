@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import json
 import datetime
+import shutil
 
 from fastapi import (APIRouter, HTTPException, status, Depends)
 from pydantic import BaseModel
@@ -43,54 +44,32 @@ async def get_all_reports(
         for report in reports]
 
 
-@router.get('/report/{id}/load/base') # response_model=LoadTimeSeriesDataResponse
+@router.get('/report/{id}/load') # response_model=LoadTimeSeriesDataResponse
 async def get_timeseries_baseload(
     id: int, 
-    resolution: int,
+    data_type: str,
     user: models.user_pydantic = Depends(get_current_user)
 ):
-    report_data = await models.ReportMetadata.get(
-        id=id, 
-        user=await models.Users.get(username=user.username)
-    )
-
-    report_json_path = Path(DATA_PATH) / user.username / 'reports' / f"{id}.json"
-
-    if not report_json_path.exists():
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='JSON file not found!'
-        )
-
-    with open(report_json_path, "r") as fp:
-        json_content = json.load(fp)
-
-    data_obj = await models.TimeseriesData.get(
-        id=json_content['basic']['loadProfile']
-    )
-
-    csv_file_path = Path(DATA_PATH) / user.username / 'timeseries_data' / f'{data_obj.filename}.csv'
-    if not csv_file_path.exists():
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='Data CSV file not found!'
-        )
-
-    df = polars.read_csv(csv_file_path, parse_dates=True)
-
-    df = df.groupby_dynamic("timestamp", every=f"{resolution}m").agg(polars.col("kW").mean()).filter(
-        (polars.col('timestamp') > datetime.datetime.strptime(json_content['basic']['startDate'] + ' 00:00:00', '%Y-%m-%d %H:%M:%S'))  & \
-        (polars.col('timestamp') < datetime.datetime.strptime(json_content['basic']['endDate'] + ' 00:00:00', '%Y-%m-%d %H:%M:%S'))
-    )
-
-    df_to_dict = df.to_dict(as_series=False)
-
-    return {
-        'data': [round(el, 2) for el in df_to_dict['kW']],
-        'start_date': str(df.select(polars.col('timestamp')).min()[0,0]),
-        'end_date':str(df.select(polars.col('timestamp')).max()[0,0]),
-        'resolution': resolution
+    
+    data_type_to_file_name_mapping  = {
+        'base_timeseries': 'base_load.csv',
+        'base_energy_metrics': 'base_load_energy_metrics.csv',
+        'base_power_metrics': 'base_load_peak_power_metrics.csv'
     }
+    try:
+        df = polars.read_csv(Path(DATA_PATH) / user.username/ 'reports_data' / str(id)/ data_type_to_file_name_mapping.get(
+            data_type, None
+        ))
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=f"Ran into an error reading file. >> {e}")
+
+    if len(df) > 2000:
+        df = df.limit(2000)
+ 
+    return  df.to_dict(as_series=False)
+
 
 @router.post('/scenario/{id}/report', response_model=models.report_pydantic)
 async def create_report(
@@ -152,6 +131,9 @@ async def delete_report(id: int, user: models.user_pydantic = Depends(get_curren
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
             detail="Unauthorized!")
+
+    report_path = Path(DATA_PATH) /  user.username / 'reports_data' / str(report_data.id)
+    shutil.rmtree(report_path, ignore_errors=True)
 
     await report_data.delete()
 

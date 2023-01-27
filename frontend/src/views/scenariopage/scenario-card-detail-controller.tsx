@@ -179,6 +179,21 @@ const ScenarioDetailController: React.FC<ControllerProps> = ({
 
     }
 
+    const handleReportDelete = (reportid: number) => {
+
+        data && axios.delete(`/report/${reportid}`,
+            { headers: { 'Authorization': 'Bearer ' + accessToken } }).then((response) => {
+                console.log(response.data)
+                setReload((value: number) => value + 1)
+                setIsClicked(null)
+            }).catch((error) => {
+                if (error.response.status === 401) {
+                    localStorage.removeItem('state')
+                }
+            })
+
+    }
+
     const handleScenarioView = () => {
         setIsViewClicked(true)
     }
@@ -221,7 +236,7 @@ const ScenarioDetailController: React.FC<ControllerProps> = ({
                 handleScenariolabelDelete={handleScenariolabelDelete}
             />
             <ScenarioControlsView controls={controls} />
-            <ReportListView reports={reports}/>
+            <ReportListView reports={reports} handleReportDelete={handleReportDelete}/>
         </div>
     )
 }

@@ -31,6 +31,7 @@ class GenericBattery:
     def __init__(self, battery_params: GenericBatteryParams):
 
         self.battery_params = battery_params
+        
         self.battery_power_profile = []
         self.battery_soc_profile = []
         self.battery_since_last_charged = 0
@@ -51,6 +52,7 @@ class GenericBattery:
         )
 
         actual_rate = self_discharge_energy/discharging_period
+        
         if self.battery_params.maximum_dod < actual_rate:
             actual_rate = self.battery_params.maximum_dod
 

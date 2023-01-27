@@ -6,6 +6,12 @@ interface ReportDataInterface {
     status: string;
 }
 
+interface BaseLoadTSDataInterface {
+   timestamp: string[];
+   kW: number[];
+}
+
 export {
-    ReportDataInterface
+    ReportDataInterface,
+    BaseLoadTSDataInterface
 }

@@ -1,19 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { StateModel } from "../../interfaces/redux-state";
-import Plot from 'react-plotly.js';
-
+import React from 'react';
+import { useTimeSeriesBaseLoad } from '../../hooks/reportpage/use-base-load';
+import { useScenDataFromId } from '../../hooks/reportpage/use-single-scen';
+import { useParams } from 'react-router-dom';
+import { NativeLoadView} from './native-load-view';
 
 interface ReportDashboardControllerProps {
 
-}
-
-interface BaseLoadTSDataInterface {
-    data: number[];
-    start_date: string;
-    end_date: string;
-    resolution: number;
 }
 
 const getDateTimeList = (
@@ -35,47 +27,34 @@ export const ReportDashboardController: React.FC<ReportDashboardControllerProps>
 
 }) => {
 
-        const [baseLoad, setBaseLoad] = useState<BaseLoadTSDataInterface| null>(null)
-        const accessToken = useSelector(
-            (state: StateModel) => state.auth.accessToken
-        )
-        const handleFetchLoadTSData = (id: number) => {
-            axios.get(
-                `/report/${id}/load/base?resolution=60`,
-                { headers: { 'Authorization': 'Bearer ' + accessToken } }
-            ).then((response) => {
-                setBaseLoad(response.data)
-            }).catch((error) => {
-                if (error.response.status === 401) {
-                    localStorage.removeItem('state')
-                }
-            })
-        }
-
-
-        useEffect(()=> {
-            handleFetchLoadTSData(4)
-        }, [])
-        return (<div className="w-full">
+        const {id} = useParams();
+        const [baseLoad, baseEnergyMetrics, basePeakPowerMetrics]  = useTimeSeriesBaseLoad(id)
+        const [scenJSON, handleFetchJSON] = useScenDataFromId(2)
         
-            {
-                baseLoad && baseLoad.data.length > 0 &&
-                <Plot
-                    data={[
-                    {
-                        x: getDateTimeList(baseLoad.start_date, 
-                            baseLoad.resolution,
-                            baseLoad.data.length),
-                        y: baseLoad.data,
-                        type: 'scatter',
-                        mode: 'lines+markers',
-                        marker: {color: 'red'},
-                    },
-                    ]}
-                    layout={ { title: 'Timeseries data plot'} }
-                    className="w-full"
+
+        return (
+            <div className="mx-10 my-5">
+
+                {/* {
+                    <p className="text-blue-500 font-bold pb-3"> <span> Scenario {'>>'} </span> 
+                    <span> {scenJSON?.basic?.scenarioName } {'>>'} </span>
+                    <span> Report {'>>'} </span>
+                    <span> Report 1 </span>
+                    </p>
+                } */}
+                <div className="flex border-b border-blue-500 mb-5">
+                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"> Native load </p>
+                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"> Solar </p>
+                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"> Energy Storage </p>
+                    <p className="mr-5 bg-blue-100 px-2 hover:bg-blue-300 hover:cursor-pointer"> Electric Vehicle </p>
+                </div>
+
+                <NativeLoadView 
+                    baseLoad={baseLoad}
+                    baseEnergyMetrics={baseEnergyMetrics}
+                    basePeakPowerMetrics={basePeakPowerMetrics}
                 />
-            }
             
-        </div>);
+            </div>
+        );
 }

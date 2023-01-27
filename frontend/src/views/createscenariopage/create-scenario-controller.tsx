@@ -154,7 +154,7 @@ export function CreateScenario(props: any) {
                 (d: Record<string, any>) => {
                     return {
                         ...d,
-                        'priceProfile': selectedPriceProfile.filter((irr) => irr.name === d.name)[0].data.id
+                        'priceProfile': selectedPriceProfile.filter((irr) => irr.name === d.name)[0]?.data?.id
                     }
                 }
             ) : [],

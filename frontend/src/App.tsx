@@ -51,7 +51,7 @@ function App() {
             <Route path='/data' element={<DataPage />} />
             <Route path='/labels' element={<LabelPageController />} />
             <Route path='/data/upload' element={<DataUpload navigation={navigation} />} />
-            <Route path='/scenario/:id/report' element={<ReportDashboardController />}/>
+            <Route path='/report/:id' element={<ReportDashboardController />}/>
           </Route>
           <Route path='*' element={<ErrorPage />} />
         </Routes>

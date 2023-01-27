@@ -2,7 +2,7 @@
 
 # standard imports
 import datetime
-from typing import List
+from typing import List, Dict
 
 # third-party imports
 from pydantic import BaseModel, confloat, conint, validator
@@ -10,31 +10,25 @@ from pydantic import BaseModel, confloat, conint, validator
 # internal imports
 from battery import GenericBattery
 
-class TimeBasedCDStrategyInputModel(BaseModel):
-    charging_hours: List[conint(le=23, ge=0)]
-    discharging_hours: List[conint(le=23, ge=0)]
-    c_rate: confloat(gt=0, lt=10)
+class PeakShavingCDStrategyInputModel(BaseModel):
+    charging_threshold: confloat(gt=0, lt=0.5)
+    discharging_threshold: confloat(ge=0.5, le=1.0)
 
-    @validator("discharging_hours")
-    def charging_discharging_hours_must_be_different(cls, v, values, **kwargs):
-        if set(values["charging_hours"]) & set(v):
-            raise ValueError(
-                "Charging hours and discharging hours can not have \
-                common value"
-            )
-
-        return v
+class LoadProfileModel(BaseModel):
+    timestamp: datetime.datetime 
+    kw: float 
 
 
-class TimeBasedCDStrategy:
-    """Implements time based charging discharging strategy."""
+class PeakShavingBasedCDStrategy:
+    """Implements peak shaving based charging discharging strategy."""
 
-    def __init__(self, config: TimeBasedCDStrategyInputModel):
+    def __init__(self, config: PeakShavingCDStrategyInputModel):
         self.config = config
 
 
     def handle_battery_charging(
-        self, battery: GenericBattery, charging_period: float
+        self, battery: GenericBattery, charging_period: float,
+        peak_load: float, actual_load: float
     ):
 
         # available energy
@@ -46,13 +40,14 @@ class TimeBasedCDStrategy:
             battery.battery_params.energy_capacity_kwhr - available_energy
         )
 
-        # Let's convert c rate into power
-        c_rate_to_kw = (
-            self.config.c_rate * battery.battery_params.energy_capacity_kwhr
-        )
+        charging_rate = peak_load*self.config.charging_threshold - actual_load
 
-        if battery.battery_params.maximum_dod < c_rate_to_kw:
-            c_rate_to_kw = battery.battery_params.maximum_dod
+        if charging_rate <=0:
+            raise ValueError(f"Charging rate can not be negative or zero.")
+
+
+        if battery.battery_params.maximum_dod < charging_rate:
+            charging_rate = battery.battery_params.maximum_dod
 
         charging_rate_expected = (
             energy_required_for_full_charge / charging_period
@@ -60,15 +55,16 @@ class TimeBasedCDStrategy:
 
         actual_rate = (
             charging_rate_expected
-            if c_rate_to_kw > charging_rate_expected
-            else c_rate_to_kw
+            if charging_rate > charging_rate_expected
+            else charging_rate
         )
 
         battery.update_soc_power(-actual_rate, charging_period)
         
 
     def handle_battery_discharging(
-        self, battery: GenericBattery, discharging_period: float
+        self, battery: GenericBattery, discharging_period: float,
+        peak_load: float, actual_load: float  
     ):
 
         available_energy = (
@@ -76,39 +72,42 @@ class TimeBasedCDStrategy:
             * battery.battery_params.energy_capacity_kwhr
         )
         self_discharge_energy = battery.compute_self_discharge_energy(
-            discharging_period
+           discharging_period
         )
 
-        c_rate_to_kw = (
-            self.config.c_rate * battery.battery_params.energy_capacity_kwhr
-        )
+        discharging_rate = actual_load - peak_load*self.config.discharging_threshold
 
-        if battery.battery_params.maximum_dod < c_rate_to_kw:
-            c_rate_to_kw = battery.battery_params.maximum_dod
+        if discharging_rate <=0:
+            raise ValueError(f"Discharging rate can not be negative or zero.")
+
+        if battery.battery_params.maximum_dod < discharging_rate:
+            discharging_rate = battery.battery_params.maximum_dod
 
         discharging_rate_expected = (available_energy - self_discharge_energy) \
             / discharging_period
             
         actual_rate = (
             discharging_rate_expected
-            if c_rate_to_kw > discharging_rate_expected
-            else c_rate_to_kw
+            if discharging_rate > discharging_rate_expected
+            else discharging_rate
         )
         battery.update_soc_power(actual_rate, discharging_period)
 
 
     def simulate(
-        self, timestamps: List[datetime.datetime], battery: GenericBattery
+        self, load_profile: List[LoadProfileModel], battery: GenericBattery
     ):
 
         # Sorting timestamps into ascending order
-        timestamps.sort()
+        load_profile.sort(key=lambda x: x['timestamp'])
+        max_load = max(load_profile, key=lambda x: x['kw'])['kw']
 
-        # Loop over all the timestamps
-        for id, timestamp in enumerate(timestamps[:-1]):
+        # Loop over all the timestamps except last timestamp
+        for id, load in enumerate(load_profile[:-1]):
 
             # Compute time in hr for next CD cycle
-            delta_time_in_hr = (timestamps[id + 1] - timestamp).seconds / 3600
+            delta_time_in_hr = (load_profile[id + 1].get('timestamp') 
+                - load.get('timestamp')).seconds / 3600
 
             if delta_time_in_hr == 0:
 
@@ -121,19 +120,21 @@ class TimeBasedCDStrategy:
                 )
                 continue
 
-            if timestamp.hour in self.config.charging_hours:
+            if load.get('kw') < self.config.charging_threshold * max_load:
                 # Reset battery self discharge hour
                 battery.battery_since_last_charged = 0
-                self.handle_battery_charging(battery, delta_time_in_hr)
+                self.handle_battery_charging(battery, delta_time_in_hr, 
+                    max_load, load.get('kw'))
 
-            elif timestamp.hour in self.config.discharging_hours:
-                self.handle_battery_discharging(battery, delta_time_in_hr)
+            elif load.get('kw') >  self.config.discharging_threshold * max_load:
+                self.handle_battery_discharging(battery, delta_time_in_hr,
+                max_load, load.get('kw'))
                 battery.battery_since_last_charged += delta_time_in_hr
             else:
                 battery.handle_battery_idling(delta_time_in_hr)
                 battery.battery_since_last_charged += delta_time_in_hr
 
-        if timestamps:
+        if load_profile:
             # Add current soc as final SOC for the battery
             battery.battery_soc_profile.append(battery.battery_current_soc)
             battery.battery_power_profile.append(
