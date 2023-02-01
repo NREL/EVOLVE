@@ -5,20 +5,83 @@ services:
     image: rabbitmq:3-management
     hostname: dev-rabbitmq
     container_name: some-rabbitmq
+    networks:
+      - evolve_network
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: pass
     ports:
       - 5672:5672
       - 15672:15672
-    volumes:
-      - C:\Users\KDUWADI\Desktop\NREL_Projects\TUNISIA\data\evolve_docker_data\rabbitmq_data:/var/lib/rabbitmq
-  postgres:
+  postgres_db:
     image: postgres:11
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: evolve
     ports:
       - 5433:5432
+    networks:
+      - evolve_network
     volumes:
-      - C:\Users\KDUWADI\Desktop\NREL_Projects\TUNISIA\data\evolve_docker_data\postgres_data1:/var/lib/postgresql/data
+      - db_volume:/var/lib/postgresql/data
+      # - C:\Users\KDUWADI\Desktop\NREL_Projects\TUNISIA\data\evolve_docker_data\postgres_data1:/var/lib/postgresql/data
+
+  evolve_ui:
+    image: evolve_ui:2.0
+    build: ./frontend
+    ports:
+      - 5001:80
+    networks:
+      - evolve_network
+    depends_on:
+      - evolve_backend
+
+  evolve_backend:
+    image: evolve_backend:2.0 
+    build: ./src/api
+    ports:
+      - 8000:8000
+    volumes:
+      - evolve_volume:/data
+    networks:
+      - evolve_network
+    environment:
+      - DATA_PATH=/data
+      - JWT_KEY=igQzv915EkOP7y#0auWBb3H&nE
+      - POSTGRES_DB_URL=postgres://postgres:password@postgres_db:5432/evolve
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=user 
+      - RABBITMQ_PASSWORD=pass
+      - RABBITMQ_PORT=5672
+    depends_on:
+      - postgres_db
+      - rabbitmq
+  
+  evolve_agent:
+    image: evolve_agent:2.0 
+    build: ./src/evolve
+    volumes:
+      - evolve_volume:/data
+    networks:
+      - evolve_network
+    environment:
+      - DATA_PATH=/data
+      - JWT_KEY=igQzv915EkOP7y#0auWBb3H&nE
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_HOST=postgres_db
+      - DB_PORT=5433
+      - DB_NAME=evolve
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=user 
+      - RABBITMQ_PASSWORD=pass
+      - RABBITMQ_PORT=5672
+    depends_on:
+      - postgres_db
+      - rabbitmq
+networks:
+  evolve_network:
+
+volumes:
+  evolve_volume:
+  db_volume:

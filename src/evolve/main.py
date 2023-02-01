@@ -3,10 +3,17 @@ push the report generation messages. """
 
 import pika
 import json
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+print('---', os.getenv('RABBITMQ_HOST'))
 
 # establish a connection with RabbitMQ server
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost',
-credentials=pika.PlainCredentials('user', 'pass')
+connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv('RABBITMQ_HOST'),
+credentials=pika.PlainCredentials(os.getenv('RABBITMQ_USER'), os.getenv('RABBITMQ_PASSWORD'))
 ))
 channel = connection.channel()
 

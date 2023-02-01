@@ -7,7 +7,8 @@ bcrypt
 pyjwt
 python-multipart
 python-dotenv
-pytests
+pytest
+pydantic
 mkdocs
 pandas
 aerich

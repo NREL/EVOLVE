@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { StateModel } from "../../interfaces/redux-state";
 
-const useScenDataFromId = (scen_id: number): [
+const useScenDataFromId = (scen_id: any): [
     any, (value: number) => void
 ] => {
 
@@ -14,7 +14,7 @@ const useScenDataFromId = (scen_id: number): [
 
     const handleFetchJSON = (id: number) => {
         axios.get(
-            `/scenario/${id}`,
+            `/report/scenjson/${id}`,
             { headers: { 'Authorization': 'Bearer ' + accessToken } }
         ).then((response) => {
             setScenJSON(response.data)
@@ -27,7 +27,7 @@ const useScenDataFromId = (scen_id: number): [
     }
 
     useEffect(() => {
-       handleFetchJSON(scen_id)
+        scen_id && handleFetchJSON(scen_id)
     }, [])
 
     return [scenJSON, handleFetchJSON];

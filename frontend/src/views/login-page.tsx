@@ -74,7 +74,10 @@ function Login(props: any) {
                 > Login </button>
             </div>
 
-            <a className="text-orange-400 text-sm border-b"> Sign up as new user </a>
+            <a className="text-blue-500 text-sm border-b
+                hover:cursor-pointer hover:text-orange-400"
+                onClick={()=> navigation('/signup')}
+                > Sign up as new user </a>
                 
         </form>
         

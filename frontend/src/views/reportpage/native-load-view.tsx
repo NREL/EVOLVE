@@ -70,7 +70,7 @@ export const NativeLoadView: React.FC<NativeLoadViewProps> = ({
                 <div>
                         <div className="grid grid-cols-2">
                         {
-                                <Plot
+                                energyMetricsData.length >0 ? <Plot
                                         data={energyMetricsData}
                                         layout={{
                                                 barmode: 'group',
@@ -79,10 +79,15 @@ export const NativeLoadView: React.FC<NativeLoadViewProps> = ({
                                                 legend: {"orientation": "h"}
                                         }}
                                         className="w-full h-[250px] mb-5 mr-5"
-                                />
+                                />: <div className="w-full h-[250px] mb-5 mr-5
+                                        bg-gray-200 animate-pulse flex justify-center items-center">
+                                                <div className="w-10 h-20 bg-gray-300 mr-3"></div>
+                                                <div className="w-10 h-40 bg-gray-300 mr-3"></div>
+                                                <div className="w-10 h-10 bg-gray-300"></div>
+                                </div>
                         }
                         {
-                                <Plot
+                                peakPowerMetricsData.length > 0 ? <Plot
                                         data={peakPowerMetricsData}
                                         layout={{
                                                 barmode: 'group',
@@ -91,12 +96,17 @@ export const NativeLoadView: React.FC<NativeLoadViewProps> = ({
                                                 legend: {"orientation": "h"}
                                         }}
                                         className="w-full h-[250px] mb-5"
-                                />
+                                /> : <div className="w-full h-[250px] mb-5
+                                bg-gray-200 animate-pulse flex justify-center items-center">
+                                        <div className="w-10 h-20 bg-gray-300 mr-3"></div>
+                                        <div className="w-10 h-40 bg-gray-300 mr-3"></div>
+                                        <div className="w-10 h-10 bg-gray-300"></div>
+                                </div>
                         }
                         </div>
                         {
 
-                                <Plot
+                                loadTimeSeriesData.length >0 ? <Plot
                                         data={loadTimeSeriesData}
                                         className="w-[calc(100vw-6rem)] h-[350px]"
                                         layout={{
@@ -104,7 +114,12 @@ export const NativeLoadView: React.FC<NativeLoadViewProps> = ({
                                                 yaxis: {title: "Base kW Profile"},
                                                 legend: {"orientation": "h"}
                                         }}
-                                />
+                                />: <div className="w-[calc(100vw-6rem)] h-[350px]
+                                bg-gray-200 animate-pulse flex justify-center items-center">
+                                        <div className="w-10 h-20 bg-gray-300 mr-3"></div>
+                                        <div className="w-10 h-40 bg-gray-300 mr-3"></div>
+                                        <div className="w-10 h-10 bg-gray-300"></div>
+                                </div>
                         }
                 </div>
         );

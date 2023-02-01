@@ -114,7 +114,7 @@ async def get_users_from_search_string(
 
 register_tortoise(
     app,
-    db_url= 'postgres://postgres:password@localhost:5433/evolve', #'sqlite://db.sqlite3',
+    db_url= os.getenv('POSTGRES_DB_URL'), #'postgres://postgres:password@localhost:5433/evolve', #'sqlite://db.sqlite3',
     modules={'models': ['models']},
     generate_schemas=True,
     add_exception_handlers=True

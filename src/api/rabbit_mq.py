@@ -3,13 +3,14 @@ push the report generation messages. """
 
 import pika
 import json
+import os
 
 
 def publish_message(message: str):
 
     # establish a connection with RabbitMQ server
-    with pika.BlockingConnection(pika.ConnectionParameters('localhost',
-        credentials=pika.PlainCredentials('user', 'pass')
+    with pika.BlockingConnection(pika.ConnectionParameters(os.getenv('RABBITMQ_HOST'),
+        credentials=pika.PlainCredentials(os.getenv('RABBITMQ_USER'), os.getenv('RABBITMQ_PASSWORD'))
     )) as connection:
 
         channel = connection.channel()

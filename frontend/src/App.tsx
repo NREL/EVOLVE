@@ -4,6 +4,7 @@ import { Nav } from "./components/navigation-view";
 import ScenarioPageController from "./views/scenariopage/scenario-page-controller";
 import { DataUpload } from "./views/data-upload-page";
 import { Login } from "./views/login-page";
+import {SignUpPage} from "./views/sign-up-page";
 import { DataPage } from "./views/datapage/data-page-controller";
 import React, { Component } from 'react';
 import axios from 'axios';
@@ -44,6 +45,7 @@ function App() {
       <div>
         <Routes>
           <Route path='/login' element={<Login navigation={navigation} location={location} dispatch={dispatch} />} />
+          <Route path='/signup' element={<SignUpPage />} />
           <Route element={<ProtectedRoutes />}>
             <Route path='/' element={<HomePage navigation={navigation} />} />
             <Route path='/scenarios' element={<ScenarioPageController />} />

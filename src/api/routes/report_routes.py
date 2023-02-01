@@ -5,6 +5,7 @@ from pathlib import Path
 import json
 import datetime
 import shutil
+import pydantic
 
 from fastapi import (APIRouter, HTTPException, status, Depends)
 from pydantic import BaseModel
@@ -14,6 +15,7 @@ import polars
 from dependencies.dependency import get_current_user
 import models
 import rabbit_mq
+from scenario_form_model import ScenarioData
 
 
 DATA_PATH = os.getenv('DATA_PATH')
@@ -28,6 +30,23 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+@router.get('/report/scenjson/{id}', response_model=ScenarioData)
+async def get_report_scenario_metadata(
+    id: int,
+    user: models.user_pydantic = Depends(get_current_user)
+):
+    """ Get JSON scenario metadata by report ID."""
+    # report_data = await models.ReportMetadata.get(
+    #         id=id,
+    #         user=await models.Users.get(username=user.username)
+    #     )
+
+    file_path = Path(DATA_PATH) / user.username / 'reports' / f"{id}.json"
+    if not file_path.exists():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+        detail='Item not found!')
+
+    return pydantic.parse_file_as(ScenarioData, file_path)
 
 @router.get('/scenario/{id}/report', response_model=List[models.report_pydantic])
 async def get_all_reports(

@@ -63,9 +63,9 @@ export function Nav() {
         <div className="px-20 h-12 bg-blue-800 text-white flex justify-between items-center">
             <h1 className="w-1/4 text-xl font-bold"> EVOLVE </h1>
             <div className="flex w-1/4 justify-between">
-                <Link to="/">Home</Link>
-                <a target="_blank" href="https://nrel.github.io/EVOLVE/">Docs</a>
-                <a target="_blank" href="https://github.com/NREL/EVOLVE">Repo</a>
+                <Link to="/" className="hover:cursor-pointer hover:font-bold hover:border-b">Home</Link>
+                <a className="hover:cursor-pointer hover:font-bold hover:border-b" target="_blank" href="https://nrel.github.io/EVOLVE/">Docs</a>
+                <a className="hover:cursor-pointer hover:font-bold hover:border-b" target="_blank" href="https://github.com/NREL/EVOLVE">Repo</a>
             </div>
             <div className="w-1/4 flex justify-end hover:cursor-pointer relative">
                 {
