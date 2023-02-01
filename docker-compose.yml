@@ -27,8 +27,8 @@ services:
       # - C:\Users\KDUWADI\Desktop\NREL_Projects\TUNISIA\data\evolve_docker_data\postgres_data1:/var/lib/postgresql/data
 
   evolve_ui:
-    image: evolve_ui:2.0
-    build: ./frontend
+    image: kapilduwadi/evolve_ui2:latest
+    # build: ./frontend
     ports:
       - 5001:80
     networks:
@@ -37,8 +37,8 @@ services:
       - evolve_backend
 
   evolve_backend:
-    image: evolve_backend:2.0 
-    build: ./src/api
+    image: kapilduwadi/evolve_backend2:latest
+    # build: ./src/api
     ports:
       - 8000:8000
     volumes:
@@ -58,8 +58,8 @@ services:
       - rabbitmq
   
   evolve_agent:
-    image: evolve_agent:2.0 
-    build: ./src/evolve
+    image: kapilduwadi/evolve_agent2:latest 
+    # build: ./src/evolve
     volumes:
       - evolve_volume:/data
     networks:
