@@ -8,8 +8,11 @@ WORKDIR /api
 
 COPY . .  
 
+
 # Create environment
 RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip install -e.
 
+WORKDIR /api/src/processor
 
-CMD ["python3", "main.py"]
+ENTRYPOINT ["python", "rabbit_mq_consumer.py"]

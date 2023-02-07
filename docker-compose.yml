@@ -4,7 +4,7 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     hostname: dev-rabbitmq
-    container_name: some-rabbitmq
+    # container_name: some_rabbitmq
     networks:
       - evolve_network
     environment:
@@ -13,6 +13,8 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    volumes:
+      - rabbitmq_volume:/var/log/rabbitmq
   postgres_db:
     image: postgres:11
     environment:
@@ -70,18 +72,20 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=password
       - DB_HOST=postgres_db
-      - DB_PORT=5433
+      - DB_PORT=5432
       - DB_NAME=evolve
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=user 
       - RABBITMQ_PASSWORD=pass
       - RABBITMQ_PORT=5672
     depends_on:
-      - postgres_db
       - rabbitmq
+      - postgres_db
+
 networks:
   evolve_network:
 
 volumes:
   evolve_volume:
   db_volume:
+  rabbitmq_volume:

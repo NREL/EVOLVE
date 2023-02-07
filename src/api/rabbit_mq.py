@@ -9,7 +9,7 @@ import os
 def publish_message(message: str):
 
     # establish a connection with RabbitMQ server
-    with pika.BlockingConnection(pika.ConnectionParameters(os.getenv('RABBITMQ_HOST'),
+    with pika.BlockingConnection(pika.ConnectionParameters(os.getenv('RABBITMQ_HOST'), os.getenv('RABBITMQ_PORT'),
         credentials=pika.PlainCredentials(os.getenv('RABBITMQ_USER'), os.getenv('RABBITMQ_PASSWORD'))
     )) as connection:
 
@@ -24,6 +24,7 @@ def publish_message(message: str):
         channel.queue_declare(queue='evolve_notify')
 
         # publish a message
+        print(f'message published >> {message}' )
         channel.basic_publish(exchange='evolve', 
             routing_key='evolve.notify', 
             body=message

@@ -22,6 +22,7 @@ from processor.base_load import get_load_df, compute_base_load_metrics
 
 
 def update_report_status(id:int, status:str):
+    print(DB_CONFIG)
     with PostGresDB(DB_CONFIG) as cursor:
         cursor.execute(
             f"""update reportmetadata 
