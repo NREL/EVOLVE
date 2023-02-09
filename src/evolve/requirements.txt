@@ -4,3 +4,7 @@ numpy
 polars
 pydantic
 python-dotenv
+cerberus
+timezonefinder
+pvlib
+matplotlib
