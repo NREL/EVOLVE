@@ -8,3 +8,4 @@ cerberus
 timezonefinder
 pvlib
 matplotlib
+pyarrow

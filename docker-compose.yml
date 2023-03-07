@@ -4,7 +4,6 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     hostname: dev-rabbitmq
-    # container_name: some_rabbitmq
     networks:
       - evolve_network
     environment:
@@ -26,11 +25,9 @@ services:
       - evolve_network
     volumes:
       - db_volume:/var/lib/postgresql/data
-      # - C:\Users\KDUWADI\Desktop\NREL_Projects\TUNISIA\data\evolve_docker_data\postgres_data1:/var/lib/postgresql/data
 
   evolve_ui:
     image: kapilduwadi/evolve_ui2:latest
-    # build: ./frontend
     ports:
       - 5001:80
     networks:
@@ -40,7 +37,6 @@ services:
 
   evolve_backend:
     image: kapilduwadi/evolve_backend2:latest
-    # build: ./src/api
     ports:
       - 8000:8000
     volumes:
@@ -61,7 +57,6 @@ services:
   
   evolve_agent:
     image: kapilduwadi/evolve_agent2:latest 
-    # build: ./src/evolve
     volumes:
       - evolve_volume:/data
     networks:

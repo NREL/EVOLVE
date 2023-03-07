@@ -62,7 +62,7 @@ def callback(ch, method, properties, body):
         input_config_pydantic= pydantic.parse_obj_as(InputConfigModel, message)
         process_scenario(input_config_pydantic)
         logger.debug(f'Completed processing...')
-        # ch.basic_ack(delivery_tag=method.delivery_tag)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:
         logger.debug(f"Errro Awk: {e}")
 

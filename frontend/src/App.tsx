@@ -4,7 +4,7 @@ import { Nav } from "./components/navigation-view";
 import ScenarioPageController from "./views/scenariopage/scenario-page-controller";
 import { DataUpload } from "./views/data-upload-page";
 import { Login } from "./views/login-page";
-import {SignUpPage} from "./views/sign-up-page";
+import { SignUpPage } from "./views/sign-up-page";
 import { DataPage } from "./views/datapage/data-page-controller";
 import React, { Component } from 'react';
 import axios from 'axios';
@@ -15,7 +15,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { StateModel } from "./interfaces/redux-state";
 import { CreateScenario } from "./views/createscenariopage/create-scenario-controller";
 import { LabelPageController } from "./views/labelpage/label-page-controller";
-import {ReportDashboardController} from "./views/reportpage/report-dashboard-controller";
+import { ReportDashboardController } from "./views/reportpage/report-dashboard-controller";
 
 axios.defaults.baseURL = Config.baseURL
 
@@ -53,7 +53,7 @@ function App() {
             <Route path='/data' element={<DataPage />} />
             <Route path='/labels' element={<LabelPageController />} />
             <Route path='/data/upload' element={<DataUpload navigation={navigation} />} />
-            <Route path='/report/:id' element={<ReportDashboardController />}/>
+            <Route path='/report/:id' element={<ReportDashboardController />} />
           </Route>
           <Route path='*' element={<ErrorPage />} />
         </Routes>
