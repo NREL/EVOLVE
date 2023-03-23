@@ -21,9 +21,9 @@ const useTimeSeriesData = (reload: number) => {
             {headers: {'Authorization': 'Bearer ' + accessToken}}
         ).then((response)=> {
 
-            let timeseriesData = response.data
-            setTimeseriesDataBackup(timeseriesData)
-            setTimeseriesData(timeseriesData.sort((
+            let tsData = response.data
+            setTimeseriesDataBackup(tsData)
+            setTimeseriesData(tsData.sort((
                 a: TimeSeriesDataInfoModel,
                 b: TimeSeriesDataInfoModel
             )=> {
@@ -32,7 +32,9 @@ const useTimeSeriesData = (reload: number) => {
             setIsLoading(false)
 
         }).catch((error)=> {
-            
+
+            setTimeseriesDataBackup([])
+            setTimeseriesData([])
             if (axios.isCancel(error)){
                 console.log("cancelled!")
             }

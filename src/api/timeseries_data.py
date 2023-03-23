@@ -44,18 +44,17 @@ async def handle_timeseries_data_upload(
 ):
     """Function to manage upload of files."""
 
-    # Checking to see if I can read the file
-    # Otherwise throw exceptipn
-
     try:
-        # io.BytesIO(input_csv_bytes)
-        # df  =pd.read_csv(file.file, parse_dates=[metadata.timestamp])
         df = polars.read_csv(file.file, parse_dates=True)
+        if df[metadata.timestamp].dtype == polars.datatypes.Utf8:
+           df_ = df.to_pandas()
+           df_[metadata.timestamp]= pd.to_datetime(df_[metadata.timestamp])
+           df = polars.from_pandas(df_)
 
     except Exception as e:
         await post_notification(
             username,
-            f"Wrong column name and/or unrecognized input! : `{file.filename}`",
+            f"Wrong column name and/or unrecognized input! >>  {e} : `{file.filename}`",
         )
 
         raise HTTPException(
@@ -127,7 +126,7 @@ async def handle_timeseries_data_upload(
         data_uuid = str(uuid.uuid4())
         tagging_dict = {file.filename.split(".")[0]: data_uuid}
         df.rename(
-            {column: metadata.category, metadata.timestamp: "timestamp"}
+            {metadata.timestamp: "timestamp"}
         ).write_csv(timeseries_data_path / (data_uuid + ".csv"))
 
     for name, uuid_ in tagging_dict.items():

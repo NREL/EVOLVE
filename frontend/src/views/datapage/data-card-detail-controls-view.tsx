@@ -21,11 +21,10 @@ export function DataCardDetailControlView(props: {
 
         <div>
             <p className="text-blue-500 border-b-2 w-max my-3 font-bold"> Data controls </p>
-            <p className="text-sm text-gray-500 pb-2 "> Hover to see what each of these controls are for. </p>
+            <p className="text-sm text-gray-500 pb-2 "> Hover to see
+                what each of these controls are for. </p>
                 
-            
             <div className="grid grid-cols-3 my-5 gap-y-5 place-items-center">
-                
                 
                 {
                     user === data.owner && <div className="relative bg-gray-100 w-12 h-12 rounded-full flex justify-center items-center hover:border-2 

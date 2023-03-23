@@ -15,8 +15,7 @@ class SelfConsumptionCDStrategyModel(BaseModel):
 
 class SelfConsumptionDataModel(BaseModel):
     timestamp: datetime.datetime 
-    load_kw: float 
-    solar_kw: float
+    kW: float 
 
 
 class SelfConsumptionCDStrategy:
@@ -84,12 +83,11 @@ class SelfConsumptionCDStrategy:
 
 
     def simulate(
-        self, net_load_profile: List[SelfConsumptionDataModel], battery: GenericBattery
+        self, load_profile: List[SelfConsumptionDataModel], battery: GenericBattery
     ):
 
         # Sorting timestamps into ascending order
         load_profile.sort(key=lambda x: x['timestamp'])
-        max_load = max(load_profile, key=lambda x: x['kw'])['kw']
 
         # Loop over all the timestamps except last timestamp
         for id, load in enumerate(load_profile[:-1]):
@@ -109,15 +107,15 @@ class SelfConsumptionCDStrategy:
                 )
                 continue
 
-            if load.get('kw') < self.config.charging_threshold * max_load:
+            if load.get('kW') < 0:
                 # Reset battery self discharge hour
                 battery.battery_since_last_charged = 0
                 self.handle_battery_charging(battery, delta_time_in_hr, 
-                    max_load, load.get('kw'))
+                    abs(load.get('kW')))
 
-            elif load.get('kw') >  self.config.discharging_threshold * max_load:
+            elif load.get('kW') >  0:
                 self.handle_battery_discharging(battery, delta_time_in_hr,
-                max_load, load.get('kw'))
+                    load.get('kW'))
                 battery.battery_since_last_charged += delta_time_in_hr
             else:
                 battery.handle_battery_idling(delta_time_in_hr)

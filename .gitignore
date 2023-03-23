@@ -7,9 +7,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-src/evolve/.env
-src/api/.env
-.env
+*.env
 # C extensions
 *.so
 

@@ -49,7 +49,7 @@ export const ReportDashboardController: React.FC<ReportDashboardControllerProps>
     }
 
     const [scenJSON, handleFetchJSON] = useScenDataFromId(id)
-    console.log(scenJSON)
+
     const [activePage, setActivePage] = useState('base')
 
 
@@ -128,10 +128,13 @@ export const ReportDashboardController: React.FC<ReportDashboardControllerProps>
             }
 
             {
+                
                 activePage === 'solar' && scenJSON?.solar?.length > 0 &&
-                <ESView
+                <div>
+                    <ESView
                     batteryPower={solarPower}
-                />
+                    />
+                </div>
             }
 
             {

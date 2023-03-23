@@ -6,6 +6,7 @@ import os
 
 # Third-party imports
 import polars
+import numpy as np
 
 
 # Internal imports
@@ -59,6 +60,7 @@ def process_scenario(
             input_config.data.basic.dataFillingStrategy,
         )
         load_df = load_df.sort(by="timestamp")
+        
         compute_base_load_metrics(
             load_df,
             input_config.data.basic.resolution,
@@ -66,10 +68,9 @@ def process_scenario(
             prefix="base_load",
         )
 
-        total_solar_power = None
-        total_battery_power = None
-
+        net_load_ = False
         if input_config.data.solar:
+            
             solar_df = process_solars(
                 input_config.data.solar, base_path, input_config.data.basic
             )
@@ -79,6 +80,10 @@ def process_scenario(
                     axis=1
                 )
             )
+
+            load_df = load_df.with_columns(
+                [polars.col('kW') - np.array(total_solar_power)])
+            net_load_ = True
 
         if input_config.data.energy_storage:
 
@@ -94,28 +99,15 @@ def process_scenario(
                     axis=1
                 )
             )
+            total_battery_power = [-el for el in total_battery_power]
+            load_df = load_df.with_columns(
+                [polars.col('kW') + np.array(total_battery_power)])
+            net_load_ = True
 
-        net_power = []
-        for power in [
-            load_df["kW"].to_list(),
-            total_solar_power,
-            total_battery_power,
-        ]:
-            if power and not net_power:
-                net_power = power
-            elif net_power and power:
-                net_power = [el if el else 0 for el in net_power]
-                power = [el if el else 0 for el in power]
-                net_power = [a + b for a, b in zip(net_power, power)]
 
-        if net_power:
+        if net_load_ :
             compute_base_load_metrics(
-                polars.from_dict(
-                    {
-                        "timestamp": load_df["timestamp"].to_list(),
-                        "kW": net_power,
-                    }
-                ),
+                load_df,
                 input_config.data.basic.resolution,
                 base_path,
                 prefix="net_load",
@@ -139,14 +131,17 @@ if __name__ == "__main__":
     import pydantic
 
     with open(
-        r"C:\Users\KDUWADI\Desktop\NREL_Projects\TUNISIA\data\evolve_data_post\jake\reports\16.json",
+        r"C:\Users\KDUWADI\Desktop\NREL_Projects\TUNISIA\data\evolve_data_post\kduwadi\reports\3.json",
         "r",
     ) as fp:
         json_content = json.load(fp)
 
-    input_config = {"id": 16, "username": "jake", "data": json_content}
+    input_config = {"id": 3, "username": "kduwadi", "data": json_content}
 
+    print(input_config)
     input_config_pydantic = pydantic.parse_obj_as(
         InputConfigModel, input_config
     )
+
+    print(input_config_pydantic)
     process_scenario(input_config_pydantic)

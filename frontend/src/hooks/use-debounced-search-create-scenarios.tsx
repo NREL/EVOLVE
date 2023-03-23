@@ -19,12 +19,12 @@ const useDebouncedSearch = (
         } else {
             setSearchProfiles([])
         }
-        
+       
     }, 100)
     
     useEffect(()=> {
             debouncedSearch(formVariable)
-        }, [formVariable])
+    }, [formVariable])
 }
 
 export {useDebouncedSearch}

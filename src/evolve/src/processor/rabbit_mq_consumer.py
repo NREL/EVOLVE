@@ -64,6 +64,7 @@ def callback(ch, method, properties, body):
         logger.debug(f'Completed processing...')
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:
+        ch.basic_ack(delivery_tag=method.delivery_tag)
         logger.debug(f"Errro Awk: {e}")
 
 channel.basic_consume(queue='evolve_notify',

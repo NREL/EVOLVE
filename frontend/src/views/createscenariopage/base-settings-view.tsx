@@ -8,7 +8,8 @@ import { useDebouncedSearch } from '../../hooks/use-debounced-search-create-scen
 export function BaseSettingsView(props: any) {
     const { formData, handleChange, errors, allTSdata,
         selectedProfile, setSelectedProfile, dateRange, fillData, updateFlag } = props;
-    const [searchProfiles, setSearchProfiles] = useState<Record<string, any>>([])
+    
+    const [searchProfiles, setSearchProfiles] = useState<Record<string, any>[]>([])
     const [isClicked, setIsClicked] = useState(updateFlag)
 
     const loadProfileExist = allTSdata.filter((d: any) => d.category === 'kW')
@@ -56,7 +57,7 @@ export function BaseSettingsView(props: any) {
                                     items-center flex justify-center hover:bg-gray-400 hover:cursor-pointer"
                                     onClick={() => {
                                         setIsClicked(false)
-                                        setSelectedProfile({})
+                                        setSelectedProfile(null)
                                     }}
                                 > X </p>
                             </div>

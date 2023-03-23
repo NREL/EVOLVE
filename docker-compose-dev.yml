@@ -11,8 +11,6 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-    volumes:
-      - C:\Users\KDUWADI\Desktop\NREL_Projects\TUNISIA\data\evolve_docker_data\rabbitmq_data:/var/lib/rabbitmq
   postgres:
     image: postgres:11
     environment:
@@ -21,4 +19,7 @@ services:
     ports:
       - 5433:5432
     volumes:
-      - C:\Users\KDUWADI\Desktop\NREL_Projects\TUNISIA\data\evolve_docker_data\postgres_data1:/var/lib/postgresql/data
+      - db_volume:/var/lib/postgresql/data
+
+volumes:
+  db_volume:

@@ -11,8 +11,8 @@ from pydantic import BaseModel, confloat, conint, validator
 from battery import GenericBattery
 
 class PeakShavingCDStrategyInputModel(BaseModel):
-    charging_threshold: confloat(gt=0, lt=0.5)
-    discharging_threshold: confloat(ge=0.5, le=1.0)
+    charging_threshold: confloat(gt=0)
+    discharging_threshold: confloat(ge=0)
 
 class LoadProfileModel(BaseModel):
     timestamp: datetime.datetime 
@@ -100,7 +100,7 @@ class PeakShavingBasedCDStrategy:
 
         # Sorting timestamps into ascending order
         load_profile.sort(key=lambda x: x['timestamp'])
-        max_load = max(load_profile, key=lambda x: x['kw'])['kw']
+        max_load = max(load_profile, key=lambda x: x['kW'])['kW']
 
         # Loop over all the timestamps except last timestamp
         for id, load in enumerate(load_profile[:-1]):
@@ -120,15 +120,15 @@ class PeakShavingBasedCDStrategy:
                 )
                 continue
 
-            if load.get('kw') < self.config.charging_threshold * max_load:
+            if load.get('kW') < self.config.charging_threshold * max_load:
                 # Reset battery self discharge hour
                 battery.battery_since_last_charged = 0
                 self.handle_battery_charging(battery, delta_time_in_hr, 
-                    max_load, load.get('kw'))
+                    max_load, load.get('kW'))
 
-            elif load.get('kw') >  self.config.discharging_threshold * max_load:
+            elif load.get('kW') >  self.config.discharging_threshold * max_load:
                 self.handle_battery_discharging(battery, delta_time_in_hr,
-                max_load, load.get('kw'))
+                max_load, load.get('kW'))
                 battery.battery_since_last_charged += delta_time_in_hr
             else:
                 battery.handle_battery_idling(delta_time_in_hr)

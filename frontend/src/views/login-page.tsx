@@ -48,38 +48,40 @@ function Login(props: any) {
     }
 
     return (
-        <form onSubmit={handleLogin} className="w-1/3 mt-16 mb-5 mx-auto bg-white p-10 shadow-md">
-            <h1 className="text-blue-500 font-bold text-xl pb-5"> EVOLVE Login</h1>
+        <div className='w-full h-[calc(100vh-70px)] flex items-center justify-center'>
+            <form onSubmit={handleLogin} className="w-1/2 mx-auto bg-white p-10 shadow-md">
+                <h1 className="text-blue-500 font-bold text-xl pb-5"> EVOLVE Login</h1>
 
-            <div >
-                <label> Username </label> <br/>
-                <input className="w-full mt-2 bg-gray-300 px-2 py-1 outline-none text-blue-500 rounded-md"
-                    type="text" name="username" value={username || ''} onChange={(e:any)=> {
-                        setUsername(e.target.value)
-                    }}/>
-            </div>
-            { !username && username !== null && errorComponentView('Username can not be empty!')}
+                <div >
+                    <label> Username </label> <br/>
+                    <input className="w-full mt-2 bg-gray-300 px-2 py-1 outline-none text-blue-500 rounded-md"
+                        type="text" name="username" value={username || ''} onChange={(e:any)=> {
+                            setUsername(e.target.value)
+                        }}/>
+                </div>
+                { !username && username !== null && errorComponentView('Username can not be empty!')}
 
-            <div className="mt-5">
-                <label> Password </label> <br/>
-                <input type="password" name="password" value={password || ''} onChange={
-                    (e:any) => {setPassword(e.target.value)}
-                }
-                className="w-full mt-2 bg-gray-300 px-2 py-1 outline-none text-blue-500 rounded-md"/>
-            </div>
-            { !password && password !== null && errorComponentView('Password can not be empty!') }
-            
-            <div className="flex justify-left pb-3">
-                <button className="bg-blue-500 mr-3 px-5 text-white py-1 rounded-2xl mt-5" type="submit"
-                > Login </button>
-            </div>
-
-            <a className="text-blue-500 text-sm border-b
-                hover:cursor-pointer hover:text-orange-400"
-                onClick={()=> navigation('/signup')}
-                > Sign up as new user </a>
+                <div className="mt-5">
+                    <label> Password </label> <br/>
+                    <input type="password" name="password" value={password || ''} onChange={
+                        (e:any) => {setPassword(e.target.value)}
+                    }
+                    className="w-full mt-2 bg-gray-300 px-2 py-1 outline-none text-blue-500 rounded-md"/>
+                </div>
+                { !password && password !== null && errorComponentView('Password can not be empty!') }
                 
-        </form>
+                <div className="flex justify-left pb-3">
+                    <button className="bg-blue-500 mr-3 px-5 text-white py-1 rounded-2xl mt-5" type="submit"
+                    > Login </button>
+                </div>
+
+                <a className="text-blue-500 text-sm border-b
+                    hover:cursor-pointer hover:text-orange-400"
+                    onClick={()=> navigation('/signup')}
+                    > Sign up as new user </a>
+                    
+            </form>
+        </div>
         
     )
 }

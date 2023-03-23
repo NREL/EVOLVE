@@ -3,7 +3,7 @@ battery model and compute time series metrics.
 """
 
 # Standard imports
-from typing import List
+from typing import List, Dict
 import datetime
 
 
@@ -16,6 +16,15 @@ from battery import GenericBattery, GenericBatteryParams
 from batery_timed_strategy import (
     TimeBasedCDStrategyInputModel,
     TimeBasedCDStrategy,
+)
+from battery_peak_shaving_strategy import (
+    PeakShavingCDStrategyInputModel,
+    PeakShavingBasedCDStrategy
+)
+
+from battery_self_consumption_strategy import (
+    SelfConsumptionCDStrategyModel,
+    SelfConsumptionCDStrategy
 )
 from processor.input_config_model import ESFormData
 from processor.helper_functions import populate_sliced_category
@@ -33,7 +42,65 @@ def default_discharge_func(time_: float):
 
 
 def time2num(time_str: str):
-    return int(time_str.split(" ")[0]) + 12 if "PM" in time_str else 0
+    return int(time_str.split(" ")[0]) + 12 if "PM" in time_str else int(time_str.split(" ")[0])
+
+def process_self_discharging_es(
+    battery: ESFormData, load_profiles: List[Dict]
+):
+    """ Process self discharging for battery. """
+    battery_params = GenericBatteryParams(
+        maximum_dod=battery.esPowerCapacity,
+        energy_capacity_kwhr=battery.esEnergyCapacity,
+        initial_soc=0.5,
+        discharge_func=default_discharge_func,
+    )
+    battery_instance = GenericBattery(battery_params)
+
+    selfconsumptioncdmodel = SelfConsumptionCDStrategyModel(
+        discharging_threshold = 0
+    )
+
+    selfconsumption_cd_instance = SelfConsumptionCDStrategy(
+        config=selfconsumptioncdmodel)
+    selfconsumption_cd_instance.simulate(load_profiles, battery_instance)
+
+    return {
+        "battery_power": [
+            round(el, 3) for el in battery_instance.battery_power_profile
+        ],
+        "battery_soc": [
+            round(el, 3) for el in battery_instance.battery_soc_profile
+        ],
+    }
+
+def process_peak_shaving_es(
+    battery: ESFormData, load_profiles: List[Dict]
+):
+    """ Process peak shaving strategy for battery. """
+    battery_params = GenericBatteryParams(
+        maximum_dod=battery.esPowerCapacity,
+        energy_capacity_kwhr=battery.esEnergyCapacity,
+        initial_soc=0.5,
+        discharge_func=default_discharge_func,
+    )
+    battery_instance = GenericBattery(battery_params)
+
+    peakshavingcdmodel = PeakShavingCDStrategyInputModel(
+        charging_threshold = battery.chargingPowerThreshold/100,
+        discharging_threshold=battery.dischargingPowerThreshold/100
+    )
+
+    peakshaving_cd_instance = PeakShavingBasedCDStrategy(config=peakshavingcdmodel)
+    peakshaving_cd_instance.simulate(load_profiles, battery_instance)
+
+    return {
+        "battery_power": [
+            round(el, 3) for el in battery_instance.battery_power_profile
+        ],
+        "battery_soc": [
+            round(el, 3) for el in battery_instance.battery_soc_profile
+        ],
+    }
 
 
 def process_time_based_es(
@@ -56,7 +123,6 @@ def process_time_based_es(
     )
 
     time_based_cd_instance = TimeBasedCDStrategy(config=timecdmodel)
-
     time_based_cd_instance.simulate(timestamps, battery_instance)
 
     return {
@@ -139,9 +205,20 @@ def process_energy_storage(
     battery_output = {}
 
     for battery in batteries:
+        
         if battery.esStrategy == "time":
             battery_output[battery.name] = process_time_based_es(
                 battery, load_df["timestamp"].to_list()
+            )
+
+        elif battery.esStrategy == 'peak_shaving':
+            battery_output[battery.name] = process_peak_shaving_es(
+                battery, load_df.to_dicts()
+            )
+        
+        elif battery.esStrategy == 'self_consumption':
+            battery_output[battery.name] = process_self_discharging_es(
+                battery, load_df.to_dicts()
             )
 
     timestamps = load_df["timestamp"].to_list()

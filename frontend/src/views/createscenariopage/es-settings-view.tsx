@@ -64,7 +64,7 @@ export function ESSettingsView(props: any) {
                                             <p className='text-sm text-gray-500 pb-2'>
                                                 Battery power capacity in kW </p>
                                             <TextField
-                                                error={errors.esPowerCapacity}
+                                                error={errors?.esPowerCapacity}
                                                 name="esPowerCapacity"
                                                 type="number"
                                                 value={formData.esPowerCapacity}
@@ -77,7 +77,7 @@ export function ESSettingsView(props: any) {
                                             <p className='text-sm text-gray-500 pb-2'>
                                                 Battery energy capacity in kW </p>
                                             <TextField
-                                                error={errors.esEnergyCapacity}
+                                                error={errors?.esEnergyCapacity}
                                                 name="esEnergyCapacity"
                                                 type="number"
                                                 value={formData.esEnergyCapacity}
@@ -93,7 +93,7 @@ export function ESSettingsView(props: any) {
                                 <p className="pr-2"> Charging/Discharging Strategy </p>
                                 <select className="rounded-md h-8 w-32 px-2" name="esStrategy" value={formData.esStrategy} onChange={handleChange}>
                                     <option value="time">Time Based</option>
-                                    <option value="price">Price Based</option>
+                                    {/* <option value="price">Price Based</option> */}
                                     <option value="self_consumption">Self consumption</option>
                                     <option value="peak_shaving">Peak shaving</option>
                                 </select>
@@ -158,7 +158,7 @@ export function ESSettingsView(props: any) {
                                             Search for price profile and select.
                                             {
                                                 priceProfileExist.length === 0 && <span className="text-red-500 pl-1 ">
-                                                    Note Load profile does not exist yet consider uploading data first.
+                                                    Note price profile does not exist yet consider uploading data first.
                                                 </span>
                                             }
                                         </p>
@@ -229,7 +229,7 @@ export function ESSettingsView(props: any) {
                                         <p className='text-sm text-gray-500 pb-2'>
                                             When load drops below this power battery starts to charge until fully charged. </p>
                                         <TextField
-                                            error={errors.chargingPowerThreshold}
+                                            error={errors?.chargingPowerThreshold}
                                             name="chargingPowerThreshold"
                                             type="number"
                                             value={formData.chargingPowerThreshold}
@@ -242,7 +242,7 @@ export function ESSettingsView(props: any) {
                                         <p className='text-sm text-gray-500 pb-2'>
                                             When load increases below this power battery starts to charge until fully discharged. </p>
                                         <TextField
-                                            error={errors.dischargingPowerThreshold}
+                                            error={errors?.dischargingPowerThreshold}
                                             name="dischargingPowerThreshold"
                                             type="number"
                                             value={formData.dischargingPowerThreshold}

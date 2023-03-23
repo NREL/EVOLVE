@@ -113,6 +113,8 @@ class ESFormData(BaseModel):
             if v is None or values['chargingPowerThreshold'] is None:
                 raise ValueError('Both charging power threshold and discharging power \
                     must be specified if strategy is peak shaving')
+        
+        return v
 
     @validator('disChargingPrice')
     def charging_discharging_price_must_be_specified(cls, v, values, **kwargs):
@@ -120,6 +122,8 @@ class ESFormData(BaseModel):
             if v is None or values['chargingPrice'] is None:
                 raise ValueError('Both charging price threshold and discharging price \
                     theshold must be specified if strategy is price.')
+            
+        return v
 
 class ScenarioData(BaseModel):
     basic: BasicFormData

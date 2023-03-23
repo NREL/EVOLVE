@@ -148,7 +148,7 @@ export const ScenarioTableView: React.FC<ScenarioTableViewProps> = ({
                             {
                                 scenJSON.energy_storage.map(
                                     (value: newESDataInterface) => {
-                                        return value.esStrategy === 'power' && <tr className="h-10 bg-gray-300 text-center" key={value.id}>
+                                        return value.esStrategy === 'peak_shaving' && <tr className="h-10 bg-gray-300 text-center" key={value.id}>
                                             <td> {value.name} </td>
                                             <td> {value.esStrategy} </td>
                                             <td> {value.chargingPowerThreshold} </td>
@@ -167,8 +167,8 @@ export const ScenarioTableView: React.FC<ScenarioTableViewProps> = ({
                             <tr className="bg-gray-500 h-10">
                                 <th> Name </th>
                                 <th> Strategy </th>
-                                <th> Charging Price Thresh. </th>
-                                <th> Discharging Price Thresh. </th>
+                                {/* <th> Charging Price Thresh. </th>
+                                <th> Discharging Price Thresh. </th> */}
                                 <th> Maximum discharge kW </th>
                                 <th> Capacity (kWh) </th>
                             </tr>
@@ -176,11 +176,11 @@ export const ScenarioTableView: React.FC<ScenarioTableViewProps> = ({
                             {
                                 scenJSON.energy_storage.map(
                                     (value: newESDataInterface) => {
-                                        return value.esStrategy === 'price' && <tr className="h-10 bg-gray-300 text-center" key={value.id}>
+                                        return value.esStrategy === 'self_consumption' && <tr className="h-10 bg-gray-300 text-center" key={value.id}>
                                             <td> {value.name} </td>
                                             <td> {value.esStrategy} </td>
-                                            <td> {value.chargingPrice} </td>
-                                            <td> {value.disChargingPrice} </td>
+                                            {/* <td> {value.chargingPrice} </td>
+                                            <td> {value.disChargingPrice} </td> */}
                                             <td> {value.esPowerCapacity} </td>
                                             <td> {value.esEnergyCapacity} </td>
                                         </tr>

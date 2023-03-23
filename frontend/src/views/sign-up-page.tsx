@@ -28,6 +28,9 @@ export const SignUpPage: React.FC<SignUpPageProps> = ({}) => {
 
         const handleSignUp = (e: any) => {
             e.preventDefault()
+            if (Object.keys(errors).length > 0) {
+                return
+            }
             axios.post(
                 `/users`,
                 signUpFormData

@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { TextField } from '../../components/text-field';
 import { SearchDataView } from './search-data-view';
 import { useDebouncedSearch } from '../../hooks/use-debounced-search-create-scenarios';
+import {HiOutlineInformationCircle} from 'react-icons/hi';
+import { 
+        TiltDescriptionView,
+        AzimuthDescriptionView,
+        SolarModelingAssumptionView
+} from './descriptions/solar-descriptions';
 
 export function SolarSettingsView(props: any) {
     const { formData, handleChange, errors,
@@ -9,11 +15,13 @@ export function SolarSettingsView(props: any) {
         updateFlag } = props;
 
     const [searchProfiles, setSearchProfiles] = useState<Record<string, any>>([])
+    const [descriptionComp, setDescriptionComp] = useState<any>(null)
+    const [closeDesView, setCloseDesView] = useState(true)
     const [isClicked, setIsClicked] = useState(updateFlag)
     const [collpased, setCollapsed] = useState(false)
 
     console.log('solar irradiance ', selectedIrrProfile)
-
+    
     const irrProfileExist = allTSdata.filter((d: any) => d.category === 'irradiance')
 
     useDebouncedSearch(
@@ -25,6 +33,7 @@ export function SolarSettingsView(props: any) {
 
     return (
         <React.Fragment>
+            {!closeDesView && descriptionComp}
             <div className="bg-gray-300 w-full my-5 pb-5">
                 <div className="bg-blue-500 h-8 flex items-center justify-between px-2">
                     <div className="flex">
@@ -45,10 +54,31 @@ export function SolarSettingsView(props: any) {
 
                 {
                     !collpased && <React.Fragment>
-                        <div className="grid grid-cols-2 md:grid-cols-3 mx-10 my-3 gap-y-2 gap-x-5">
+                        
+                        <div
+                            className='mx-10 mt-2 flex gap-x-2 border-b w-max 
+                            pb-1 text-gray-500 hover:cursor-pointer hover:text-blue-500
+                            hover:border-blue-500'
+                            onClick={()=> {
+                                setCloseDesView(false)
+                                setDescriptionComp(
+                                    <SolarModelingAssumptionView setCloseView={setCloseDesView}/>
+                                )}}
+                        >   
+                            <HiOutlineInformationCircle size={20} />   
+                            <p className=' 
+                                w-max text-sm font-bold'> 
+                                Learn about solar modelling assumptions. 
+                            </p>
+
+                        </div>
+                        
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 mx-10 my-3 
+                            gap-y-2 gap-x-5">
 
                             <div>
-                                <p> Capacity (kW) </p>
+                                <p> DC Capacity (kW) </p>
                                 <p className='text-sm text-gray-500 pb-2'> Enter total solar capacity in kW. </p>
                                 <TextField
                                     error={errors.solarCapacity}
@@ -64,7 +94,7 @@ export function SolarSettingsView(props: any) {
                                 <p className='text-sm text-gray-500 pb-2'> Search for solar profile and select one.
                                     {
                                         irrProfileExist.length === 0 && <span className="text-red-500 pl-1 ">
-                                            Note Load profile does not exist yet consider uploading data first.
+                                            Note irradiance profile does not exist yet consider uploading data first.
                                         </span>
                                     }
                                 </p>
@@ -126,7 +156,17 @@ export function SolarSettingsView(props: any) {
 
                             {formData.solarInstallationStrategy !== 'dual_axis' &&
                                 <div>
-                                    <p> Azimuth (degrees) </p>
+                                    <div className='flex items-center gap-x-2'>
+                                        <p> Azimuth (degrees)  </p>
+                                        <HiOutlineInformationCircle size={20} 
+                                            className='text-gray-500 hover:text-blue-500 hover:cursor-pointer'
+                                            onClick={()=> {
+                                                setCloseDesView(false)
+                                                setDescriptionComp(
+                                                    <AzimuthDescriptionView setCloseView={setCloseDesView}/>
+                                                )}}
+                                        />          
+                                    </div>
                                     <p className='text-sm text-gray-500 pb-2'> Angle solar panel is facing measured in clockwise
                                         direction from North. </p>
                                     <TextField
@@ -141,8 +181,19 @@ export function SolarSettingsView(props: any) {
 
                             {
                                 formData.solarInstallationStrategy === 'fixed' && <div>
-                                    <p> Tilt (degrees) </p>
-                                    <p className='text-sm text-gray-500 pb-2'> Angle the panel is tilted from the horizontal ground earth surface.
+                                    <div className='flex items-center gap-x-2'>
+                                        <p> Tilt (degrees)  </p>
+                                        <HiOutlineInformationCircle size={20} 
+                                            className='text-gray-500 hover:text-blue-500 hover:cursor-pointer'
+                                            onClick={()=> {
+                                                setCloseDesView(false)
+                                                setDescriptionComp(
+                                                    <TiltDescriptionView setCloseView={setCloseDesView}/>
+                                                )}}
+                                        />          
+                                    </div>
+                                    <p className='text-sm text-gray-500 pb-2'> Angle the panel is 
+                                        tilted from the horizontal ground earth surface.
                                     </p>
                                     <TextField
                                         error={errors.panelTilt}
