@@ -1,7 +1,7 @@
 psycopg2-binary
 pika
 numpy
-polars
+polars==0.16.11
 pydantic
 python-dotenv
 cerberus

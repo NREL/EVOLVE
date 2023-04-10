@@ -12,7 +12,7 @@ pydantic
 mkdocs
 pandas
 aerich
-polars
+polars==0.16.11
 pika
 tortoise-orm[asyncpg]
 mkdocstrings[python]

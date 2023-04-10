@@ -42,7 +42,10 @@ def default_discharge_func(time_: float):
 
 
 def time2num(time_str: str):
-    return int(time_str.split(" ")[0]) + 12 if "PM" in time_str else int(time_str.split(" ")[0])
+    if time_str == '12 AM':
+        return 0
+
+    return int(time_str.split(" ")[0]) + 11 if "PM" in time_str else int(time_str.split(" ")[0])
 
 def process_self_discharging_es(
     battery: ESFormData, load_profiles: List[Dict]
