@@ -6,7 +6,7 @@ import { BaseLoadTSDataInterface } from '../../interfaces/report-interfaces';
 
 const useTimeSeriesBaseLoad = (id: any):
     [BaseLoadTSDataInterface | null, any, any, any, any, any,
-        any, any] => {
+        any, any, any, any, any, any] => {
 
     const [baseLoad, setBaseLoad] = useState<BaseLoadTSDataInterface | null>(null)
     const [baseEnergyMetrics, setBaseEnergyMetrics] = useState<any>(null)
@@ -16,6 +16,10 @@ const useTimeSeriesBaseLoad = (id: any):
     const [netPeakPowerMetrics, setNetPeakPowerMetrics] = useState<any>(null)
     const [batteryPower, setBatteryPower] = useState<any>(null)
     const [solarPower, setSolarPower] = useState<any>(null)
+    const [solarMetrics, setSolarMetrics] = useState<any>(null)
+    const [batteryDisChargMetrics, setBatteryDisChargMetrics] = useState<any>(null)
+    const [batteryChargMetrics, setBatteryChargMetrics] = useState<any>(null)
+    const [batterySOC, setBatterySOC] = useState<any>(null)
 
     const accessToken = useSelector(
         (state: StateModel) => state.auth.accessToken
@@ -42,11 +46,15 @@ const useTimeSeriesBaseLoad = (id: any):
         handleFetchLoadTSData(`/report/${id}/load/?data_type=net_power_metrics`, setNetPeakPowerMetrics)
         handleFetchLoadTSData(`/report/${id}/load/?data_type=solar_power`, setSolarPower)
         handleFetchLoadTSData(`/report/${id}/load/?data_type=battery_power`, setBatteryPower)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=solar_metrics`, setSolarMetrics)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=battery_charging_metrics`, setBatteryChargMetrics)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=battery_discharging_metrics`, setBatteryDisChargMetrics)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=battery_soc`, setBatterySOC)
     }, [])
 
     return [baseLoad, baseEnergyMetrics, basePeakPowerMetrics,
-        netLoad, netEnergyMetrics, netPeakPowerMetrics, batteryPower, solarPower]
-
+        netLoad, netEnergyMetrics, netPeakPowerMetrics, batteryPower, solarPower,
+        solarMetrics, batteryChargMetrics, batteryDisChargMetrics, batterySOC ]
 }
 
 export { useTimeSeriesBaseLoad }

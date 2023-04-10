@@ -105,6 +105,10 @@ async def get_timeseries_baseload(
         "net_power_metrics": "net_load_peak_power_metrics.csv",
         "battery_power": "battery_power_timeseries.csv",
         "solar_power": "solar_power_timeseries.csv",
+        "solar_metrics": "solar_metrics.csv",
+        "battery_charging_metrics": 'es_charging_energy_metrics.csv',
+        "battery_discharging_metrics": 'es_discharging_energy_metrics.csv',
+        "battery_soc": "battery_soc_timeseries.csv"
     }
     try:
         df = polars.read_csv(
@@ -191,10 +195,24 @@ async def delete_report(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized!"
         )
 
-    report_path = (
+    report_data_path = (
         Path(DATA_PATH) / user.username / "reports_data" / str(report_data.id)
     )
-    shutil.rmtree(report_path, ignore_errors=True)
+
+    report_json_file = (
+        Path(DATA_PATH) / user.username / "reports" / f"{str(report_data.id)}.json"
+    )
+
+    report_zip_path = (
+        Path(DATA_PATH) / user.username / "reports_data" / f"{str(report_data.id)}.zip"
+    )
+
+    try:
+        shutil.rmtree(report_data_path, ignore_errors=True)
+        os.remove(report_json_file)
+        os.remove(report_zip_path)
+    except Exception as e:
+        print(e, '---')
 
     await report_data.delete()
 

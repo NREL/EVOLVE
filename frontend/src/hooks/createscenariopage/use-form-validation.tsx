@@ -19,7 +19,7 @@ const useFormValidation = (
     })
 
     const basicValidationSchema:any = Yup.object({
-        scenarioName: Yup.string().required().max(20),
+        scenarioName: Yup.string().required().max(255),
         loadProfile: Yup.string().required(),
         startDate: Yup.date().min(dateRange.min).max(dateRange.max),
         endDate: Yup.date().min(Yup.ref('startDate')?Yup.ref('startDate'):dateRange.min).max(dateRange.max),

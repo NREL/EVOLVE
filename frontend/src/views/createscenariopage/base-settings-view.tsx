@@ -12,7 +12,7 @@ export function BaseSettingsView(props: any) {
     const [searchProfiles, setSearchProfiles] = useState<Record<string, any>[]>([])
     const [isClicked, setIsClicked] = useState(updateFlag)
 
-    const loadProfileExist = allTSdata.filter((d: any) => d.category === 'kW')
+    const loadProfileExist = allTSdata.filter((d: any) => d.category === 'kW');
 
     useDebouncedSearch(
         allTSdata,

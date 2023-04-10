@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from typing import List
 import json
+import shutil
 
 from fastapi import (APIRouter, HTTPException, status, Depends)
 import tortoise
@@ -202,8 +203,36 @@ async def delete_scenario_data(id: int, user: models.user_pydantic = Depends(get
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
             detail="Unauthorized!")
+    
+    # TODO: Find all the report and delete them as well
+    try:
+        reports = await models.ReportMetadata.all().filter(
+            scenario= scen_data,
+            user=await models.Users.get(username=user.username)
+        )
+
+        for report in reports:
+
+            report_data_path = (
+                Path(DATA_PATH) / user.username / "reports_data" / str(report.id)
+            )
+
+            report_json_file = (
+                Path(DATA_PATH) / user.username / "reports" / f"{str(report.id)}.json"
+            )
+
+            report_zip_path = (
+                Path(DATA_PATH) / user.username / "reports_data" / f"{str(report.id)}.zip"
+            )
+            shutil.rmtree(report_data_path, ignore_errors=True)
+            os.remove(report_json_file)
+            os.remove(report_zip_path)
+
+    except Exception as e:
+        print('Warning: ', e)
 
     file_name = scen_data.filename
     file_path = Path(DATA_PATH) / user.username / 'scenarios' / file_name
     await scen_data.delete()
     file_path.unlink(missing_ok=True)
+    

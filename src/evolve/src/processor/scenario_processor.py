@@ -3,6 +3,7 @@
 # Manage python standard imports
 from pathlib import Path
 import os
+import traceback
 
 # Third-party imports
 import polars
@@ -116,12 +117,11 @@ def process_scenario(
         update_report_status(input_config.id, "COMPLETED")
 
     except Exception as e:
+        
         with open(base_path / "error.txt", "w") as fp:
             fp.write(str(e))
-        print(e)
-        import traceback
-
-        print(traceback.format_exc())
+            fp.write(traceback.format_exc())
+    
         update_report_status(input_config.id, "ERROR")
 
 
