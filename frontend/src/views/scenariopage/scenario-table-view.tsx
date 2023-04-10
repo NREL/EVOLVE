@@ -161,8 +161,7 @@ export const ScenarioTableView: React.FC<ScenarioTableViewProps> = ({
                             }
                         </table>
 
-                        <p className="text-indigo-600 my-2 border-b-2 border-indigo-500 w-max"> Electric storage with user defined price
-                            thresholds for charging and discharging </p>
+                        <p className="text-indigo-600 my-2 border-b-2 border-indigo-500 w-max"> Electric storage with self consumption strategy </p>
                         <table className='w-full table-auto border-collapse mt-3'>
                             <tr className="bg-gray-500 h-10">
                                 <th> Name </th>
