@@ -48,8 +48,15 @@ export const DataDescriptionView: React.FC<DescViewProps> = ({
             <p> <span className="text-blue-500 font-bold"> Irradiance data </span> <br/>
                 If you are uploadling irradiance data make sure columns <span className="text-blue-500"> ghi </span>, 
                 <span className="text-blue-500"> dhi </span>, 
-                <span className="text-blue-500"> dhi </span> exist along with column consisting of datetime values.
-
+                <span className="text-blue-500"> dni </span> exist along with column consisting of datetime values. 
+                <span className="text-blue-500"> ghi </span> is an acronym for Global Horizontal Irradiance which represents
+                the total amount of shortwave radiation received from above by a surface which is parallel to the ground.
+                <span className="text-blue-500"> dhi </span>  is acronym for Diffused Horizontal Irradiance which represents 
+                solar radiation that does not arrive on a direct path from the sun, 
+                but has been scattered by clouds and particles in the atmosphere and comes equally from all directions. 
+                <span className="text-blue-500"> dni </span> is acronym for Diffused Normal Irradiance which represents the 
+                amount of light that is coming perpendicular to surface. The surface here represents ground or 
+                something parallel to ground. 
             </p>
 
             <p className="pt-2"> e.g. kW csv file  </p>

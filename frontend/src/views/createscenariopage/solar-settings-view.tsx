@@ -157,7 +157,11 @@ export function SolarSettingsView(props: any) {
                             {formData.solarInstallationStrategy !== 'dual_axis' &&
                                 <div>
                                     <div className='flex items-center gap-x-2'>
-                                        <p> Azimuth (degrees)  </p>
+                                        {
+                                            formData.solarInstallationStrategy === 'fixed' ?
+                                            <p> Surface Azimuth (degrees)  </p>:
+                                            <p> Axis Azimuth (degrees)  </p>
+                                        }
                                         <HiOutlineInformationCircle size={20} 
                                             className='text-gray-500 hover:text-blue-500 hover:cursor-pointer'
                                             onClick={()=> {
@@ -167,8 +171,16 @@ export function SolarSettingsView(props: any) {
                                                 )}}
                                         />          
                                     </div>
-                                    <p className='text-sm text-gray-500 pb-2'> Angle solar panel is facing measured in clockwise
-                                        direction from North. </p>
+                                    {
+                                        formData.solarInstallationStrategy === 'fixed' ?
+                                            <p className='text-sm text-gray-500 pb-2'> Angle solar panel is 
+                                            facing measured in clockwise
+                                        direction from North. </p>:
+                                            <p className='text-sm text-gray-500 pb-2'> Angle solar panel axis is 
+                                                facing measured in clockwise
+                                            direction from North. </p>
+                                        }
+                                    
                                     <TextField
                                         error={errors.panelAzimuth}
                                         name="panelAzimuth"
@@ -215,6 +227,36 @@ export function SolarSettingsView(props: any) {
                                     name="dcacRatio"
                                     type="number"
                                     value={formData.dcacRatio}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 mx-10 my-3 gap-y-2 gap-x-5">
+
+                            <div>
+                                <p> Longitude </p>
+                                <p className='text-sm text-gray-500 pb-2'> Longitude 
+                                of where solar panel is installed. </p>
+                                <TextField
+                                    error={errors.longitude}
+                                    name="longitude"
+                                    type="number"
+                                    value={formData.longitude}
+                                    onChange={handleChange}
+                                />
+                            </div>
+
+                            <div>
+                                <p> Latitude </p>
+                                <p className='text-sm text-gray-500 pb-2'> 
+                                    Latitude of where solar panel is installed. 
+                                </p>
+                                <TextField
+                                    error={errors.latitude}
+                                    name="latitude"
+                                    type="number"
+                                    value={formData.latitude}
                                     onChange={handleChange}
                                 />
                             </div>

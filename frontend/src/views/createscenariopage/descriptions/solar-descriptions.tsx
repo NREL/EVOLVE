@@ -70,7 +70,7 @@ export const AzimuthDescriptionView: React.FC<DescViewProps> = ({
     ]
 
     return <TransparentBackGroundLayout setCloseView={setCloseView}>
-        <>
+        <div className='h-[500px] overflow-y-scroll'>
             <h1 className='font-bold pb-1 mb-3 text-xl border-b'> Azimuth (Deg) </h1>
             <p> For a fixed array, the azimuth angle is the angle clockwise from true north describing 
                 the direction that the array faces. An azimuth angle of 180° is for a south-facing array, 
@@ -87,6 +87,8 @@ export const AzimuthDescriptionView: React.FC<DescViewProps> = ({
                 afternoon energy production, and decreasing the azimuth angle favors morning energy production. 
                 The opposite is true for the southern hemisphere.</p>
 
+            <img src='./azimuth.png' />
+
             <table className='table-fixed w-full text-left mt-3'>
                 <thead>
                     <tr className='border-b'>
@@ -102,7 +104,7 @@ export const AzimuthDescriptionView: React.FC<DescViewProps> = ({
                     })}
                 </tbody>
             </table>
-        </>
+        </div>
     </TransparentBackGroundLayout>
 }
 
@@ -121,13 +123,18 @@ export const SolarModelingAssumptionView: React.FC<DescViewProps> = ({
         <>
             <h1 className='font-bold pb-1 mb-3 text-xl border-b'> Solar Modeling Assumptions </h1>
             <p> EVOLVE uses pvlib library to generate time series solar generation profile. Here are some of the 
-                parameters assumed in the model when you are using EVOLVE UI.  </p>
+                parameters assumed in the model when you are using EVOLVE UI.  Please visit the link below 
+                to know more about mathematical equations used to model pv systems.
 
-            <table className='table-fixed w-full text-left mt-3'>
+                <a href='https://pvlib-python.readthedocs.io/en/stable/reference/generated/pvlib.irradiance.get_total_irradiance.html?highlight=get_total_irradiance' className='text-blue-500 underline italic'> https://pvlib-python.readthedocs.io/en/stable/reference/generated/pvlib.irradiance.get_total_irradiance.html?highlight=get_total_irradiance </a>
+                
+                </p>
+
+            {/* <table className='table-fixed w-full text-left mt-3'>
                 <thead>
                     <tr className='border-b'>
                         <th> Heading</th>
-                        <th> Azimuth Angle (deg)</th>
+                        <th> Parameters </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -137,7 +144,7 @@ export const SolarModelingAssumptionView: React.FC<DescViewProps> = ({
                         </tr>
                     })}
                 </tbody>
-            </table>
+            </table> */}
         </>
     </TransparentBackGroundLayout>
 }

@@ -71,7 +71,7 @@ class FixedAxisModel(AxisModel):
 
 class SingleAxisModel(AxisModel):
     axis_tilt: confloat(ge=-90, le=90) = 37
-    axis_azimuth: confloat(ge=-90, le=90) = 180
+    axis_azimuth: confloat(ge=0, le=360) = 180
     axis_max_tilt: confloat(ge=-90, le=90) = 85
 
 

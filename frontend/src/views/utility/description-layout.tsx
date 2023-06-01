@@ -13,7 +13,7 @@ export const TransparentBackGroundLayout: React.FC<BackGroundLayoutProps> = (
         <>
             <div className='bg-gray-900
                 fixed top-0 left-0 h-screen w-full
-                opacity-95 flex items-center justify-center'>
+                opacity-95 flex items-center justify-center z-10'>
 
                 <div className='w-2/3 bg-white 
                                 px-10 py-5 rounded-md shadow-md relative'>

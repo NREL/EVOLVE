@@ -28,6 +28,8 @@ services:
 
   evolve_ui:
     image: kapilduwadi/evolve_ui2:latest
+    environment:
+      REACT_APP_EVOLVE_BACKEND_URL: http://localhost:8000
     ports:
       - 5001:80
     networks:

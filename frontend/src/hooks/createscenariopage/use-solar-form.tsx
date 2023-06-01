@@ -13,6 +13,8 @@ const UseSolarForm = (
         irradianceData: "",
         panelAzimuth: 0,
         panelTilt: 0,
+        longitude: 0,
+        latitude: 0,
         solarInstallationStrategy: 'fixed',
         dcacRatio: 1,
     }

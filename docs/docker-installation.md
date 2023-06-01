@@ -60,6 +60,8 @@ services:
 
   evolve_ui:
     image: kapilduwadi/evolve_ui2:latest
+    environment:
+      REACT_APP_EVOLVE_BACKEND_URL: http://localhost:8000
     ports:
       - 5001:80
     networks:
@@ -119,6 +121,8 @@ volumes:
 
 ```
 
-2. Open up a command prompt (for windows user) or terminal (for linux or mac users) and navigate to the directory where you have the `docker-compose.yml` you created in step 1.
-3. Run the command `docker-compose up`. After a minute or so all the services should be running.
-4. Visit your browser and type in `http://localhost:5001`.
+2. Open up a command prompt (for windows user) or terminal (for linux or mac users) and navigate to the directory where you have the `docker-compose.yml` you created in step 1. Make sure to update the `REACT_APP_EVOLVE_BACKEND_URL` env variable in docker-compose file for deployment to remote server.
+3. If you need to pull new images make sure to run `docker-compose up --pull always` and you can skip step 4. However if you already have upto date images then you can skip this step and run step 4. 
+4. Run the command `docker-compose up`. After a minute or so all the services should be running.
+5. Visit your browser and type in `http://localhost:5001`.
+

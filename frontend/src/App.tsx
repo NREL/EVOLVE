@@ -8,7 +8,7 @@ import { SignUpPage } from "./views/sign-up-page";
 import { DataPage } from "./views/datapage/data-page-controller";
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Config } from './helpers/config';
+// import { Config } from './helpers/config';
 import { ErrorPage } from "./views/error-page-view";
 import { Navigate, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,7 +17,8 @@ import { CreateScenario } from "./views/createscenariopage/create-scenario-contr
 import { LabelPageController } from "./views/labelpage/label-page-controller";
 import { ReportDashboardController } from "./views/reportpage/report-dashboard-controller";
 
-axios.defaults.baseURL = Config.baseURL
+
+axios.defaults.baseURL = process.env.REACT_APP_EVOLVE_BACKEND_URL; //Config.baseURL
 
 // axios.interceptors.response.use(undefined, error => {
 // })

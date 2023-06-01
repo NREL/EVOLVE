@@ -52,6 +52,8 @@ class SolarFormData(BaseModel):
     name: str 
     panelAzimuth: confloat(ge=0, le=360)
     panelTilt: confloat(ge=-90, le=90)
+    longitude: Optional[confloat(ge=-180, le=180)]
+    latitude: Optional[confloat(ge=-90, le=90)]
     solarCapacity: confloat(gt=0) 
     solarInstallationStrategy: str 
 

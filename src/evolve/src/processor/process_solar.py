@@ -123,8 +123,8 @@ def process_solars(
         if solar.solarInstallationStrategy == "fixed":
             fixed = FixedAxisSolarModel(
                 solar_basic_model=SolarBasicModel(
-                    longitude=36,
-                    latitude=9,
+                    longitude=solar.longitude if solar.longitude else 36,
+                    latitude=solar.latitude if solar.latitude else 9,
                     kw=solar.solarCapacity,
                     irradiance=solar_df.to_pandas(date_as_object=True),
                 ),
@@ -140,8 +140,8 @@ def process_solars(
         elif solar.solarInstallationStrategy == "single_axis":
             fixed = SingleAxisSolarModel(
                 solar_basic_model=SolarBasicModel(
-                    longitude=36,
-                    latitude=9,
+                    longitude=solar.longitude if solar.longitude else 36,
+                    latitude=solar.latitude if solar.latitude else 9,
                     kw=solar.solarCapacity,
                     irradiance=solar_df.to_pandas(date_as_object=True),
                 ),
@@ -156,8 +156,8 @@ def process_solars(
         elif solar.solarInstallationStrategy == "dual_axis":
             fixed = DualAxisSolarModel(
                 solar_basic_model=SolarBasicModel(
-                    longitude=36,
-                    latitude=9,
+                    longitude=solar.longitude if solar.longitude else 36,
+                    latitude=solar.latitude if solar.latitude else 9,
                     kw=solar.solarCapacity,
                     irradiance=solar_df.to_pandas(date_as_object=True),
                 ),

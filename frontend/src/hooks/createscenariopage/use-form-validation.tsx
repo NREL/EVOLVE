@@ -9,6 +9,8 @@ const useFormValidation = (
         panelAzimuth: Yup.number().min(0).max(360),
         panelTilt: Yup.number().min(-90).max(90),
         dcacRatio: Yup.number().min(0).max(2),
+        longitude: Yup.number().min(-180).max(180),
+        latitude: Yup.number().min(-90).max(90),
         irradianceData: Yup.string()
     })
 
