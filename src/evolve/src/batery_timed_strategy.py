@@ -13,7 +13,8 @@ from battery import GenericBattery
 class TimeBasedCDStrategyInputModel(BaseModel):
     charging_hours: List[conint(le=23, ge=0)]
     discharging_hours: List[conint(le=23, ge=0)]
-    c_rate: confloat(gt=0, lt=10)
+    c_rate_charging: confloat(gt=0, lt=40)
+    c_rate_discharging: confloat(gt=0, lt=40)
 
     @validator("discharging_hours")
     def charging_discharging_hours_must_be_different(cls, v, values, **kwargs):
@@ -48,7 +49,7 @@ class TimeBasedCDStrategy:
 
         # Let's convert c rate into power
         c_rate_to_kw = (
-            self.config.c_rate * battery.battery_params.energy_capacity_kwhr
+            self.config.c_rate_charging * battery.battery_params.energy_capacity_kwhr
         )
 
         if battery.battery_params.maximum_dod < c_rate_to_kw:
@@ -80,7 +81,7 @@ class TimeBasedCDStrategy:
         )
 
         c_rate_to_kw = (
-            self.config.c_rate * battery.battery_params.energy_capacity_kwhr
+            self.config.c_rate_discharging * battery.battery_params.energy_capacity_kwhr
         )
 
         if battery.battery_params.maximum_dod < c_rate_to_kw:

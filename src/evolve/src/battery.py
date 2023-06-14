@@ -13,6 +13,8 @@ class GenericBatteryParams(BaseModel):
     energy_capacity_kwhr: float
     initial_soc: confloat(ge=0, le=100) = 100
     discharge_func: Callable[[float], float]
+    charging_efficiency: confloat(ge=0.5, le=1.0) =1.0
+    discharging_efficiency: confloat(ge=0.5, le=1.0) =1.0
 
 
 class GenericBattery:
@@ -48,7 +50,7 @@ class GenericBattery:
     ):
         
         self_discharge_energy = self.compute_self_discharge_energy(
-             discharging_period
+            discharging_period
         )
 
         actual_rate = self_discharge_energy/discharging_period
@@ -73,7 +75,10 @@ class GenericBattery:
         self.battery_power_profile.append(rate)
 
         # Next available energy
-        next_available_energy = available_energy - rate * period
+        eff = self.battery_params.charging_efficiency \
+            if rate <0 else self.battery_params.discharging_efficiency
+        
+        next_available_energy = available_energy - rate * period * eff
 
         # Update soc for next time step
         self.battery_current_soc = (

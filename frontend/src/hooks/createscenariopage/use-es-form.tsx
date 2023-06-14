@@ -19,6 +19,11 @@ const UseESForm = (
         priceProfile: '',
         chargingPowerThreshold: 70,
         dischargingPowerThreshold: 80,
+        esChargingEff: 0.95,
+        esDischargingEff: 0.95,
+        esChargingRate: 0.5,
+        esDischargingRate: 0.5,
+        esInitialSOC: 0.5
     }
 
     const [counter, setCounter] = useState(2)

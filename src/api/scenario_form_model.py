@@ -79,7 +79,12 @@ class ESFormData(BaseModel):
     chargingPrice: Optional[float] 
     disChargingPrice: Optional[float]
     esEnergyCapacity: confloat(gt=0) 
-    esPowerCapacity: confloat(gt=0) 
+    esPowerCapacity: confloat(gt=0)
+    esDischargingRate: Optional[confloat(ge=0.01, le=50)]
+    esChargingRate: Optional[confloat(ge=0.01, le=50)]
+    esDischargingEff: Optional[confloat(ge=0.5, le=1.0)]
+    esChargingEff: Optional[confloat(ge=0.5, le=1.0)]
+    esInitialSOC: Optional[confloat(ge=0, le=1.0)] 
     id: str 
     name: str
     priceProfile: Optional[int]

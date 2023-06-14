@@ -48,19 +48,14 @@ def time2num(time_str: str):
     if time_str == '12 PM':
         return 12
 
-    return int(time_str.split(" ")[0]) + 12 if "PM" in time_str else int(time_str.split(" ")[0])
+    return int(time_str.split(" ")[0]) + 12 if "PM" in \
+        time_str else int(time_str.split(" ")[0])
 
 def process_self_discharging_es(
-    battery: ESFormData, load_profiles: List[Dict]
+    battery_instance: GenericBattery, battery: ESFormData, 
+    load_profiles: List[Dict]
 ):
     """ Process self discharging for battery. """
-    battery_params = GenericBatteryParams(
-        maximum_dod=battery.esPowerCapacity,
-        energy_capacity_kwhr=battery.esEnergyCapacity,
-        initial_soc=0.5,
-        discharge_func=default_discharge_func,
-    )
-    battery_instance = GenericBattery(battery_params)
 
     selfconsumptioncdmodel = SelfConsumptionCDStrategyModel(
         discharging_threshold = 0
@@ -80,16 +75,10 @@ def process_self_discharging_es(
     }
 
 def process_peak_shaving_es(
-    battery: ESFormData, load_profiles: List[Dict]
+    battery_instance: GenericBattery, battery: ESFormData,
+    load_profiles: List[Dict]
 ):
     """ Process peak shaving strategy for battery. """
-    battery_params = GenericBatteryParams(
-        maximum_dod=battery.esPowerCapacity,
-        energy_capacity_kwhr=battery.esEnergyCapacity,
-        initial_soc=0.5,
-        discharge_func=default_discharge_func,
-    )
-    battery_instance = GenericBattery(battery_params)
 
     peakshavingcdmodel = PeakShavingCDStrategyInputModel(
         charging_threshold = battery.chargingPowerThreshold/100,
@@ -110,22 +99,16 @@ def process_peak_shaving_es(
 
 
 def process_time_based_es(
-    battery: ESFormData, timestamps: List[datetime.datetime]
+    battery_instance: GenericBattery, battery: ESFormData,
+    timestamps: List[datetime.datetime]
 ):
     """Process a single battery."""
 
-    battery_params = GenericBatteryParams(
-        maximum_dod=battery.esPowerCapacity,
-        energy_capacity_kwhr=battery.esEnergyCapacity,
-        initial_soc=0.5,
-        discharge_func=default_discharge_func,
-    )
-
-    battery_instance = GenericBattery(battery_params)
     timecdmodel = TimeBasedCDStrategyInputModel(
         charging_hours=[time2num(el) for el in battery.chargingHours],
         discharging_hours=[time2num(el) for el in battery.disChargingHours],
-        c_rate=0.25,
+        c_rate_charging= 1/battery.esChargingRate if battery.esChargingRate else 0.25,
+        c_rate_discharging= 1/battery.esDischargingRate if battery.esDischargingRate else 0.25
     )
 
     time_based_cd_instance = TimeBasedCDStrategy(config=timecdmodel)
@@ -211,20 +194,30 @@ def process_energy_storage(
     battery_output = {}
 
     for battery in batteries:
+
+        battery_params = GenericBatteryParams(
+            maximum_dod=battery.esPowerCapacity,
+            energy_capacity_kwhr=battery.esEnergyCapacity,
+            initial_soc=battery.esInitialSOC if battery.esInitialSOC else 1.0,
+            discharge_func=default_discharge_func,
+            charging_efficiency=battery.esChargingEff if battery.esChargingEff else 1,
+            discharging_efficiency=battery.esDischargingEff if battery.esDischargingEff else 1
+        )
+        battery_instance = GenericBattery(battery_params)
         
         if battery.esStrategy == "time":
             battery_output[battery.name] = process_time_based_es(
-                battery, load_df["timestamp"].to_list()
+                battery_instance, battery, load_df["timestamp"].to_list()
             )
 
         elif battery.esStrategy == 'peak_shaving':
             battery_output[battery.name] = process_peak_shaving_es(
-                battery, load_df.to_dicts()
+                battery_instance, battery, load_df.to_dicts()
             )
         
         elif battery.esStrategy == 'self_consumption':
             battery_output[battery.name] = process_self_discharging_es(
-                battery, load_df.to_dicts()
+                battery_instance, battery, load_df.to_dicts()
             )
 
     timestamps = load_df["timestamp"].to_list()

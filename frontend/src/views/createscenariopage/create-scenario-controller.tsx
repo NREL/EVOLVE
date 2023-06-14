@@ -332,10 +332,6 @@ export function CreateScenario(props: any) {
                     formError && <p className="text-red-500"> Fix errors first before submitting ! &#x1F613;</p>
                 }
 
-                {/* {
-                    JSON.stringify(evFormDataArray, null, 2)
-                } */}
-
 
             </form>
 

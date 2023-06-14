@@ -17,6 +17,11 @@ const useFormValidation = (
     const esValidationSchema  = Yup.object({
         esPowerCapacity: Yup.number().positive(),
         esEnergyCapacity: Yup.number().positive(),
+        esChargingEff: Yup.number().positive().min(0.5).max(1.0),
+        esDischargingEff: Yup.number().positive().min(0.5).max(1.0),
+        esChargingRate: Yup.number().positive().min(0.05).max(50.0),
+        esDischargingRate: Yup.number().positive().min(0.05).max(50.0),
+        esInitialSOC: Yup.number().positive().min(0).max(1.0),
         priceProfile: Yup.string()
     })
 

@@ -144,4 +144,4 @@ if __name__ == "__main__":
     )
 
     print(input_config_pydantic)
-    process_scenario(input_config_pydantic)
+    # process_scenario(input_config_pydantic)

@@ -1,9 +1,7 @@
 import React from 'react';
 import { TransparentBackGroundLayout } from '../../utility/description-layout';
+import { DescViewProps } from './desc-interfaces';
 
-interface DescViewProps {
-    setCloseView: React.Dispatch<React.SetStateAction<boolean>>
-}
 
 export const TiltDescriptionView: React.FC<DescViewProps> = ({
     setCloseView
@@ -112,13 +110,6 @@ export const SolarModelingAssumptionView: React.FC<DescViewProps> = ({
     setCloseView
 }) => {
 
-    const data = [
-        ['System Losses', '........'],
-        ['Max Tilt', '........'],
-        ['Inverter Temperature', '........'],
-        ['Temperature Coefficients', '........'],
-    ]
-
     return <TransparentBackGroundLayout setCloseView={setCloseView}>
         <>
             <h1 className='font-bold pb-1 mb-3 text-xl border-b'> Solar Modeling Assumptions </h1>
@@ -129,22 +120,6 @@ export const SolarModelingAssumptionView: React.FC<DescViewProps> = ({
                 <a href='https://pvlib-python.readthedocs.io/en/stable/reference/generated/pvlib.irradiance.get_total_irradiance.html?highlight=get_total_irradiance' className='text-blue-500 underline italic'> https://pvlib-python.readthedocs.io/en/stable/reference/generated/pvlib.irradiance.get_total_irradiance.html?highlight=get_total_irradiance </a>
                 
                 </p>
-
-            {/* <table className='table-fixed w-full text-left mt-3'>
-                <thead>
-                    <tr className='border-b'>
-                        <th> Heading</th>
-                        <th> Parameters </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((item:any)=> {
-                        return <tr className='border-b'>
-                            {item.map((val:any)=> <td> {val} </td>)}
-                        </tr>
-                    })}
-                </tbody>
-            </table> */}
         </>
     </TransparentBackGroundLayout>
 }

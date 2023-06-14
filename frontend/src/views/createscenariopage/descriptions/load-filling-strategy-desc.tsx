@@ -1,16 +1,13 @@
 import React from 'react';
 import { TransparentBackGroundLayout } from '../../utility/description-layout';
+import { DescViewProps } from './desc-interfaces';
 
-interface DataFilingStrategyDescProps {
-    setCloseView: React.Dispatch<React.SetStateAction<boolean>>
-}
 
-export const DataFilingStrategyDesc: React.FC<DataFilingStrategyDescProps> = ({
+export const DataFilingStrategyDesc: React.FC<DescViewProps> = ({
     setCloseView
 }) => {
 
    
-
     return <TransparentBackGroundLayout setCloseView={setCloseView}>
         <div className='h-[500px] overflow-y-scroll'>
             <h1 className='font-bold pb-1 mb-3 text-xl border-b'> Data Filling Strategy </h1>
