@@ -124,7 +124,7 @@ class SolarModel(ABC):
 
     def get_inverter_output(self):
 
-        poa_irradiance = self.get_poa()
+        tracking_data,poa_irradiance = self.get_poa()
         poa_irradiance = poa_irradiance.merge(
             self.solar_basic_model.irradiance["temp"], on="timestamp"
         ).fillna(value=0)
@@ -153,7 +153,7 @@ class SolarModel(ABC):
         )
 
         ac_output.columns = ["AC_Output"]
-        return ac_output
+        return tracking_data,ac_output
 
     @abstractmethod
     def get_poa(self):
@@ -179,7 +179,7 @@ class FixedAxisSolarModel(SolarModel):
 
         super().get_poa()
 
-        return pd.DataFrame(
+        return [self.axis_model.surface_tilt,self.axis_model.surface_azimuth],pd.DataFrame(
             pvlib.irradiance.get_total_irradiance(
                 surface_tilt=self.axis_model.surface_tilt,
                 surface_azimuth=self.axis_model.surface_azimuth,
@@ -223,7 +223,7 @@ class SingleAxisSolarModel(SolarModel):
             index=self.solar_basic_model.irradiance.index,
         ).fillna(value=0)
 
-        return pd.DataFrame(
+        return single_axis_tracking_data,pd.DataFrame(
             pvlib.irradiance.get_total_irradiance(
                 surface_tilt=single_axis_tracking_data["surface_tilt"],
                 surface_azimuth=single_axis_tracking_data["surface_azimuth"],
@@ -234,12 +234,11 @@ class SingleAxisSolarModel(SolarModel):
                 dni=self.solar_basic_model.irradiance["dni"],
                 ghi=self.solar_basic_model.irradiance["ghi"],
                 dhi=self.solar_basic_model.irradiance["dhi"],
-                model="haydavies",
-                dni_extra=0,
+                # model="haydavies",
+                # dni_extra=0,
             ),
             index=self.solar_basic_model.irradiance.index,
         )
-
 
 class DualAxisSolarModel(SolarModel):
     def __init__(
@@ -276,7 +275,7 @@ class DualAxisSolarModel(SolarModel):
             tracking_dict, orient="index"
         )
 
-        return pd.DataFrame(
+        return dual_axis_tracking_data,pd.DataFrame(
             pvlib.irradiance.get_total_irradiance(
                 surface_tilt=dual_axis_tracking_data["surface_tilt"],
                 surface_azimuth=dual_axis_tracking_data["surface_azimuth"],
@@ -287,8 +286,8 @@ class DualAxisSolarModel(SolarModel):
                 dni=self.solar_basic_model.irradiance["dni"],
                 ghi=self.solar_basic_model.irradiance["ghi"],
                 dhi=self.solar_basic_model.irradiance["dhi"],
-                model="haydavies",
-                dni_extra=0,
+                # model="haydavies",
+                # dni_extra=0,
             ),
             index=self.solar_basic_model.irradiance.index,
         )
