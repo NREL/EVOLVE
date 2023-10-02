@@ -27,7 +27,7 @@ from battery_self_consumption_strategy import (
     SelfConsumptionCDStrategy
 )
 from processor.input_config_model import ESFormData
-from processor.helper_functions import populate_sliced_category
+from processor.helper_functions import populate_sliced_category, sort_metric_dataframe
 
 
 def default_discharge_func(time_: float):
@@ -177,8 +177,10 @@ def compute_energy_storage_metrics(
         battery_power_df, resolution
     )
 
-    charging_energy_df.write_csv(base_path / "es_charging_energy_metrics.csv")
-    discharging_energy_df.write_csv(
+    charging_energy_df_sorted = sort_metric_dataframe(charging_energy_df)
+    discharging_energy_df_sorted = sort_metric_dataframe(discharging_energy_df)
+    charging_energy_df_sorted.write_csv(base_path / "es_charging_energy_metrics.csv")
+    discharging_energy_df_sorted.write_csv(
         base_path / "es_discharging_energy_metrics.csv"
     )
 

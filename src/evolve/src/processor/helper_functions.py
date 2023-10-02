@@ -24,6 +24,46 @@ DB_CONFIG = {
 DATA_PATH = os.getenv("DATA_PATH")
 
 
+def sort_metric_dataframe(df: polars.DataFrame):
+    
+    try:
+        months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+        if sum(df['category'].str.contains('PM')) or sum(df['category'].str.contains('AM')):
+            sort_index_func = lambda x: int(x.split(' ')[0]) + \
+                12 if 'PM' in x else int(x.split(' ')[0]) if '12' not in x else 0 
+            
+            return df.with_columns(
+                    polars.col("category")
+                        .apply(sort_index_func)
+                        .alias('sort_index')
+                ).sort('sort_index').select(polars.exclude('sort_index'))
+
+        elif sum(df['category'].apply(lambda x: x in months)):
+            return df.with_columns(
+                    polars.col("category")
+                        .apply(lambda x: months.index(x))
+                        .alias('sort_index')
+                ).sort('sort_index').select(polars.exclude('sort_index'))
+        
+        elif sum(df['category'].apply(lambda x: x in weekdays)):
+            return df.with_columns(
+                    polars.col("category")
+                        .apply(lambda x: weekdays.index(x))
+                        .alias('sort_index')
+                ).sort('sort_index').select(polars.exclude('sort_index'))
+        
+        else:
+            return df.with_columns(
+                    polars.col("category")
+                        .apply(lambda x: int(x))
+                        .alias('sort_index')
+                ).sort('sort_index').select(polars.exclude('sort_index'))
+    except Exception as e:
+        return df
+
+
 def populate_sliced_category(df: polars.DataFrame):
 
     start_date = df.select(polars.col("timestamp")).min()[0, 0]

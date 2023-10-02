@@ -22,7 +22,9 @@ from processor.helper_functions import (
     upsample_interpolate_df,
     upsample_staircase_df,
     populate_sliced_category,
+    sort_metric_dataframe
 )
+
 
 from solar import (
     FixedAxisModel,
@@ -176,6 +178,8 @@ def process_solars(
         )
 
         solar_output_df.write_csv(base_path / "solar_power_timeseries.csv")
-        solar_metric_df.write_csv(base_path / "solar_metrics.csv")
+
+        solar_metric_df_sorted = sort_metric_dataframe(solar_metric_df)
+        solar_metric_df_sorted.write_csv(base_path / "solar_metrics.csv")
 
         return solar_output_df

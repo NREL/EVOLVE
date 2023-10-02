@@ -153,7 +153,7 @@ class SolarModel(ABC):
         )
 
         ac_output.columns = ["AC_Output"]
-        return tracking_data,ac_output
+        return ac_output
 
     @abstractmethod
     def get_poa(self):

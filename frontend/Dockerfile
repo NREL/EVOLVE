@@ -14,19 +14,21 @@ WORKDIR /evolve-ui
 COPY . .
 
 # Build frontend
-RUN npm run build
+# RUN npm run build
 
 # nginx 
-FROM nginx:alpine
+# FROM nginx:alpine
 
 # Copy nginx config
-COPY ./nginx.conf /etc/nginx/nginx.conf
+# COPY ./nginx.conf /etc/nginx/nginx.conf
 
 ## Remove default nginx index page
-RUN rm -rf /usr/share/nginx/html/*
+# RUN rm -rf /usr/share/nginx/html/*
 
-COPY --from=builder /evolve-ui/build /usr/share/nginx/html
+# COPY --from=builder /evolve-ui/build /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 3000
 
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+CMD ["npm", "run", "start"]
+
+# ENTRYPOINT ["nginx", "-g", "daemon off;"]

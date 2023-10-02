@@ -19,9 +19,10 @@ import { ReportDashboardController } from "./views/reportpage/report-dashboard-c
 
 
 axios.defaults.baseURL = process.env.REACT_APP_EVOLVE_BACKEND_URL; //Config.baseURL
-
 // axios.interceptors.response.use(undefined, error => {
 // })
+
+console.log(axios.defaults.baseURL, '---')
 
 const ProtectedRoutes = () => {
 

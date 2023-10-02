@@ -18,6 +18,7 @@ from processor.helper_functions import (
     DATA_PATH,
     populate_sliced_category,
     get_file_name_from_id,
+    sort_metric_dataframe
 )
 
 
@@ -83,8 +84,12 @@ def compute_base_load_metrics(
     base_load_power_df = compute_max_power(load_df)
 
     load_df.write_csv(base_path / f"{prefix}.csv")
-    base_load_energy_df.write_csv(base_path / f"{prefix}_energy_metrics.csv")
-    base_load_power_df.write_csv(base_path / f"{prefix}_peak_power_metrics.csv")
+
+    base_load_energy_df_sorted = sort_metric_dataframe(base_load_energy_df)
+    base_load_energy_df_sorted.write_csv(base_path / f"{prefix}_energy_metrics.csv")
+    
+    base_load_power_df_sorted = sort_metric_dataframe(base_load_power_df)
+    base_load_power_df_sorted.write_csv(base_path / f"{prefix}_peak_power_metrics.csv")
 
 
 def get_load_df(

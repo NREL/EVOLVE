@@ -174,12 +174,10 @@ export function SolarSettingsView(props: any) {
                                     {
                                         formData.solarInstallationStrategy === 'fixed' ?
                                             <p className='text-sm text-gray-500 pb-2'> Angle solar panel is 
-                                            facing measured in clockwise
-                                        direction from North. </p>:
+                                            facing measured in clockwise direction from North. </p>:
                                             <p className='text-sm text-gray-500 pb-2'> Angle solar panel axis is 
-                                                facing measured in clockwise
-                                            direction from North. </p>
-                                        }
+                                                facing measured in clockwise direction from North. </p>
+                                    }
                                     
                                     <TextField
                                         error={errors.panelAzimuth}
@@ -192,9 +190,13 @@ export function SolarSettingsView(props: any) {
                             }
 
                             {
-                                formData.solarInstallationStrategy === 'fixed' && <div>
+                                formData.solarInstallationStrategy !== 'dual_axis' && <div>
                                     <div className='flex items-center gap-x-2'>
-                                        <p> Tilt (degrees)  </p>
+                                        {
+                                            formData.solarInstallationStrategy === 'fixed' ? 
+                                            <p> Surface Tilt (degrees)  </p>: 
+                                            <p> Axis Tilt (degrees)  </p>
+                                        }
                                         <HiOutlineInformationCircle size={20} 
                                             className='text-gray-500 hover:text-blue-500 hover:cursor-pointer'
                                             onClick={()=> {
@@ -204,9 +206,13 @@ export function SolarSettingsView(props: any) {
                                                 )}}
                                         />          
                                     </div>
-                                    <p className='text-sm text-gray-500 pb-2'> Angle the panel is 
-                                        tilted from the horizontal ground earth surface.
-                                    </p>
+                                    {
+                                        formData.solarInstallationStrategy === 'fixed' ?  <p className='text-sm text-gray-500 pb-2'> Angle the panel is 
+                                            tilted from the horizontal ground earth surface.
+                                        </p>: <p className='text-sm text-gray-500 pb-2'> Angle the axis is 
+                                            tilted from the horizontal ground earth surface.
+                                        </p>
+                                    }
                                     <TextField
                                         error={errors.panelTilt}
                                         name="panelTilt"
