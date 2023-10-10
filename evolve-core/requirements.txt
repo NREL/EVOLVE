@@ -1,0 +1,6 @@
+pydantic 
+pvlib
+pytest
+numpy 
+polars
+timezonefinder
