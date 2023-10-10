@@ -1,27 +1,4 @@
-""" Module for managing solar modeling. 
-
-Examples:
-
-from model import (
-    FixedAxisSolarModel,
-    SolarBasicModel,
-    InverterModel,
-    FixedAxisModel,
-)
-import pandas as pd
-
-base_path = r"f89fccd6-c618-46c7-b7c9-0a65d46f8d2c.csv"
-df = pd.read_csv(base_path, parse_dates=["timestamp"])
-
-fixed = FixedAxisSolarModel(
-    solar_basic_model=SolarBasicModel(
-        longitude=36, latitude=9, kw=40, irradiance=df
-    ),
-    axis_model=FixedAxisModel(),
-    inv_model=InverterModel(),
-)
-df = fixed.get_inverter_output()
-"""
+""" Module for managing solar modeling. """
 
 
 # standard imports
@@ -184,8 +161,7 @@ class SolarModel(ABC):
             index=poa_irradiance.index,
         )
 
-        # dc_output.columns = ["DC_Output"]
-
+        dc_output.columns = ["output"]
         ac_output = pd.DataFrame(
             pvlib.inverter.pvwatts(
                 pdc=dc_output,
@@ -194,10 +170,9 @@ class SolarModel(ABC):
                 eta_inv_ref=0.9637,
             ),
             index=poa_irradiance.index,
-            columns=["ac_output"]
+            columns=["output"]
         )
-
-        return list(ac_output["ac_output"])
+        return list(ac_output["output"])
 
     @abstractmethod
     def get_poa(self):

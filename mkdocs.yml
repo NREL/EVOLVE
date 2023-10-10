@@ -71,3 +71,5 @@ nav:
   - Metrics: metrics.md
   - EVOLVE Core: 
       Setup & Installation: evolve-core/index.md
+      Solar Modeling: evolve-core/solar.md
+      EV Modeling: evolve-core/ev.md
