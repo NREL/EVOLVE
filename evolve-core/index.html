@@ -12,6 +12,8 @@
         <link rel="prev" href="../metrics/">
       
       
+        <link rel="next" href="solar/">
+      
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.4">
@@ -460,17 +462,6 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Setup & Installation
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -481,32 +472,46 @@
 
       </a>
       
-        
+    </li>
+  
 
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+              
+            
+              
+                
   
   
   
-    
+    <li class="md-nav__item">
+      <a href="solar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Solar Modeling
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#modeling-fixed-axis-solar-installation" class="md-nav__link">
-    Modeling Fixed Axis Solar Installation
-  </a>
   
-</li>
-      
-    </ul>
+    <li class="md-nav__item">
+      <a href="ev/" class="md-nav__link">
+        
   
-</nav>
-      
+  <span class="md-ellipsis">
+    EV Modeling
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -539,21 +544,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#modeling-fixed-axis-solar-installation" class="md-nav__link">
-    Modeling Fixed Axis Solar Installation
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -572,38 +562,9 @@
 
 <h1 id="evolve-core">EVOLVE Core</h1>
 <p><code>evolve-core</code> is a lightweight python package that allows users to play with distributed energy resource models within evolve such as solar, energy storage and electric vehicle.</p>
+<p>If you want to use evolve core package and run simulations purely in python environment without worrying about setting up frontend and backend. You can install this package and get started. </p>
 <p>To get started, you can install this package in any python environment ("&gt;=3.10") by runing following command.</p>
 <div class="highlight"><pre><span></span><code>pip install evolve-core
-</code></pre></div>
-<h3 id="modeling-fixed-axis-solar-installation">Modeling Fixed Axis Solar Installation</h3>
-<p>Here is an example script to get started on modeling fixed axis solar installation.</p>
-<div class="highlight"><span class="filename">Fixed Axis Solar Model</span><pre><span></span><code><span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">evolve.solar.solar</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">FixedAxisSolarModel</span><span class="p">,</span>
-    <span class="n">SolarBasicModel</span><span class="p">,</span>
-    <span class="n">FixedAxisModel</span><span class="p">,</span>
-    <span class="n">InverterModel</span>
-<span class="p">)</span>
-
-<span class="n">timestamps</span> <span class="o">=</span> <span class="p">[</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">60</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">)]</span>
-<span class="n">irradiance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">timestamps</span><span class="p">,</span>
-    <span class="s2">&quot;ghi&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="k">if</span> <span class="n">i</span><span class="o">&lt;</span> <span class="mi">6</span> <span class="ow">or</span> <span class="n">i</span><span class="o">&gt;</span><span class="mi">17</span> <span class="k">else</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">*</span><span class="mi">1000</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">)],</span>
-    <span class="s2">&quot;dhi&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="k">if</span> <span class="n">i</span><span class="o">&lt;</span> <span class="mi">6</span> <span class="ow">or</span> <span class="n">i</span><span class="o">&gt;</span><span class="mi">17</span> <span class="k">else</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">*</span><span class="mi">1000</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">)],</span>
-    <span class="s2">&quot;dni&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="k">if</span> <span class="n">i</span><span class="o">&lt;</span> <span class="mi">6</span> <span class="ow">or</span> <span class="n">i</span><span class="o">&gt;</span><span class="mi">17</span> <span class="k">else</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">*</span><span class="mi">1000</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">)]</span>
-<span class="p">})</span>
-
-<span class="n">solar_instance</span> <span class="o">=</span> <span class="n">FixedAxisSolarModel</span><span class="p">(</span>
-    <span class="n">solar_basic_model</span><span class="o">=</span><span class="n">SolarBasicModel</span><span class="p">(</span>
-        <span class="n">longitude</span><span class="o">=</span><span class="mf">9.0</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="mf">36.0</span><span class="p">,</span> <span class="n">kw</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">irradiance</span><span class="o">=</span><span class="n">irradiance_df</span>
-    <span class="p">),</span>
-    <span class="n">axis_model</span><span class="o">=</span><span class="n">FixedAxisModel</span><span class="p">(</span><span class="n">surface_azimuth</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="n">surface_tilt</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
-    <span class="n">inv_model</span><span class="o">=</span><span class="n">InverterModel</span><span class="p">(</span><span class="n">acdcratio</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="n">solar_instance</span><span class="o">.</span><span class="n">get_inverter_ac_output</span><span class="p">()</span>
 </code></pre></div>
 
 
