@@ -3,104 +3,82 @@ import { TextField } from '../../components/text-field';
 import { SelectField } from '../../components/select-field';
 import { SearchDataView } from './search-data-view';
 import { useDebouncedSearch } from '../../hooks/use-debounced-search-create-scenarios';
-import {HiOutlineInformationCircle} from 'react-icons/hi';
+import { HiOutlineInformationCircle } from 'react-icons/hi';
 import { ESStrategyDescView } from './descriptions/storage-strategy-desc';
+import { FormGroupsView } from './utils';
 
 
-function HoursView(props:any) {
+function HoursView(props: any) {
 
     const hours = ['12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM',
-    '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM',
-    '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM',
-    '8 PM', '9 PM', '10 PM', '11 PM'];
+        '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM',
+        '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM',
+        '8 PM', '9 PM', '10 PM', '11 PM'];
     return (
         <>
             {
-            hours.map((hour) => {
-                return (<div className="flex items-center pr-2">
-                    <SelectField
-                        name={props.name}
-                        value={hour}
-                        onChange={props.handleChange}
-                        checked={props.checked(hour)}
-                        disabled={props.disabled(hour)}
-                    />
-                    <p className="pl-2"> {hour} </p>
-                </div>)
-            })
-        }
+                hours.map((hour) => {
+                    return (<div className="flex items-center pr-2">
+                        <SelectField
+                            name={props.name}
+                            value={hour}
+                            onChange={props.handleChange}
+                            checked={props.checked(hour)}
+                            disabled={props.disabled(hour)}
+                        />
+                        <p className="pl-2"> {hour} </p>
+                    </div>)
+                })
+            }
         </>
     )
 }
 
-function TimeFormGroupsView(props:any) {
+function TimeFormGroupsView(props: any) {
 
     const fields = [
         {
             name: 'chargingHours',
             label: 'Charging hours',
             description: 'Set charging hours for battery.',
-            checked: (value:string) => 
+            checked: (value: string) =>
                 props.formData.chargingHours.includes(value),
-            disabled: (value:string) => 
+            disabled: (value: string) =>
                 props.formData.disChargingHours.includes(value)
         },
         {
             name: 'disChargingHours',
             label: 'Discharging hours',
             description: 'Set discharging hours for battery.',
-            checked: (value:string) => 
+            checked: (value: string) =>
                 props.formData.disChargingHours.includes(value),
-            disabled: (value:string) => 
+            disabled: (value: string) =>
                 props.formData.chargingHours.includes(value)
         }
     ]
-    
+
     return (
-            <div className="mt-3">
-                {
-                    fields.map((item:any)=> {
-                        return (
-                            <div>
-                                <p> {item.label} </p>
-                                <p className='text-sm text-gray-500 pb-2'>
-                                   {item.description} </p>
-                                <div className="grid grid-cols-12 gap-y-3 py-2">
-                                    <HoursView 
-                                        name={item.name}
-                                        handleChange={props.handleChange}
-                                        checked={item.checked}
-                                        disabled={item.disabled}
-                                    />
-                                </div>
+        <div className="mt-3">
+            {
+                fields.map((item: any) => {
+                    return (
+                        <div>
+                            <p> {item.label} </p>
+                            <p className='text-sm text-gray-500 pb-2'>
+                                {item.description} </p>
+                            <div className="grid grid-cols-12 gap-y-3 py-2">
+                                <HoursView
+                                    name={item.name}
+                                    handleChange={props.handleChange}
+                                    checked={item.checked}
+                                    disabled={item.disabled}
+                                />
+                            </div>
                         </div>
-                        )
-                    })
-                }
-            </div>
-    )
-};
-
-
-function FormGroupsView(props: any) {
-    return  (
-        <>
-         {
-            props.formFields.map((item:any)=> {
-                return (
-                    <div>
-                        <p> {item.label} </p>
-                        <p className='text-sm text-gray-500 pb-2'>
-                            {item.description} </p>
-                        <TextField error={item.error} name={item.name}
-                            type={item.type} value={item.value}
-                            onChange={props.handleChange}
-                        />
-                    </div>
-                )
-               }) 
-         }
-        </>
+                    )
+                })
+            }
+        </div>
     )
 };
 
@@ -146,8 +124,8 @@ function PriceGroupsView(props: any) {
                             onChange={props.handleChange}
                         /> : <div className="flex py-1">
                             <p> {props.selectedPriceProfile.name} <span className="bg-blue-500 px-1 rounded-md 
-                                                        text-white text-sm text-center"> 
-                                        {props.selectedPriceProfile.owner} </span>
+                                                        text-white text-sm text-center">
+                                {props.selectedPriceProfile.owner} </span>
                             </p>
                             <p className="ml-3 bg-gray-200 text-center w-6 h-6 rounded-full text-sm 
                                                         items-center flex justify-center 
@@ -172,7 +150,7 @@ function PriceGroupsView(props: any) {
                 </div>
 
                 <FormGroupsView
-                    formFields={fields} 
+                    formFields={fields}
                     handleChange={props.handleChange}
                 />
             </div>
@@ -307,8 +285,8 @@ export function ESSettingsView(props: any) {
                         className="hover:cursor-pointer"
                         onClick={() => setCollapsed(value => !value)}
                     >
-                        {collpased ? <img src="./images/collapse.svg" /> : 
-                        <img src="./images/uncollapse.svg" />}
+                        {collpased ? <img src="./images/collapse.svg" /> :
+                            <img src="./images/uncollapse.svg" />}
                     </div>
                 </div>
 
@@ -318,23 +296,23 @@ export function ESSettingsView(props: any) {
                         <div className="mx-10 my-3">
                             <div className="grid grid-cols-2 md:grid-cols-3 
                                 gap-y-2 mt-3 gap-x-5">
-                                    
+
                                 <FormGroupsView
-                                   formFields={formFields.filter((item)=> 
-                                    item.category === 'general')} 
-                                   handleChange={handleChange}
+                                    formFields={formFields.filter((item) =>
+                                        item.category === 'general')}
+                                    handleChange={handleChange}
                                 />
-                                    
+
                             </div>
-                            
+
                             {/* TODO: Techincal Debt to figure out better way of bundling
                             strategy and it's description section. */}
                             <div className='flex items-center gap-x-3'>
                                 <div>
                                     <div className="flex items-center mt-5">
                                         <p className="pr-2"> Charging/Discharging Strategy </p>
-                                        <select className="rounded-md h-8 w-32 px-2" 
-                                            name="esStrategy" value={formData.esStrategy} 
+                                        <select className="rounded-md h-8 w-32 px-2"
+                                            name="esStrategy" value={formData.esStrategy}
                                             onChange={handleChange}>
                                             <option value="time">Time Based</option>
                                             {/* <option value="price">Price Based</option> */}
@@ -346,18 +324,19 @@ export function ESSettingsView(props: any) {
                                         Pick a strategy to be used for charging and discharging a battery. </p>
                                 </div>
 
-                                <HiOutlineInformationCircle size={20} 
+                                <HiOutlineInformationCircle size={20}
                                     className='text-gray-500 hover:text-blue-500 hover:cursor-pointer'
-                                    onClick={()=> {
+                                    onClick={() => {
                                         setCloseDesView(false)
                                         setDescriptionComp(
-                                            <ESStrategyDescView setCloseView={setCloseDesView}/>
-                                        )}}
+                                            <ESStrategyDescView setCloseView={setCloseDesView} />
+                                        )
+                                    }}
                                 />
                             </div>
-                            
+
                             {
-                                formData.esStrategy === 'time' && <TimeFormGroupsView 
+                                formData.esStrategy === 'time' && <TimeFormGroupsView
                                     handleChange={handleChange}
                                     formData={formData}
                                 />
@@ -379,12 +358,12 @@ export function ESSettingsView(props: any) {
                             }
 
                             {
-                                formData.esStrategy === 'peak_shaving' && <div 
+                                formData.esStrategy === 'peak_shaving' && <div
                                     className="grid gap-x-5 grid-cols-2 
                                     md:grid-cols-3 gap-y-2 mt-3">
                                     <FormGroupsView
-                                        formFields={formFields.filter((item)=> 
-                                        item.category === 'peak_shaving')} 
+                                        formFields={formFields.filter((item) =>
+                                            item.category === 'peak_shaving')}
                                         handleChange={handleChange}
                                     />
                                 </div>

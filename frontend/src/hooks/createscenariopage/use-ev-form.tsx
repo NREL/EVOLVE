@@ -7,8 +7,23 @@ const UseEVForm = (
 ) => {
 
     const newEVData = {
-        numberOfEV: 1,
-        pctResEV: 100
+        evType: "vehicle",
+        evCategoryName: "Car",
+        numberOfEV: 500,
+        acceptedkW: "6,60",
+        acceptedkWh: "8,60",
+        mileage: "60,330",
+        weekdayMiles: "30,60",
+        weekendMiles: "50,100",
+        homeCharger: 1.2,
+        avergeMileage: 15,
+        weekdayTravelHours: "9,17",
+        weekendTravelHours: "12,19",
+        intialSocs: "80,100",
+        stationCategoryName: "Level 2 Chargers",
+        numberOfStations: 5,
+        numberOfSlots: "5,10",
+        maxSlotkW: 9.6
     }
 
     const [counter, setCounter] = useState(2)

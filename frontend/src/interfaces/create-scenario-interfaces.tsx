@@ -28,9 +28,24 @@ interface newESDataInterface {
 
 interface newEVDataInterface {
     id: string
+    evType: string
+    evCategoryName: string
     name: string
     numberOfEV: number
-    pctResEV: number
+    acceptedkW: string
+    acceptedkWh: string
+    mileage: string
+    weekdayMiles: string
+    weekendMiles: string
+    homeCharger: number
+    avergeMileage: number
+    weekdayTravelHours: string
+    weekendTravelHours: string
+    intialSocs: string
+    stationCategoryName: string
+    numberOfStations: number
+    numberOfSlots: string
+    maxSlotkW: number
 }
 
 interface newBasicDataInterface {

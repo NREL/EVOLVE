@@ -26,15 +26,6 @@ theme:
 plugins:
   - mkdocstrings
   - search
-  - i18n:
-      default_language: en
-      languages:
-        en:
-          name: English
-          build: true
-        es:
-          name: Español
-          build: true
 
 
 
@@ -71,9 +62,6 @@ markdown_extensions:
 
 
 nav:
-  # - Languages:
-  #   - en: /
-  #   - es: /es/
   - Welcome: index.md
   - Installation:
     - Docker installation: docker-installation.md 
@@ -81,11 +69,5 @@ nav:
     - Developer installation: developer-installation.md 
     - Legacy dashboard: usage.md
   - Metrics: metrics.md
-# extra:
-#   alternate:
-#     - name: English
-#       link: / 
-#       lang: en
-#     - name: Spanish
-#       link: /es/
-#       lang: es
+  - EVOLVE Core: 
+      Setup & Installation: evolve-core/index.md

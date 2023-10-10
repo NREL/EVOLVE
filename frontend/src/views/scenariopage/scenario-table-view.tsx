@@ -83,16 +83,18 @@ export const ScenarioTableView: React.FC<ScenarioTableViewProps> = ({
                             rounded-md shadow-md text-white"> Electric Vehicle Units </h1>
                         <table className='w-full table-auto border-collapse'>
                             <tr className="bg-gray-500 h-10">
-                                <th> Number of EV units </th>
-                                <th> % Residential EV </th>
+                                <th> Electric Vehicle Type </th>
+                                <th> Number of EVs </th>
+                                <th> Number of Stations </th>
                             </tr>
 
                             {
                                 scenJSON.ev.map(
                                     (value: newEVDataInterface, index: number) => {
                                         return <tr className="h-10 bg-gray-300 text-center" key={'ev_' + index}>
-                                            <td> {value.numberOfEV} </td>
-                                            <td> {value.pctResEV} </td>
+                                            <td> {value.evType} </td>
+                                            <td> {value.evType === 'vehicle' ? value.numberOfEV : null} </td>
+                                            <td> {value.evType !== 'vehicle' ? value.numberOfStations : null} </td>
                                         </tr>
                                     }
                                 )
