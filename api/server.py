@@ -20,7 +20,7 @@ import uvicorn
 
 
 # internal imports
-from api import models
+import models
 
 # pylint:disable=import-error,wrong-import-order
 from dependencies.dependency import get_current_user
@@ -60,7 +60,7 @@ app.include_router(notification_routes.router)
 app.include_router(report_routes.router)
 
 
-async def autheticate_user(username: str, password: str)-> ('models.Users' | bool):
+async def autheticate_user(username: str, password: str):
     """Function to autheticate user."""
 
     user = await models.Users.get(username=username)

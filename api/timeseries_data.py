@@ -10,7 +10,6 @@ from pathlib import Path
 import polars
 import pandas as pd
 from pydantic import BaseModel
-import numpy as np
 from dotenv import load_dotenv
 from fastapi import HTTPException, status
 
@@ -22,6 +21,8 @@ DATA_PATH = os.getenv("DATA_PATH")
 
 
 class TSFormInput(BaseModel):
+    """Interface for timeseries form input."""
+
     timestamp: str
     resolution: float
     category: str
@@ -29,7 +30,7 @@ class TSFormInput(BaseModel):
 
 
 async def post_notification(username: str, message: str):
-
+    """Function for saving notification."""
     not_obj = models.Notifications(
         user=await models.Users.get(username=username),
         message=message,
@@ -39,17 +40,15 @@ async def post_notification(username: str, message: str):
     await not_obj.save()
 
 
-async def handle_timeseries_data_upload(
-    file, metadata: TSFormInput, username: str
-):
+async def handle_timeseries_data_upload(file, metadata: TSFormInput, username: str):
     """Function to manage upload of files."""
 
     try:
         df = polars.read_csv(file.file, parse_dates=True)
         if df[metadata.timestamp].dtype == polars.datatypes.Utf8:
-           df_ = df.to_pandas()
-           df_[metadata.timestamp]= pd.to_datetime(df_[metadata.timestamp])
-           df = polars.from_pandas(df_)
+            df_ = df.to_pandas()
+            df_[metadata.timestamp] = pd.to_datetime(df_[metadata.timestamp])
+            df = polars.from_pandas(df_)
 
     except Exception as e:
         await post_notification(
@@ -59,8 +58,8 @@ async def handle_timeseries_data_upload(
 
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Unrecognized input!",
-        )
+            detail="Unrecognized input!",
+        ) from e
 
     # Do some validation on dataframe
     # If not valid throw exception
@@ -77,8 +76,8 @@ async def handle_timeseries_data_upload(
 
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Unrecognized input!",
-        )
+            detail="Unrecognized input!",
+        ) from e
 
     if len(
         diff_timestamps.filter(
@@ -86,7 +85,6 @@ async def handle_timeseries_data_upload(
             == datetime.timedelta(minutes=metadata.resolution)
         )
     ) != len(diff_timestamps):
-
         await post_notification(
             username,
             f"Specified time resolution does not match! `{file.filename}`",
@@ -94,7 +92,7 @@ async def handle_timeseries_data_upload(
 
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Specified time resolution does not match!",
+            detail="Specified time resolution does not match!",
         )
 
     # Now that the data is valid let's upload data to databases
@@ -114,20 +112,16 @@ async def handle_timeseries_data_upload(
             if column != metadata.timestamp:
                 data_uuid = str(uuid.uuid4())
                 tagging_dict[column] = data_uuid
-                df.select(
-                    [polars.col(column), polars.col(metadata.timestamp)]
-                ).rename(
+                df.select([polars.col(column), polars.col(metadata.timestamp)]).rename(
                     {column: metadata.category, metadata.timestamp: "timestamp"}
-                ).write_csv(
-                    timeseries_data_path / (data_uuid + ".csv")
-                )
+                ).write_csv(timeseries_data_path / (data_uuid + ".csv"))
 
     else:
         data_uuid = str(uuid.uuid4())
         tagging_dict = {file.filename.split(".")[0]: data_uuid}
-        df.rename(
-            {metadata.timestamp: "timestamp"}
-        ).write_csv(timeseries_data_path / (data_uuid + ".csv"))
+        df.rename({metadata.timestamp: "timestamp"}).write_csv(
+            timeseries_data_path / (data_uuid + ".csv")
+        )
 
     for name, uuid_ in tagging_dict.items():
         data_model = models.TimeseriesData(
@@ -146,7 +140,5 @@ async def handle_timeseries_data_upload(
         data_pydantic = await models.ts_minimal.from_tortoise_orm(data_model)
         ts_pydantics.append(data_pydantic)
 
-    await post_notification(
-        username, f"Uploaded successfully `{file.filename}`"
-    )
+    await post_notification(username, f"Uploaded successfully `{file.filename}`")
     return ts_pydantics

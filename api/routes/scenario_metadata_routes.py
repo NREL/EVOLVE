@@ -6,16 +6,17 @@ from typing import List
 import json
 import shutil
 
-from fastapi import (APIRouter, HTTPException, status, Depends)
+from fastapi import APIRouter, HTTPException, status, Depends
 import tortoise
 import pydantic
 
+# pylint:disable=import-error
 import models
 from dependencies.dependency import get_current_user
-from api.scenario_form_model_deprecated import ScenarioData, CloneScenarioInputModel
 from custom_models import ScenarioMetaDataResponseModel, SimpleLabelModel
+from common.scenario import ScenarioData
 
-DATA_PATH = os.getenv('DATA_PATH')
+DATA_PATH = os.getenv("DATA_PATH")
 
 router = APIRouter(
     prefix="/scenario",
@@ -23,14 +24,15 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-@router.get('/', response_model=List[ScenarioMetaDataResponseModel])
-async def get_all_scenarios(
-    user: models.user_pydantic = Depends(get_current_user)):
 
-    scen_data = await models.ScenarioMetadata.all().filter(
-        user=await models.Users.get(username=user.username)
-    ).prefetch_related('scen_meta')
-
+@router.get("/", response_model=List[ScenarioMetaDataResponseModel])
+async def get_all_scenarios(user: models.user_pydantic = Depends(get_current_user)):
+    """ Route handler to get all DER scenarios. """
+    scen_data = (
+        await models.ScenarioMetadata.all()
+        .filter(user=await models.Users.get(username=user.username))
+        .prefetch_related("scen_meta")
+    )
 
     all_scenarios = []
     for scen in scen_data:
@@ -39,180 +41,187 @@ async def get_all_scenarios(
 
         scen_labels_pydantic = []
         for scen_label in scen_labels:
-            await scen_label.fetch_related('label')
+            await scen_label.fetch_related("label")
 
             scen_labels_pydantic.append(
                 SimpleLabelModel(labelname=scen_label.label.labelname)
             )
 
         all_scenarios.append(
-            ScenarioMetaDataResponseModel(
-                **scen_dict,
-                labels=scen_labels_pydantic
-            )
+            ScenarioMetaDataResponseModel(**scen_dict, labels=scen_labels_pydantic)
         )
 
     return all_scenarios
 
-@router.get('/{id}', response_model=ScenarioData)
+
+@router.get("/{id}", response_model=ScenarioData)
 async def get_scenario_metadata(
-    id: int,
-    user: models.user_pydantic = Depends(get_current_user)
+    id: int, user: models.user_pydantic = Depends(get_current_user)
 ):
-    """ Get JSON scenario metadata by ID."""
+    """Get JSON scenario metadata by ID."""
     scen_data = await models.ScenarioMetadata.get(
-            id=id,
-            user=await models.Users.get(username=user.username)
-        )
+        id=id, user=await models.Users.get(username=user.username)
+    )
 
-    file_path = Path(DATA_PATH) / user.username / 'scenarios' / scen_data.filename
+    file_path = Path(DATA_PATH) / user.username / "scenarios" / scen_data.filename
     if not file_path.exists():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-        detail='Item not found!')
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Item not found!"
+        )
+    with open(file_path, "r", encoding="utf-8") as file_pointer:
+        scen_data = json.load(file_pointer)
 
-    return pydantic.parse_file_as(ScenarioData, file_path)
+    return ScenarioData.model_validate(scen_data)
 
-@router.post('/', response_model=models.scenmeta_pydantic)
+
+@router.post("/", response_model=models.scenmeta_pydantic)
 async def create_scenario_metadta(
-    body: ScenarioData,
-    user: models.user_pydantic = Depends(get_current_user)
+    body: ScenarioData, user: models.user_pydantic = Depends(get_current_user)
 ):
-    """ Create scenario metadata. """
+    """Create scenario metadata."""
     try:
         await models.ScenarioMetadata.get(
             name=body.basic.scenarioName,
-            user=await models.Users.get(username=user.username)
+            user=await models.Users.get(username=user.username),
         )
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-            detail='Scenario with same name already exists!')
-    
-    except tortoise.exceptions.DoesNotExist as e: 
-        
-        filename = str(uuid.uuid4()) + '.json'
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Scenario with same name already exists!",
+        )
 
-        folder_path = Path(DATA_PATH) / user.username / 'scenarios'
+    except tortoise.exceptions.DoesNotExist as _:
+        filename = str(uuid.uuid4()) + ".json"
+
+        folder_path = Path(DATA_PATH) / user.username / "scenarios"
         if not folder_path.exists():
             folder_path.mkdir(parents=True)
-     
-        with open(folder_path / filename, 'w') as fout:
-            fout.write(body.json())
+
+        with open(folder_path / filename, "w", encoding="utf-8") as fout:
+            fout.write(body.model_dump_json())
 
         scenario_obj = models.ScenarioMetadata(
-            user= await models.Users.get(username=user.username),
+            user=await models.Users.get(username=user.username),
             name=body.basic.scenarioName,
-            description='Description not yet passed from UI.',
-            solar = 'solar' in body.basic.technologies,
-            ev = 'ev' in body.basic.technologies,
-            storage = 'energy_storage' in body.basic.technologies,
-            filename = filename
+            description="Description not yet passed from UI.",
+            solar="solar" in body.basic.technologies,
+            ev="ev" in body.basic.technologies,
+            storage="energy_storage" in body.basic.technologies,
+            filename=filename,
         )
 
         await scenario_obj.save()
         return await models.scenmeta_pydantic.from_tortoise_orm(scenario_obj)
-        
-@router.patch('/{id}', response_model=models.scenmeta_pydantic)
+
+
+@router.patch("/{id}", response_model=models.scenmeta_pydantic)
 async def update_scenario_metadta(
-    id: int,
-    body: ScenarioData,
-    user: models.user_pydantic = Depends(get_current_user)
+    id: int, body: ScenarioData, user: models.user_pydantic = Depends(get_current_user)
 ):
-    """ Update scenario. """
+    """Update scenario."""
     try:
         scenario_obj = await models.ScenarioMetadata.get(
-            id=id,
-            user=await models.Users.get(username=user.username)
+            id=id, user=await models.Users.get(username=user.username)
         )
 
-        filename = str(uuid.uuid4()) + '.json'
-        folder_path = Path(DATA_PATH) / user.username / 'scenarios'
+        filename = str(uuid.uuid4()) + ".json"
+        folder_path = Path(DATA_PATH) / user.username / "scenarios"
         filepath = folder_path / scenario_obj.filename
         filepath.unlink(missing_ok=True)
 
-        scenario_obj.update_from_dict({
-            'name':body.basic.scenarioName,
-            'solar': 'solar' in body.basic.technologies,
-            'ev': 'ev' in body.basic.technologies,
-            'storage': 'energy_storage' in body.basic.technologies,
-            'filename':  filename
-        })
+        scenario_obj.update_from_dict(
+            {
+                "name": body.basic.scenarioName,
+                "solar": "solar" in body.basic.technologies,
+                "ev": "ev" in body.basic.technologies,
+                "storage": "energy_storage" in body.basic.technologies,
+                "filename": filename,
+            }
+        )
 
         await scenario_obj.save()
 
-        with open(folder_path / filename, 'w') as fout:
-            fout.write(body.json())
+        with open(folder_path / filename, "w", encoding="utf-8") as fout:
+            fout.write(body.model_dump_json())
 
         return await models.scenmeta_pydantic.from_tortoise_orm(scenario_obj)
 
-    except tortoise.exceptions.DoesNotExist as e: 
+    except tortoise.exceptions.DoesNotExist as exp:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Scenario with id {id} does not exist!",
+        ) from exp
 
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Scenario with id {id} does not exist!')
 
-@router.post('/clone/{id}', response_model=models.scenmeta_pydantic)
-async def create_scenario_metadta(
+class CloneScenarioInputModel(pydantic.BaseModel):
+    """ Simple interface for cloning. """
+    name: str
+
+
+@router.post("/clone/{id}", response_model=models.scenmeta_pydantic)
+async def clone_scenario_metadata(
     id: int,
     body: CloneScenarioInputModel,
-    user: models.user_pydantic = Depends(get_current_user)
+    user: models.user_pydantic = Depends(get_current_user),
 ):
-    """ Clone scenario. """
+    """Clone scenario."""
     try:
         scenario_obj = await models.ScenarioMetadata.get(
-            id=id,
-            user=await models.Users.get(username=user.username)
+            id=id, user=await models.Users.get(username=user.username)
         )
 
-        filename = str(uuid.uuid4()) + '.json'
-        
-        folder_path = Path(DATA_PATH) / user.username / 'scenarios'
-        with open(folder_path / scenario_obj.filename, "r") as fp:
+        filename = str(uuid.uuid4()) + ".json"
+
+        folder_path = Path(DATA_PATH) / user.username / "scenarios"
+        with open(folder_path / scenario_obj.filename, "r", encoding="utf-8") as fp:
             json_body = json.load(fp)
 
-        json_body['basic']['scenarioName'] = body.name
+        json_body["basic"]["scenarioName"] = body.name
 
         scenario_obj_clone = models.ScenarioMetadata(
-            user= await models.Users.get(username=user.username),
+            user=await models.Users.get(username=user.username),
             name=body.name,
-            description='Description not yet passed from UI.',
-            solar = scenario_obj.solar,
-            ev = scenario_obj.ev,
-            storage = scenario_obj.storage,
-            filename = filename
+            description="Description not yet passed from UI.",
+            solar=scenario_obj.solar,
+            ev=scenario_obj.ev,
+            storage=scenario_obj.storage,
+            filename=filename,
         )
 
-        with open(folder_path / filename, 'w') as fout:
+        with open(folder_path / filename, "w", encoding="utf-8") as fout:
             json.dump(json_body, fout)
 
         await scenario_obj_clone.save()
         return await models.scenmeta_pydantic.from_tortoise_orm(scenario_obj_clone)
 
-    except tortoise.exceptions.DoesNotExist as e: 
+    except tortoise.exceptions.DoesNotExist as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Scenario with id {id} does not exist!",
+        ) from e
 
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Scenario with id {id} does not exist!')
 
-@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_scenario_data(id: int, user: models.user_pydantic = Depends(get_current_user)):
-    """ Delete scenario data by id. """
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_scenario_data(
+    id: int, user: models.user_pydantic = Depends(get_current_user)
+):
+    """Delete scenario data by id."""
 
     try:
         scen_data = await models.ScenarioMetadata.get(
-            id=id, 
-            user=await models.Users.get(username=user.username)
+            id=id, user=await models.Users.get(username=user.username)
         )
     except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, 
-            detail="Unauthorized!")
-    
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized!"
+        ) from e
+
     # TODO: Find all the report and delete them as well
     try:
         reports = await models.ReportMetadata.all().filter(
-            scenario= scen_data,
-            user=await models.Users.get(username=user.username)
+            scenario=scen_data, user=await models.Users.get(username=user.username)
         )
 
         for report in reports:
-
             report_data_path = (
                 Path(DATA_PATH) / user.username / "reports_data" / str(report.id)
             )
@@ -222,17 +231,19 @@ async def delete_scenario_data(id: int, user: models.user_pydantic = Depends(get
             )
 
             report_zip_path = (
-                Path(DATA_PATH) / user.username / "reports_data" / f"{str(report.id)}.zip"
+                Path(DATA_PATH)
+                / user.username
+                / "reports_data"
+                / f"{str(report.id)}.zip"
             )
             shutil.rmtree(report_data_path, ignore_errors=True)
             os.remove(report_json_file)
             os.remove(report_zip_path)
 
     except Exception as e:
-        print('Warning: ', e)
+        print("Warning: ", e)
 
     file_name = scen_data.filename
-    file_path = Path(DATA_PATH) / user.username / 'scenarios' / file_name
+    file_path = Path(DATA_PATH) / user.username / "scenarios" / file_name
     await scen_data.delete()
     file_path.unlink(missing_ok=True)
-    

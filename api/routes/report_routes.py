@@ -16,13 +16,15 @@ import polars
 from dependencies.dependency import get_current_user
 import models
 import rabbit_mq
-from api.scenario_form_model_deprecated import ScenarioData
+from common.scenario import ScenarioData
 
 
 DATA_PATH = os.getenv("DATA_PATH")
 
 
 class ReportCreateFormModel(BaseModel):
+    """Interface for report create model."""
+
     name: str
     description: str
 
@@ -53,9 +55,7 @@ async def get_report_scenario_metadata(
     return pydantic.parse_file_as(ScenarioData, file_path)
 
 
-@router.get(
-    "/scenario/{id}/report", response_model=List[models.report_pydantic]
-)
+@router.get("/scenario/{id}/report", response_model=List[models.report_pydantic])
 async def get_all_reports(
     id: int, user: models.user_pydantic = Depends(get_current_user)
 ):
@@ -71,16 +71,14 @@ async def get_all_reports(
     )
 
     return [
-        await models.report_pydantic.from_tortoise_orm(report)
-        for report in reports
+        await models.report_pydantic.from_tortoise_orm(report) for report in reports
     ]
 
 
 @router.get("/report/{id}/file")
-async def get_reports(
-    id: int,  user: models.user_pydantic = Depends(get_current_user)
-):
-    report_path = Path(DATA_PATH) / user.username / "reports_data"  
+async def get_reports(id: int, user: models.user_pydantic = Depends(get_current_user)):
+    """Get report file by id."""
+    report_path = Path(DATA_PATH) / user.username / "reports_data"
     zip_file_path = report_path / (str(id) + ".zip")
     if not zip_file_path.exists():
         shutil.make_archive(
@@ -95,7 +93,7 @@ async def get_timeseries_baseload(
     data_type: str,
     user: models.user_pydantic = Depends(get_current_user),
 ):
-
+    """ Get timeseries data. """
     data_type_to_file_name_mapping = {
         "base_timeseries": "base_load.csv",
         "base_energy_metrics": "base_load_energy_metrics.csv",
@@ -106,9 +104,9 @@ async def get_timeseries_baseload(
         "battery_power": "battery_power_timeseries.csv",
         "solar_power": "solar_power_timeseries.csv",
         "solar_metrics": "solar_metrics.csv",
-        "battery_charging_metrics": 'es_charging_energy_metrics.csv',
-        "battery_discharging_metrics": 'es_discharging_energy_metrics.csv',
-        "battery_soc": "battery_soc_timeseries.csv"
+        "battery_charging_metrics": "es_charging_energy_metrics.csv",
+        "battery_discharging_metrics": "es_discharging_energy_metrics.csv",
+        "battery_soc": "battery_soc_timeseries.csv",
     }
     try:
         df = polars.read_csv(
@@ -122,7 +120,7 @@ async def get_timeseries_baseload(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Ran into an error reading file. >> {e}",
-        )
+        ) from e
 
     if len(df) > 2000:
         df = df.limit(2000)
@@ -152,7 +150,7 @@ async def create_report(
     folder_path = Path(DATA_PATH) / user.username / "scenarios"
     json_path = folder_path / scenario.filename
 
-    with open(json_path, "r") as fp:
+    with open(json_path, "r", encoding="utf-8") as fp:
         scen_dict = json.load(fp)
 
     await report_obj.save()
@@ -174,7 +172,7 @@ async def create_report(
         output_path.mkdir(parents=True)
 
     output_json_path = output_path / f"{report_response.id}.json"
-    with open(output_json_path, "w") as fp:
+    with open(output_json_path, "w", encoding="utf-8") as fp:
         json.dump(scen_dict, fp)
 
     return report_response
@@ -193,7 +191,7 @@ async def delete_report(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized!"
-        )
+        ) from e
 
     report_data_path = (
         Path(DATA_PATH) / user.username / "reports_data" / str(report_data.id)
@@ -212,7 +210,7 @@ async def delete_report(
         os.remove(report_json_file)
         os.remove(report_zip_path)
     except Exception as e:
-        print(e, '---')
+        print(e, "---")
 
     await report_data.delete()
 
@@ -238,8 +236,7 @@ async def update_report(
         return await models.report_pydantic.from_tortoise_orm(report_obj)
 
     except tortoise.exceptions.DoesNotExist as e:
-
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Report with id {id} does not exist!",
-        )
+        ) from e
