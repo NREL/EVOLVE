@@ -138,7 +138,7 @@ class PeakShavingESFormData(_ESFormData, _ChargDischargRates):
     @model_validator(mode="after")
     def validate_power_thresholds(self) -> "PeakShavingESFormData":
         """Method to validate charging and discharging power threshold."""
-        if self.dischargingPowerThreshold >= self.chargingPowerThreshold:
+        if self.dischargingPowerThreshold < self.chargingPowerThreshold:
             raise ValueError(
                 f"Charging power threshold {self.chargingPowerThreshold} must be"
                 f"less than discharging price {self.dischargingPowerThreshold}"

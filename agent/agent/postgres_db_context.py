@@ -2,27 +2,25 @@
 
 # Standard imports
 import psycopg2
-from typing import Dict
 
 # third-party imports
 
+
 # internal imports
 class PostGresDB:
-    """ Class for managing interaction with PostGres DB. """
-    
-    def __init__(self,
-        db_config: Dict
-    ):
-        """ Constructor for DB.
+    """Class for managing interaction with PostGres DB."""
+
+    def __init__(self, db_config: dict):
+        """Constructor for DB.
 
         e.g. db_config = {
-            user: str, 
-            password: str, 
-            host: str, 
-            port: str, 
+            user: str,
+            password: str,
+            host: str,
+            port: str,
             database: str
         }
-        
+
         """
         self.connection = psycopg2.connect(**db_config)
         self.connection.autocommit = True
@@ -31,6 +29,5 @@ class PostGresDB:
     def __enter__(self):
         return self.cursor
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, *args, **kwargs):
         self.connection.close()
-    

@@ -6,7 +6,7 @@ import { BaseLoadTSDataInterface } from '../../interfaces/report-interfaces';
 
 const useTimeSeriesBaseLoad = (id: any):
     [BaseLoadTSDataInterface | null, any, any, any, any, any,
-        any, any, any, any, any, any] => {
+        any, any, any, any, any, any, any, any, any] => {
 
     const [baseLoad, setBaseLoad] = useState<BaseLoadTSDataInterface | null>(null)
     const [baseEnergyMetrics, setBaseEnergyMetrics] = useState<any>(null)
@@ -20,6 +20,9 @@ const useTimeSeriesBaseLoad = (id: any):
     const [batteryDisChargMetrics, setBatteryDisChargMetrics] = useState<any>(null)
     const [batteryChargMetrics, setBatteryChargMetrics] = useState<any>(null)
     const [batterySOC, setBatterySOC] = useState<any>(null)
+    const [evPower, setEVPower] = useState<any>(null)
+    const [stationPower, setStationPower] = useState<any>(null)
+    const [evMetrics, setEVMetrics] = useState<any>(null)
 
     const accessToken = useSelector(
         (state: StateModel) => state.auth.accessToken
@@ -50,11 +53,14 @@ const useTimeSeriesBaseLoad = (id: any):
         handleFetchLoadTSData(`/report/${id}/load/?data_type=battery_charging_metrics`, setBatteryChargMetrics)
         handleFetchLoadTSData(`/report/${id}/load/?data_type=battery_discharging_metrics`, setBatteryDisChargMetrics)
         handleFetchLoadTSData(`/report/${id}/load/?data_type=battery_soc`, setBatterySOC)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=ev_power`, setEVPower)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=ev_metrics`, setEVMetrics)
+        handleFetchLoadTSData(`/report/${id}/load/?data_type=station_power`, setStationPower)
     }, [])
 
     return [baseLoad, baseEnergyMetrics, basePeakPowerMetrics,
         netLoad, netEnergyMetrics, netPeakPowerMetrics, batteryPower, solarPower,
-        solarMetrics, batteryChargMetrics, batteryDisChargMetrics, batterySOC ]
+        solarMetrics, batteryChargMetrics, batteryDisChargMetrics, batterySOC, evPower, evMetrics, stationPower ]
 }
 
 export { useTimeSeriesBaseLoad }

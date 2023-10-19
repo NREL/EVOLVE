@@ -35,10 +35,10 @@ class _SolarFormData(BaseModel):
     ]
     longitude: Annotated[
         LongitudeType,
-        Field(..., description="Longitude where solar panel is installed."),
+        Field(9.5, description="Longitude where solar panel is installed."),
     ]
     latitude: Annotated[
-        LatitudeType, Field(..., description="Latitude where solar panel is installed.")
+        LatitudeType, Field(33.88, description="Latitude where solar panel is installed.")
     ]
     solarCapacity: Annotated[
         PositiveFloat, Field(..., description="Capacity of solar panel in kW.")

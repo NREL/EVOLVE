@@ -26,9 +26,7 @@ class SelfConsumptionCDStrategy:
         """Method to handle battery charging."""
 
         # available energy
-        available_energy = (
-            battery.battery_current_soc * battery.battery_params.energy_capacity_kwhr
-        )
+        available_energy = battery.battery_current_soc * battery.battery_params.energy_capacity_kwhr
         energy_required_for_full_charge = (
             battery.battery_params.energy_capacity_kwhr - available_energy
         )
@@ -46,12 +44,8 @@ class SelfConsumptionCDStrategy:
         self, battery: GenericBattery, discharging_period: float, kw_rate: float
     ):
         """Method to handle battery discharging."""
-        available_energy = (
-            battery.battery_current_soc * battery.battery_params.energy_capacity_kwhr
-        )
-        self_discharge_energy = battery.compute_self_discharge_energy(
-            discharging_period
-        )
+        available_energy = battery.battery_current_soc * battery.battery_params.energy_capacity_kwhr
+        self_discharge_energy = battery.compute_self_discharge_energy(discharging_period)
 
         if battery.battery_params.maximum_dod < kw_rate:
             kw_rate = battery.battery_params.maximum_dod
@@ -61,9 +55,7 @@ class SelfConsumptionCDStrategy:
         actual_rate = rate_expected if kw_rate > rate_expected else kw_rate
         battery.update_soc_power(actual_rate, discharging_period)
 
-    def simulate(
-        self, load_profile: list[SelfConsumptionDataModel], battery: GenericBattery
-    ):
+    def simulate(self, load_profile: list[SelfConsumptionDataModel], battery: GenericBattery):
         """Method to simulate battery."""
         # Sorting timestamps into ascending order
         load_profile.sort(key=lambda x: x.timestamp)
@@ -71,17 +63,13 @@ class SelfConsumptionCDStrategy:
         # Loop over all the timestamps except last timestamp
         for index, load in enumerate(load_profile[:-1]):
             # Compute time in hr for next CD cycle
-            delta_time_in_hr = (
-                load_profile[index + 1].timestamp - load.timestamp
-            ).seconds / 3600
+            delta_time_in_hr = (load_profile[index + 1].timestamp - load.timestamp).seconds / 3600
 
             if delta_time_in_hr == 0:
                 # Add the last timestep power to power profile if
                 # this is the first time then add 0
                 battery.battery_power_profile.append(
-                    battery.battery_power_profile[-1]
-                    if battery.battery_power_profile
-                    else 0
+                    battery.battery_power_profile[-1] if battery.battery_power_profile else 0
                 )
                 continue
 

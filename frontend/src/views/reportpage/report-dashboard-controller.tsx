@@ -19,7 +19,7 @@ export const ReportDashboardController: React.FC = () => {
     const [baseLoad, baseEnergyMetrics, basePeakPowerMetrics,
         netLoad, netEnergyMetrics, netPeakPowerMetrics, batteryPower,
         solarPower, solarMetrics, batteryChargMetrics, batteryDisChargMetrics,
-        batterySOC
+        batterySOC, evPower, evMetrics, stationPower
     ] = useTimeSeriesBaseLoad(id);
 
     const handleDataDownload = (id: any) => {
@@ -122,10 +122,22 @@ export const ReportDashboardController: React.FC = () => {
 
             {
                 activePage === 'Electric Vehicle' && scenJSON?.ev?.length > 0 &&
-                <div className="w-full h-96 flex justify-center
-                        items-center">
-                    <p className="text-4xl text-gray-500 border-b-2"> Sorry we are
-                        still building EV model. </p>
+        
+                <div>
+                    <div>
+                        <EnergyMetricsView 
+                            metric={evMetrics}
+                            title={"Electric Vehicle Consumption (kWh)"}
+                        />
+                        <TimeseriesPowerView
+                            tsPower={evPower}
+                            title={'Aggregated EV kW Profile'}
+                        />
+                        <TimeseriesPowerView
+                            tsPower={stationPower}
+                            title={'Aggregated Station kW Profile'}
+                        />
+                    </div>
                 </div>
             }
 

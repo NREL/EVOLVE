@@ -51,8 +51,11 @@ async def get_report_scenario_metadata(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Item not found!"
         )
+    
+    with open(file_path, "r", encoding="utf-8") as file_pointer:
+        json_content = json.load(file_pointer)
 
-    return pydantic.parse_file_as(ScenarioData, file_path)
+    return ScenarioData.model_validate(json_content)
 
 
 @router.get("/scenario/{id}/report", response_model=List[models.report_pydantic])
@@ -107,6 +110,9 @@ async def get_timeseries_baseload(
         "battery_charging_metrics": "es_charging_energy_metrics.csv",
         "battery_discharging_metrics": "es_discharging_energy_metrics.csv",
         "battery_soc": "battery_soc_timeseries.csv",
+        "ev_power": "ev_timeseries.csv",
+        "ev_metrics": "ev_metrics.csv",
+        "station_power": "station_timeseries.csv"
     }
     try:
         df = polars.read_csv(
