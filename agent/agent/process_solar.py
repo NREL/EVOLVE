@@ -52,7 +52,7 @@ def solar_load_df(
     if not file_path.exists():
         raise FileNotFoundError(f"File {file_path} does not exist!")
 
-    df = filter_by_date(polars.read_csv(file_path, parse_dates=True), start_date, end_date)
+    df = filter_by_date(polars.read_csv(file_path, try_parse_dates=True), start_date, end_date)
 
     if data_res > resolution:
         return {
@@ -82,7 +82,7 @@ def compute_solar_energy_metric(solar_power_df: polars.DataFrame, resolution: in
             df_ = (
                 df.groupby("category")
                 .agg(polars.col(column).sum())
-                .with_column((polars.col(column) * (-resolution / 60)).alias(column))
+                .with_columns((polars.col(column) * (-resolution / 60)).alias(column))
                 .select([column, "category"])
             )
 

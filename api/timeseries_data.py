@@ -44,7 +44,7 @@ async def handle_timeseries_data_upload(file, metadata: TSFormInput, username: s
     """Function to manage upload of files."""
 
     try:
-        df = polars.read_csv(file.file, parse_dates=True)
+        df = polars.read_csv(file.file, try_parse_dates=True)
         if df[metadata.timestamp].dtype == polars.datatypes.Utf8:
             df_ = df.to_pandas()
             df_[metadata.timestamp] = pd.to_datetime(df_[metadata.timestamp])

@@ -8,14 +8,14 @@ pyjwt
 python-multipart
 python-dotenv
 pytest
-pydantic==1.10.11
+pydantic
 mkdocs
 pandas
 aerich
-polars==0.16.11
+polars
 pika
 tortoise-orm[asyncpg]
-mkdocstrings[python]
-mkdocs-material
-mkdocs-static-i18nt
 pyarrow
+# mkdocstrings[python]
+# mkdocs-material
+# mkdocs-static-i18nt

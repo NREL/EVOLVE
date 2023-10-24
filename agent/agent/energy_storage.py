@@ -116,7 +116,7 @@ def compute_es_energy_metric(battery_power_df: polars.DataFrame, resolution: int
                 df.filter(polars.col(column) < 0)
                 .groupby("category")
                 .agg(polars.col(column).sum())
-                .with_column((polars.col(column) * (-resolution / 60)).alias(column))
+                .with_columns((polars.col(column) * (-resolution / 60)).alias(column))
                 .select([column, "category"])
             )
 
@@ -124,7 +124,7 @@ def compute_es_energy_metric(battery_power_df: polars.DataFrame, resolution: int
                 df.filter(polars.col(column) > 0)
                 .groupby("category")
                 .agg(polars.col(column).sum())
-                .with_column((polars.col(column) * (resolution / 60)).alias(column))
+                .with_columns((polars.col(column) * (resolution / 60)).alias(column))
                 .select([column, "category"])
             )
 

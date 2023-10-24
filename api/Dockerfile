@@ -7,7 +7,7 @@ USER root
 
 WORKDIR /api 
 
-COPY . .  
+COPY . . 
 
 # Create environment
 RUN pip3 install --no-cache-dir -r requirements.txt

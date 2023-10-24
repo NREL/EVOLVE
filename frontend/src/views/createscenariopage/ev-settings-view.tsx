@@ -124,15 +124,6 @@ export function EVSettingsView(props: any) {
             evtype: "vehicle"
         },
         {
-            label: 'Initial SOCs Range',
-            description: `Range of initial state of charges (SOCs)`,
-            error: errors?.intialSocs,
-            name: "intialSocs",
-            type: "text",
-            value: formData.intialSocs,
-            evtype: "vehicle"
-        },
-        {
             label: 'Station Catgeory Name',
             description: `Specify category name for this group of stations. e.g Level 2 Chargers`,
             error: errors?.stationCategoryName,

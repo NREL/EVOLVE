@@ -56,24 +56,30 @@ def sort_metric_dataframe(df: polars.DataFrame):
             )
 
             return (
-                df.with_columns(polars.col("category").apply(sort_index_func).alias("sort_index"))
-                .sort("sort_index")
-                .select(polars.exclude("sort_index"))
-            )
-
-        elif sum(df["category"].apply(lambda x: x in months)):
-            return (
                 df.with_columns(
-                    polars.col("category").apply(lambda x: months.index(x)).alias("sort_index")
+                    polars.col("category").map_elements(sort_index_func).alias("sort_index")
                 )
                 .sort("sort_index")
                 .select(polars.exclude("sort_index"))
             )
 
-        elif sum(df["category"].apply(lambda x: x in weekdays)):
+        elif sum(df["category"].map_elements(lambda x: x in months)):
             return (
                 df.with_columns(
-                    polars.col("category").apply(lambda x: weekdays.index(x)).alias("sort_index")
+                    polars.col("category")
+                    .map_elements(lambda x: months.index(x))
+                    .alias("sort_index")
+                )
+                .sort("sort_index")
+                .select(polars.exclude("sort_index"))
+            )
+
+        elif sum(df["category"].map_elements(lambda x: x in weekdays)):
+            return (
+                df.with_columns(
+                    polars.col("category")
+                    .map_elements(lambda x: weekdays.index(x))
+                    .alias("sort_index")
                 )
                 .sort("sort_index")
                 .select(polars.exclude("sort_index"))
@@ -81,7 +87,9 @@ def sort_metric_dataframe(df: polars.DataFrame):
 
         else:
             return (
-                df.with_columns(polars.col("category").apply(lambda x: int(x)).alias("sort_index"))
+                df.with_columns(
+                    polars.col("category").map_elements(lambda x: int(x)).alias("sort_index")
+                )
                 .sort("sort_index")
                 .select(polars.exclude("sort_index"))
             )
@@ -108,8 +116,8 @@ def populate_sliced_category(df: polars.DataFrame):
     else:
         format_code = "%Y"
 
-    return df.with_column(
-        polars.col("timestamp").apply(lambda x: x.strftime(format_code)).alias("category")
+    return df.with_columns(
+        polars.col("timestamp").map_elements(lambda x: x.strftime(format_code)).alias("category")
     )
 
 
@@ -125,8 +133,10 @@ def upsample_staircase_df(df: polars.DataFrame, resolution: int):
 
 def downsample_df(df: polars.DataFrame, resolution: int, column_name: str):
     """Downsampling dataframe."""
-    return df.groupby_dynamic("timestamp", every=f"{resolution}m").agg(
-        polars.col(column_name).mean()
+    return (
+        df.sort("timestamp")
+        .group_by_dynamic("timestamp", every=f"{resolution}m")
+        .agg(polars.col(column_name).mean())
     )
 
 

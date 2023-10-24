@@ -3,7 +3,6 @@ data and compute metrics."""
 
 # standard imports
 from pathlib import Path
-from typing import Dict
 
 # third-party imports
 import polars
@@ -31,7 +30,7 @@ def compute_energy_metric(df: polars.DataFrame, resolution: int, column_name="kW
         df.filter(polars.col(column_name) > 0)
         .groupby("category")
         .agg(polars.col(column_name).sum())
-        .with_column((polars.col(column_name) * resolution / 60).alias("import_kWh"))
+        .with_columns((polars.col(column_name) * resolution / 60).alias("import_kWh"))
         .select(["import_kWh", "category"])
     )
 
@@ -39,7 +38,7 @@ def compute_energy_metric(df: polars.DataFrame, resolution: int, column_name="kW
         df.filter(polars.col(column_name) <= 0)
         .groupby("category")
         .agg(polars.col(column_name).sum())
-        .with_column((polars.col(column_name) * resolution / 60).alias("export_kWh"))
+        .with_columns((polars.col(column_name) * resolution / 60).alias("export_kWh"))
         .select(["export_kWh", "category"])
     )
 
@@ -55,7 +54,7 @@ def compute_max_power(df: polars.DataFrame, column_name="kW"):
         df.filter(polars.col(column_name) > 0)
         .groupby("category")
         .agg(polars.col(column_name).max())
-        .with_column((polars.col(column_name)).alias("import_peak_kW"))
+        .with_columns((polars.col(column_name)).alias("import_peak_kW"))
         .select(["import_peak_kW", "category"])
     )
 
@@ -63,7 +62,7 @@ def compute_max_power(df: polars.DataFrame, column_name="kW"):
         df.filter(polars.col(column_name) <= 0)
         .groupby("category")
         .agg(polars.col(column_name).max())
-        .with_column((polars.col(column_name)).alias("export_peak_kW"))
+        .with_columns((polars.col(column_name)).alias("export_peak_kW"))
         .select(["export_peak_kW", "category"])
     )
 
@@ -100,7 +99,7 @@ def get_load_df(
     if not file_path.exists():
         raise FileNotFoundError(f"File {file_path} does not exist!")
 
-    df = filter_by_date(polars.read_csv(file_path, parse_dates=True), start_date, end_date)
+    df = filter_by_date(polars.read_csv(file_path, try_parse_dates=True), start_date, end_date)
 
     if data_res <= resolution:
         return downsample_df(df, resolution, "kW")

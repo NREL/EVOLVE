@@ -34,10 +34,10 @@ export const ReportListView: React.FC<ReportListViewProps> = ({
                                 >
                                     <img src="./images/delete_light.svg" width="13"/>
                                 </div>
-                                <div className="flex justify-center items-center bg-gray-300 
+                                {/* <div className="flex justify-center items-center bg-gray-300 
                                     w-6 h-6 rounded-full hover:cursor-pointer hover:bg-red-500">
                                     <img src="./images/edit_light.svg" width="13"/>
-                                </div>
+                                </div> */}
                             </div>
                             <p className="border-b text-indigo-500 font-bold"> {item.name} </p>
                             <p className="text-sm text-gray-500"> {item.description} </p>

@@ -20,7 +20,7 @@ def compute_ev_energy_metric(ev_power_df: polars.DataFrame, resolution: int):
             df_ = (
                 df.groupby("category")
                 .agg(polars.col(column).sum())
-                .with_column((polars.col(column) * (resolution / 60)).alias(column))
+                .with_columns((polars.col(column) * (resolution / 60)).alias(column))
                 .select([column, "category"])
             )
 

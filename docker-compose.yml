@@ -31,7 +31,7 @@ services:
     environment:
       REACT_APP_EVOLVE_BACKEND_URL: http://localhost:8000
     ports:
-      - 5001:80
+      - 5001:3000
     networks:
       - evolve_network
     depends_on:

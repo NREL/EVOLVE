@@ -4,15 +4,22 @@ FROM python:3.10-slim
 
 RUN mkdir /data
 
-WORKDIR /api 
+WORKDIR /app
 
 COPY . .  
 
-
 # Create environment
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip install hatch
 RUN pip install -e.
 
-WORKDIR /api/src/processor
+# Install evolve-core
+WORKDIR /app/evolve-core
+
+RUN hatch build 
+RUN pip install dist/*.whl
+RUN pip uninstall -y hatch
+
+WORKDIR /app/agent
+RUN rm -rf /app/evolve-core
 
 ENTRYPOINT ["python", "rabbit_mq_consumer.py"]
