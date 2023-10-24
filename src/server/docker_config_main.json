@@ -1,6 +1,0 @@
-{
-    "project_path": "data/extractedbypldata",
-    "dtpower_file": "transformer_data.csv",
-    "customer_energy": "customers_energy_data.csv",
-    "solar_irradiance_file": "solar_data.csv"
-}

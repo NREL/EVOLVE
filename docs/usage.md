@@ -1,3 +1,3 @@
 #### Navigating EVOLVE dashboard
 
-![](../images/usage.png)
+![](images/usage.png)

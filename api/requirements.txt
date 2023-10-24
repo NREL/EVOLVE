@@ -1,0 +1,21 @@
+fastapi
+pyjwt
+tortoise-orm
+uvicorn[standard]
+passlib
+bcrypt
+pyjwt
+python-multipart
+python-dotenv
+pytest
+pydantic
+mkdocs
+pandas
+aerich
+polars
+pika
+tortoise-orm[asyncpg]
+pyarrow
+# mkdocstrings[python]
+# mkdocs-material
+# mkdocs-static-i18nt

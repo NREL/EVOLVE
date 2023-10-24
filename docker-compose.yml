@@ -1,24 +1,88 @@
-version: '2'
+version: "3.7"
 
-services: 
-  back_end:
-    build: 
-      context: ./src
-      dockerfile: Dockerfile
-    container_name: evolve
-    volumes: 
-      - C:\Users\KDUWADI\Desktop\NREL_Projects\Tunisia\input_data:/evolve/data
-      - C:\Users\KDUWADI\Desktop\NREL_Projects\Tunisia\EVOLVE\src:/evolve/src
-    ports: 
-      - "5000:5000"
-  front_end:
-    build:
-      context: ./react-app
-      dockerfile: Dockerfile
-    container_name: evolve_react
-    # volumes: 
-    #   - C:\Users\KDUWADI\Desktop\NREL_Projects\BYPL-USAID\EVOLVE\react-app:/evolve/react_app
-    ports: 
-      - "3001:3000"
-    depends_on: 
-      - back_end
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: dev-rabbitmq
+    networks:
+      - evolve_network
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: pass
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_volume:/var/log/rabbitmq
+  postgres_db:
+    image: postgres:11
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: evolve
+    ports:
+      - 5433:5432
+    networks:
+      - evolve_network
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+
+  evolve_ui:
+    image: kapilduwadi/evolve_ui2:latest
+    environment:
+      REACT_APP_EVOLVE_BACKEND_URL: http://localhost:8000
+    ports:
+      - 5001:3000
+    networks:
+      - evolve_network
+    depends_on:
+      - evolve_backend
+
+  evolve_backend:
+    image: kapilduwadi/evolve_backend2:latest
+    ports:
+      - 8000:8000
+    volumes:
+      - evolve_volume:/data
+    networks:
+      - evolve_network
+    environment:
+      - DATA_PATH=/data
+      - JWT_KEY=igQzv915EkOP7y#0auWBb3H&nE
+      - POSTGRES_DB_URL=postgres://postgres:password@postgres_db:5432/evolve
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=user 
+      - RABBITMQ_PASSWORD=pass
+      - RABBITMQ_PORT=5672
+    depends_on:
+      - postgres_db
+      - rabbitmq
+  
+  evolve_agent:
+    image: kapilduwadi/evolve_agent2:latest 
+    volumes:
+      - evolve_volume:/data
+    networks:
+      - evolve_network
+    environment:
+      - DATA_PATH=/data
+      - JWT_KEY=igQzv915EkOP7y#0auWBb3H&nE
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_HOST=postgres_db
+      - DB_PORT=5432
+      - DB_NAME=evolve
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=user 
+      - RABBITMQ_PASSWORD=pass
+      - RABBITMQ_PORT=5672
+    depends_on:
+      - rabbitmq
+      - postgres_db
+
+networks:
+  evolve_network:
+
+volumes:
+  evolve_volume:
+  db_volume:
+  rabbitmq_volume:

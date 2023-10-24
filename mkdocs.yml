@@ -1,0 +1,75 @@
+site_name: EVOLVE
+
+theme:
+  name: "material"
+  features:
+    - search.suggest
+    - sarch.highlight
+    - content.tabs.link
+    - content.code.annotate
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/git-alt
+plugins:
+  - mkdocstrings
+  - search
+
+
+
+repo_url: https://github.com/NREL/EVOLVE.git
+repo_name: nrel/evolve
+material_alternate: true
+
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.33.1/plotly.min.js
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true 
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - admonition
+  - codehilite
+  - abbr
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+  - toc:
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+
+
+nav:
+  - Welcome: index.md
+  - Installation:
+    - Docker installation: docker-installation.md 
+    - Navigating EVOLVE UI: evolve_new_dashboard
+    - Developer installation: developer-installation.md 
+    - Legacy dashboard: usage.md
+  - Metrics: metrics.md
+  - EVOLVE Core: 
+      Setup & Installation: evolve-core/index.md
+      Solar Modeling: evolve-core/solar.md
+      EV Modeling: evolve-core/ev.md
