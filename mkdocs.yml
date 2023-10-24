@@ -66,8 +66,6 @@ nav:
   - Installation:
     - Docker installation: docker-installation.md 
     - Navigating EVOLVE UI: evolve_new_dashboard
-    - Developer installation: developer-installation.md 
-    - Legacy dashboard: usage.md
   - Metrics: metrics.md
   - EVOLVE Core: 
       Setup & Installation: evolve-core/index.md
