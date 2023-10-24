@@ -118,6 +118,7 @@ volumes:
   evolve_volume:
   db_volume:
   rabbitmq_volume:
+  
 ```
 
 2. Open up a command prompt (for windows user) or terminal (for linux or mac users) and navigate to the directory where you have the `docker-compose.yml` you created in step 1. Make sure to update the `REACT_APP_EVOLVE_BACKEND_URL` env variable in docker-compose file for deployment to remote server.
