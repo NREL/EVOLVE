@@ -47,7 +47,9 @@ Done correctly, and one should see their two datasets displayed as shown below.
 ![](images/datasets.JPG)
 
 
-## :sunny::battery::car::zap: Create Scenarios
+## :sunny: :battery: :bus: :zap: Create Scenarios
+
+
 After uploading data, the user must create scenarios they wish to model. This can be done by clicking the Create Scenarios tab. 
 
 ![](images/create_scenarios_button.JPG)
