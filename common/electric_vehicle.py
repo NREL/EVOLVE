@@ -100,7 +100,7 @@ class ElectricVehiclesForm(BaseModel):
         PctRangeField,
         Field(..., description="Range of initial state of charges for vehicles."),
     ]
-    preferredHours: Annotated[
+    preferredHour: Annotated[
         Optional[conint(ge=0, le=23)], Field(..., description="Preferred charge hour.")
     ] = None
     pctVehiclesForPreferredHour: Annotated[

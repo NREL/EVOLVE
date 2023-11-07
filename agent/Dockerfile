@@ -18,8 +18,7 @@ WORKDIR /app/evolve-core
 
 RUN hatch build && \
     pip install dist/*.whl && \
-    pip uninstall -y hatch && \
-    rm -R /dist 
+    pip uninstall -y hatch
 
 WORKDIR /app/agent
 RUN rm -rf /app/evolve-core

@@ -17,6 +17,6 @@ rm -rf evolve-core
 
 docker system prune -f 
 
-docker push kapilduwadi/evolve_ui2:latest
-docker push kapilduwadi/evolve_backend2:latest
-docker push kapilduwadi/evolve_agent2:latest
+# docker push kapilduwadi/evolve_ui2:latest
+# docker push kapilduwadi/evolve_backend2:latest
+# docker push kapilduwadi/evolve_agent2:latest
