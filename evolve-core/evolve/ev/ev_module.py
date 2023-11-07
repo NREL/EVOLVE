@@ -54,9 +54,7 @@ class ChargingStations:
                 self.vehicle_id_station[ev_id] = chosen_station
                 return chosen_station.id
 
-    def _collect_results(
-        self, charging_kw: float, station_id: str, timestamp: datetime.datetime
-    ):
+    def _collect_results(self, charging_kw: float, station_id: str, timestamp: datetime.datetime):
         for station in self.stations:
             self.station_pct_occupied[station.id][timestamp] = round(
                 station.n_occupied * 100 / station.num_of_slots, 3
@@ -125,10 +123,7 @@ class ElectricVehicle:
         """Method for getting hours to charge electric vehicle."""
 
         travel_hours = self._get_travel_all_hours(day)
-        return list(
-            set(list(range(min(travel_hours), max(travel_hours) + 1)))
-            - set(travel_hours)
-        )
+        return list(set(list(range(min(travel_hours), max(travel_hours) + 1))) - set(travel_hours))
 
     def _get_travel_all_hours(self, day: datetime.date):
         """Method to get travel hours."""
@@ -137,10 +132,7 @@ class ElectricVehicle:
         trip_duration_hour = math.ceil(self._get_trip_duration(day) / 60)
         return np.sort(
             np.array(
-                [
-                    list(range(hr, hr + trip_duration_hour + 1))
-                    for hr in travel_start_hours
-                ]
+                [list(range(hr, hr + trip_duration_hour + 1)) for hr in travel_start_hours]
             ).flatten()
         )
 
@@ -177,9 +169,7 @@ class ElectricVehicle:
         )
 
         if travel_mile > self.ev.mileage_full:
-            raise ValueError(
-                f"Travel mile = {travel_mile}, Full Mileage = {self.ev.mileage_full}"
-            )
+            raise ValueError(f"Travel mile = {travel_mile}, Full Mileage = {self.ev.mileage_full}")
 
         return (self.ev.kwh * travel_mile) / self.ev.mileage_full
 
@@ -243,9 +233,7 @@ class ElectricVehicle:
 
         elif self.ev.soc <= self.ev.soc_preference.min_soc and not self.is_charging:
             self._start_reset_charging()
-            station_id = self.stations.attach_to_station(
-                self.ev.id, self.ev.station_category_order
-            )
+            station_id = self.stations.attach_to_station(self.ev.id, self.ev.station_category_order)
             print(f"EV {self.ev.id} attached to Station {station_id}")
 
             return self.stations.get_charging_kw_for_ev(
@@ -272,9 +260,21 @@ class ElectricVehicle:
         morning_hours = res_hours[res_hours < 12]
 
         if is_cd_charg_loc_res and timestamp.hour in evening_hours:
+            if self.ev.preferred_charge_hour:
+                return (
+                    timestamp.hour >= self.ev.preferred_charge_hour
+                    if self.ev.preferred_charge_hour > 12
+                    else False
+                )
             return True
 
         if is_pd_charg_loc_res and timestamp.hour in morning_hours:
+            if self.ev.preferred_charge_hour:
+                return (
+                    timestamp.hour >= self.ev.preferred_charge_hour
+                    if self.ev.preferred_charge_hour <= 12
+                    else True
+                )
             return True
 
         return False
@@ -311,10 +311,7 @@ class ElectricVehicle:
             self.stations.detach_from_substation(self.ev.id)
 
         if (timestamp.hour in self.get_station_charging_hours(timestamp.date())) and (
-            (
-                self.ev.charge_loc_pref(timestamp.date())
-                == ChargingLocation.charging_station
-            )
+            (self.ev.charge_loc_pref(timestamp.date()) == ChargingLocation.charging_station)
         ):
             charging_kw = self.handle_station_charging(timestamp)
             charging_location = ChargingLocation.charging_station
@@ -362,8 +359,7 @@ class TransportationModel:
         self.stations = stations
 
         self.timestamps = [
-            start_time + datetime.timedelta(minutes=resolution_min * i)
-            for i in range(steps)
+            start_time + datetime.timedelta(minutes=resolution_min * i) for i in range(steps)
         ]
         self.resolution_min = resolution_min
 
@@ -391,6 +387,16 @@ class TransportationModel:
         data = {"Timestamps": self.timestamps}
         for vehicle in self.vehicles:
             data[vehicle.ev.id] = np.float16(vehicle.station_charg_profile)
+
+        return pl.DataFrame(data)
+
+    def get_ev_total_charging_df(self) -> pl.DataFrame:
+        """Method to get total charging for electric vehicle."""
+        data = {"Timestamps": self.timestamps}
+        for vehicle in self.vehicles:
+            data[vehicle.ev.id] = np.float16(vehicle.station_charg_profile) + np.float16(
+                vehicle.residence_charge_profile
+            )
 
         return pl.DataFrame(data)
 

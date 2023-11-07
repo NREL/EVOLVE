@@ -81,7 +81,7 @@ export const ReportDashboardController: React.FC = () => {
                 activePage === 'Energy Storage' && scenJSON?.energy_storage?.length > 0 && 
                 
                 <div>
-                    <div className='flex'>
+                    <div className='grid grid-cols-2 gap-x-5 w-100'>
                         <EnergyMetricsView 
                             metric={batteryChargMetrics}
                             title={"Charging Energy (kWh)"}

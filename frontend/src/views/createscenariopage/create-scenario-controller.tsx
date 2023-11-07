@@ -197,19 +197,30 @@ export function CreateScenario(props: any) {
                     w-max mb-3"> Create Scenario </p>
                 }
 
-                <div className="flex">
-                    <p className="pr-3"> Name </p>
-
-                    <TextField
-                        error={errors.scenarioName}
-                        name="scenarioName"
-                        type="text"
-                        placeholder="Enter scenario name"
-                        value={formData.scenarioName}
-                        onChange={(e: any) => handleChange(e, formData, setFormData)}
-                    />
-
-
+                <div className='flex gap-x-10'>
+                    <div className="flex">
+                        <p className="pr-3"> Name </p>
+                        <TextField
+                            error={errors.scenarioName}
+                            name="scenarioName"
+                            type="text"
+                            placeholder="Enter scenario name"
+                            value={formData.scenarioName}
+                            onChange={(e: any) => handleChange(e, formData, setFormData)}
+                        />
+                    </div>
+                    
+                    <div className="flex">
+                        <p className="pr-3"> Scenario Description </p>
+                        <TextField
+                            error={errors.scenarioDescription}
+                            name="scenarioDescription"
+                            type="textarea"
+                            placeholder="Enter scenario description"
+                            value={formData.scenarioDescription}
+                            onChange={(e: any) => handleChange(e, formData, setFormData)}
+                        />
+                    </div>
                 </div>
 
                 <TechnologiesView

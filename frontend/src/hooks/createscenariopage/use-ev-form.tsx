@@ -23,7 +23,9 @@ const UseEVForm = (
         stationCategoryName: "Level 2 Chargers",
         numberOfStations: 5,
         numberOfSlots: "5,10",
-        maxSlotkW: 9.6
+        maxSlotkW: 9.6,
+        preferredHour: null, 
+        pctVehiclesForPreferredHour: 100
     }
 
     const [counter, setCounter] = useState(2)

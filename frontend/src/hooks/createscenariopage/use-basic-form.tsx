@@ -9,6 +9,7 @@ const UseBasicForm = (
     // console.log('initial profile', initialSelectedProfile)
     const newBasicData = {
         scenarioName: '',
+        scenarioDescription: '',
         technologies: [],
         loadProfile: '',
         startDate: null,

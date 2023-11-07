@@ -14,7 +14,7 @@ import pydantic
 import models
 from dependencies.dependency import get_current_user
 from custom_models import ScenarioMetaDataResponseModel, SimpleLabelModel
-from common.scenario import ScenarioData
+from common.scenario import ScenarioData, DERTechnologies
 
 DATA_PATH = os.getenv("DATA_PATH")
 
@@ -27,7 +27,7 @@ router = APIRouter(
 
 @router.get("/", response_model=List[ScenarioMetaDataResponseModel])
 async def get_all_scenarios(user: models.user_pydantic = Depends(get_current_user)):
-    """ Route handler to get all DER scenarios. """
+    """Route handler to get all DER scenarios."""
     scen_data = (
         await models.ScenarioMetadata.all()
         .filter(user=await models.Users.get(username=user.username))
@@ -43,9 +43,7 @@ async def get_all_scenarios(user: models.user_pydantic = Depends(get_current_use
         for scen_label in scen_labels:
             await scen_label.fetch_related("label")
 
-            scen_labels_pydantic.append(
-                SimpleLabelModel(labelname=scen_label.label.labelname)
-            )
+            scen_labels_pydantic.append(SimpleLabelModel(labelname=scen_label.label.labelname))
 
         all_scenarios.append(
             ScenarioMetaDataResponseModel(**scen_dict, labels=scen_labels_pydantic)
@@ -55,9 +53,7 @@ async def get_all_scenarios(user: models.user_pydantic = Depends(get_current_use
 
 
 @router.get("/{id}", response_model=ScenarioData)
-async def get_scenario_metadata(
-    id: int, user: models.user_pydantic = Depends(get_current_user)
-):
+async def get_scenario_metadata(id: int, user: models.user_pydantic = Depends(get_current_user)):
     """Get JSON scenario metadata by ID."""
     scen_data = await models.ScenarioMetadata.get(
         id=id, user=await models.Users.get(username=user.username)
@@ -65,9 +61,7 @@ async def get_scenario_metadata(
 
     file_path = Path(DATA_PATH) / user.username / "scenarios" / scen_data.filename
     if not file_path.exists():
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Item not found!"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found!")
     with open(file_path, "r", encoding="utf-8") as file_pointer:
         scen_data = json.load(file_pointer)
 
@@ -75,7 +69,7 @@ async def get_scenario_metadata(
 
 
 @router.post("/", response_model=models.scenmeta_pydantic)
-async def create_scenario_metadta(
+async def create_scenario_metadata(
     body: ScenarioData, user: models.user_pydantic = Depends(get_current_user)
 ):
     """Create scenario metadata."""
@@ -102,10 +96,10 @@ async def create_scenario_metadta(
         scenario_obj = models.ScenarioMetadata(
             user=await models.Users.get(username=user.username),
             name=body.basic.scenarioName,
-            description="Description not yet passed from UI.",
-            solar="solar" in body.basic.technologies,
-            ev="ev" in body.basic.technologies,
-            storage="energy_storage" in body.basic.technologies,
+            description=body.basic.scenarioDescription,
+            solar=DERTechnologies.solar in body.basic.technologies,
+            ev=DERTechnologies.ev in body.basic.technologies,
+            storage=DERTechnologies.energy_storage in body.basic.technologies,
             filename=filename,
         )
 
@@ -153,7 +147,8 @@ async def update_scenario_metadta(
 
 
 class CloneScenarioInputModel(pydantic.BaseModel):
-    """ Simple interface for cloning. """
+    """Simple interface for cloning."""
+
     name: str
 
 
@@ -201,9 +196,7 @@ async def clone_scenario_metadata(
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_scenario_data(
-    id: int, user: models.user_pydantic = Depends(get_current_user)
-):
+async def delete_scenario_data(id: int, user: models.user_pydantic = Depends(get_current_user)):
     """Delete scenario data by id."""
 
     try:
@@ -211,9 +204,7 @@ async def delete_scenario_data(
             id=id, user=await models.Users.get(username=user.username)
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized!"
-        ) from e
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized!") from e
 
     # TODO: Find all the report and delete them as well
     try:
@@ -222,19 +213,14 @@ async def delete_scenario_data(
         )
 
         for report in reports:
-            report_data_path = (
-                Path(DATA_PATH) / user.username / "reports_data" / str(report.id)
-            )
+            report_data_path = Path(DATA_PATH) / user.username / "reports_data" / str(report.id)
 
             report_json_file = (
                 Path(DATA_PATH) / user.username / "reports" / f"{str(report.id)}.json"
             )
 
             report_zip_path = (
-                Path(DATA_PATH)
-                / user.username
-                / "reports_data"
-                / f"{str(report.id)}.zip"
+                Path(DATA_PATH) / user.username / "reports_data" / f"{str(report.id)}.zip"
             )
             shutil.rmtree(report_data_path, ignore_errors=True)
             os.remove(report_json_file)

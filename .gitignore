@@ -14,6 +14,8 @@ __pycache__/
 *.sqlite3
 *.sqlite3-*
 
+server_user_id.txt
+
 # Distribution / packaging
 .Python
 build/
