@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { TextField } from '../../components/text-field';
 import { FormGroupsView } from './utils';
 
 export function EVSettingsView(props: any) {
@@ -9,7 +8,7 @@ export function EVSettingsView(props: any) {
     const formFields = [
         {
             label: 'EV Catgeory Name',
-            description: `Specify category name for this group of vehicles. e.g Cars`,
+            description: `Specify category name for this group of vehicles. e.g Cars.`,
             error: errors?.evCategoryName,
             name: "evCategoryName",
             type: "text",
@@ -58,7 +57,7 @@ export function EVSettingsView(props: any) {
             evtype: "vehicle"
         },
         {
-            label: 'Weekday Tarvel Miles Range',
+            label: 'Weekday Travel Miles Range',
             description: `Miles travelled during weekday. Specific miles for each vehicle is 
                 determined using random sampling. `,
             error: errors?.weekdayMiles,
@@ -68,7 +67,7 @@ export function EVSettingsView(props: any) {
             evtype: "vehicle"
         },
         {
-            label: 'Weekend Tarvel Miles Range',
+            label: 'Weekend Travel Miles Range',
             description: `Miles travelled during weekend. Specific miles for each vehicle is 
                 determined using random sampling. `,
             error: errors?.weekendMiles,
@@ -81,7 +80,7 @@ export function EVSettingsView(props: any) {
             label: 'Home Charger (kW)',
             description: `Maximum home charger capacity.`,
             error: errors?.homeCharger,
-            name: "homecharger",
+            name: "homeCharger",
             type: "number",
             value: formData.homeCharger,
             evtype: "vehicle"
@@ -158,6 +157,24 @@ export function EVSettingsView(props: any) {
             type: "number",
             value: formData.maxSlotkW,
             evtype: "charging_station"
+        },
+        {
+            label: 'Preferred Hour for Charging',
+            description: `Starting hour for charging vehicles.`,
+            error: errors?.preferredHour,
+            name: "preferredHour",
+            type: "number",
+            value: formData.preferredHour,
+            evtype: "vehicle"
+        },
+        {
+            label: 'Percentage vehicles for preferred hours.',
+            description: `Percentage vehicles adopting preferred hours.`,
+            error: errors?.pctVehiclesForPreferredHour,
+            name: "pctVehiclesForPreferredHour",
+            type: "number",
+            value: formData.pctVehiclesForPreferredHour,
+            evtype: "vehicle"
         }
     ]
 
@@ -167,7 +184,7 @@ export function EVSettingsView(props: any) {
                 <div className="bg-blue-500 h-8 flex items-center justify-between px-2">
                     <div className="flex">
                         <img src="./images/ev_icon.svg" width="25" />
-                        <p className="text-white pl-2"> {formData.name} </p>
+                        <p className="text-white pl-2"> {formData.evType === 'vehicle' ? formData.evCategoryName : formData.stationCategoryName} </p>
                         <p className="w-6 h-6 bg-blue-800 text-white flex items-center 
                                 justify-center pb-1 ml-5 rounded-full hover:bg-blue-600 hover:cursor-pointer"
                             onClick={() => handleEVDelete(formData.id)}

@@ -172,6 +172,15 @@ export function ESSettingsView(props: any) {
     const priceProfileExist = allTSdata.filter((d: any) => d.category === 'price');
     const formFields = [
         {
+            label: 'Friendly Name',
+            description: 'Friendly name for energy storage.',
+            error: errors?.name,
+            name: "name",
+            type: "text",
+            value: formData.name,
+            category: 'general'
+        },
+        {
             label: 'Maximum Power Capacity (kW)',
             description: 'Battery power capacity in kW',
             error: errors?.esPowerCapacity,
@@ -273,7 +282,7 @@ export function ESSettingsView(props: any) {
             <div className="bg-gray-300 w-full my-10 pb-5">
                 <div className="bg-blue-500 h-8 flex items-center justify-between px-2">
                     <div className="flex">
-                        <img src="./images/ev_icon.svg" width="25" />
+                        <img src="./images/storage_icon.svg" width="25" />
                         <p className="text-white pl-2"> {formData.name} </p>
                         <p className="w-6 h-6 bg-blue-800 text-white flex items-center 
                                 justify-center pb-1 ml-5 rounded-full 

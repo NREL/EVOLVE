@@ -7,6 +7,10 @@ type scenarioCardViewProps = {
     clickedData: ScenarioDataInterface;
 }
 
+const shortenText = (text:string, length: number) => {
+    return text.length < length ? text : text.slice(0, length) + ' ...'
+}
+
 const ScenarioCardView: React.FC<scenarioCardViewProps> = ({
     cardData, clickedData }) => {
     return (
@@ -16,10 +20,10 @@ const ScenarioCardView: React.FC<scenarioCardViewProps> = ({
 
             <div className="flex items-center">
                 <img src="./images/scenario_card_icon.svg" width="20" />
-                <p className="pl-2 text-blue-500 font-bold"> {cardData.name} </p>
+                <p className="pl-2 text-blue-500 font-bold"> {shortenText(cardData.name, 20)} </p>
             </div>
 
-            <p className="flex items-center"> {cardData.description.length < 20 ? cardData.description : cardData.description.slice(0, 20) + '...'}</p>
+            <p className="flex items-center"> {shortenText(cardData.description, 20)}</p>
             <p className="flex items-center"> {new Date(cardData.created_at).toLocaleDateString()}</p>
             <div className="flex">
                 {cardData.solar && <img src="./images/solar_icon.svg" width="35" className="pr-2" />}

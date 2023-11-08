@@ -1,7 +1,7 @@
 """ Pydantic model for electric vehicle. """
 
 # standard imports
-from typing import Tuple, TypeAlias, Annotated, Literal
+from typing import Tuple, TypeAlias, Annotated, Literal, Optional
 
 # third-party imports
 # pylint:disable=no-name-in-module
@@ -100,6 +100,13 @@ class ElectricVehiclesForm(BaseModel):
         PctRangeField,
         Field(..., description="Range of initial state of charges for vehicles."),
     ]
+    preferredHour: Annotated[
+        Optional[conint(ge=0, le=23)], Field(..., description="Preferred charge hour.")
+    ] = None
+    pctVehiclesForPreferredHour: Annotated[
+        Optional[confloat(ge=0, le=100)], 
+        Field(..., description="Percentage vehicles adopting preferred hours.")
+    ] = 100
 
     @model_validator(mode="before")
     def modify_input_if_str(self):

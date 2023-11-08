@@ -56,6 +56,7 @@ interface newBasicDataInterface {
     endDate: Date | null
     resolution: number
     dataFillingStrategy: string
+    scenarioDescription: string
 }
 
 interface scenarioJSONInterface {

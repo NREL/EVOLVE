@@ -141,6 +141,7 @@ class EVModel(BaseModel):
     max_accepted_kw: PositiveFloat
     mileage_full: NonNegativeFloat
     home_charger: ElectricCharger
+    preferred_charge_hour: Optional[conint(ge=0, le=23)] = None
     soc_preference: ChargingSOCPreference
     travel_pref: Callable[[datetime.date], TravelPreference]
     charge_loc_pref: Callable[[datetime.date], ChargingLocation]

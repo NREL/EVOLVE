@@ -46,6 +46,9 @@ class BasicFormData(BaseModel):
         Field(..., description="Time resolution in minute for simulation."),
     ]
     scenarioName: Annotated[str, Field(..., description="Friendly name for a scenario.")]
+    scenarioDescription: Annotated[
+        str, Field(..., description="Friendly name for a scenario.")
+    ] = "Deafult description."
     technologies: Annotated[
         list[DERTechnologies],
         Field(..., description="List of DER technologies to simulate."),

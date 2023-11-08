@@ -23,7 +23,7 @@ export const EnergyMetricsView: React.FC<EnergyMetricsViewProps> = ({
         }): [];
 
     return (
-        <div>
+        <div className='w-100'>
             {
 
                 metricData.length >0  && <Plot

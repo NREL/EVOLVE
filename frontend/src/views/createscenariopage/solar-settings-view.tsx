@@ -78,6 +78,18 @@ export function SolarSettingsView(props: any) {
                             gap-y-2 gap-x-5">
 
                             <div>
+                                <p> Friendly Name </p>
+                                <p className='text-sm text-gray-500 pb-2'> Friendly name for solar. </p>
+                                <TextField
+                                    error={errors.name}
+                                    name="name"
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                />
+                            </div>
+
+                            <div>
                                 <p> DC Capacity (kW) </p>
                                 <p className='text-sm text-gray-500 pb-2'> Enter total solar capacity in kW. </p>
                                 <TextField
@@ -225,7 +237,7 @@ export function SolarSettingsView(props: any) {
 
                             <div>
                                 <p> DC/AC ratio </p>
-                                <p className='text-sm text-gray-500 pb-2'> DC AC ratio is used to compute inverter output. Value greater than 1 would
+                                <p className='text-sm text-gray-500 pb-2'> DC to AC ratio is used to compute inverter output. Value greater than 1 would
                                     not saturate output.
                                 </p>
                                 <TextField
