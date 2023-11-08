@@ -1,9 +1,5 @@
 # get python 3.10
 FROM python:3.10-slim
-
-
-RUN mkdir /data
-
 WORKDIR /app
 
 COPY . .  
@@ -11,7 +7,7 @@ COPY . .
 # Create environment
 RUN pip install --upgrade pip
 RUN pip install hatch
-RUN pip install -e. 
+RUN pip install -e.
 
 # Install evolve-core
 WORKDIR /app/evolve-core
