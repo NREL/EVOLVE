@@ -48,3 +48,8 @@ path = "evolve/__init__.py"
 include = [
     "/evolve",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "evolve"
+]
