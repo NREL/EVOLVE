@@ -2,7 +2,7 @@
 
 Greetings fellow developer, Please follow these instructions set up local environment in your computer.
 
-The code is organized in six folders.
+## Code Organization
 
 `api:` The api directory manages REST API code.
 
@@ -16,6 +16,7 @@ The code is organized in six folders.
 
 `docs`: Collection markdown documentation files.
 
+## Setting Up Environment
 
 First step for local developement is to create python environment using using python 3.11 or more.
 

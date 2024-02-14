@@ -12,7 +12,7 @@ EVOLVE is an opensource [python](https://www.python.org/) package to assess net 
 
 Features of `evolve-core` package:
 
-**Modeling Solar :** `EVOLVE` uses [pvlib] (https://pvlib-python.readthedocs.io/en/stable/) to produce generation profile for different types of solar installations. 
+**Modeling Solar :** `EVOLVE` uses [pvlib](https://pvlib-python.readthedocs.io/en/stable/) to produce generation profile for different types of solar installations. 
 
 **Modeling Battery :** `EVOLVE` uses it's own battery model to simulate timeseries charging discharging for different strategies. For example, time based, peak load shaving, and self consumption.
 
