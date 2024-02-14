@@ -115,13 +115,15 @@ def process_solars(solars: List[SolarFormData], base_path: str, basic_data: Basi
                     longitude=solar.longitude if solar.longitude else 36,
                     latitude=solar.latitude if solar.latitude else 9,
                     kw=solar.solarCapacity,
-                    irradiance=solar_df.to_pandas(date_as_object=True),
+                    irradiance=solar_df.with_columns(
+                        polars.col("timestamp").cast(polars.Datetime(time_unit="ns"))
+                    ).to_pandas(date_as_object=True),
                 ),
                 axis_model=FixedAxisModel(
                     surface_tilt=solar.panelTilt,
                     surface_azimuth=solar.panelAzimuth,
                 ),
-                inv_model=InverterModel(acdcratio=1 / solar.dcacRatio),
+                inv_model=InverterModel(acdcratio=(1 / solar.dcacRatio)),
             )
             solar_output[solar.name] = fixed.get_inverter_ac_output()
 

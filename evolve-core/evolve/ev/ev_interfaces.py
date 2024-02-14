@@ -15,16 +15,14 @@ from pydantic import (
     PositiveInt,
     StrictStr,
     model_validator,
-    NonNegativeFloat
+    NonNegativeFloat,
 )
 
 
 class ElectricCharger(BaseModel):
     """Class for modeling abstract electric charger."""
 
-    max_charger_kw: PositiveFloat = Field(
-        ..., description="Maximum kW output for this charger."
-    )
+    max_charger_kw: PositiveFloat = Field(..., description="Maximum kW output for this charger.")
     soc_kw_func: Callable[[float], float]
 
     def get_charging_kw(self, soc: float) -> float:
@@ -51,12 +49,8 @@ class ChargingLocation(str, Enum):
 class ChargStationModel(BaseModel):
     """Interface for Charging Station Model configuration."""
 
-    num_of_slots: PositiveInt = Field(
-        ..., description="Number of slots in this charging station."
-    )
-    charger: ElectricCharger = Field(
-        ..., description="Electric charger interface instance."
-    )
+    num_of_slots: PositiveInt = Field(..., description="Number of slots in this charging station.")
+    charger: ElectricCharger = Field(..., description="Electric charger interface instance.")
     n_occupied: conint(ge=0) = Field(
         0, description="Internally updated number of slots occupied for this station."
     )
@@ -73,12 +67,8 @@ class TravelPreference(BaseModel):
     """Interface for defining travel preference for
     electric vehicle."""
 
-    daily_travel_mile: NonNegativeInt = Field(
-        ..., description="Miles travelled in a day."
-    )
-    daily_travel_minute: NonNegativeInt = Field(
-        ..., description="Minutes travelled in a day."
-    )
+    daily_travel_mile: NonNegativeInt = Field(..., description="Miles travelled in a day.")
+    daily_travel_minute: NonNegativeInt = Field(..., description="Minutes travelled in a day.")
     daily_travel_hours: List[conint(ge=0, le=23)] = Field(
         ..., description="List of day hours indicating start of travel."
     )
@@ -100,8 +90,7 @@ class ChargingSOCPreference(BaseModel):
         """Method to validate state of charges."""
         if self.min_soc >= self.max_soc:
             raise ValueError(
-                f"Max SOC ({self.max_soc}) must be greater "
-                f"than Min SOC ({self.min_soc})"
+                f"Max SOC ({self.max_soc}) must be greater " f"than Min SOC ({self.min_soc})"
             )
         return self
 
@@ -110,9 +99,7 @@ class ChargingNeedPreference(BaseModel):
     """Interface for defining charging need preference."""
 
     target: ChargTargetModel = Field(..., description="Target for charging need.")
-    desired_soc: Optional[float] = Field(
-        None, description="Desired state of charge in percentage."
-    )
+    desired_soc: Optional[float] = Field(None, description="Desired state of charge in percentage.")
     desired_duration: Optional[float] = Field(
         None, description="Desired charging duration if target is duration."
     )
@@ -126,10 +113,9 @@ class ChargingNeedPreference(BaseModel):
     @model_validator(mode="after")
     def validated_desired_duration(self) -> "ChargingNeedPreference":
         if self.target == "time_based" and self.desired_duration is None:
-            raise ValueError(
-                "desired_duration should be defined for soc based strategy!"
-            )
+            raise ValueError("desired_duration should be defined for soc based strategy!")
         return self
+
 
 
 class EVModel(BaseModel):
@@ -147,6 +133,7 @@ class EVModel(BaseModel):
     charge_loc_pref: Callable[[datetime.date], ChargingLocation]
     charging_need_pref: Callable[[datetime.date], ChargingNeedPreference]
     station_category_order: List[str]
+
 
 
 class EVModelingInput(BaseModel):

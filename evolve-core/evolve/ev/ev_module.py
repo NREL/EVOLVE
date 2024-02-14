@@ -317,8 +317,13 @@ class ElectricVehicle:
             charging_location = ChargingLocation.charging_station
 
         charging_kwh = charging_kw * timestep_sec / 3600
-
         self.ev.soc += charging_kwh * 100 / self.ev.kwh
+
+        if self.ev.soc > 100:
+            excess_kwh = (self.ev.soc-100)*(self.ev.kwh/100)
+            charging_kw = (charging_kwh - excess_kwh)*3600/timestep_sec
+            self.ev.soc = 100
+
         self._update_profile(charging_location, charging_kw)
 
         if charging_kw > 0:
