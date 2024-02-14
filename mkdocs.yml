@@ -71,3 +71,4 @@ nav:
       Setup & Installation: evolve-core/index.md
       Solar Modeling: evolve-core/solar.md
       EV Modeling: evolve-core/ev.md
+  - Developers Guide: developers-guide.md
