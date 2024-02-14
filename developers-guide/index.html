@@ -9,10 +9,8 @@
       
       
       
-        <link rel="prev" href="../metrics/">
+        <link rel="prev" href="../evolve-core/ev/">
       
-      
-        <link rel="next" href="solar/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -20,7 +18,7 @@
     
     
       
-        <title>Setup & Installation - EVOLVE</title>
+        <title>Developers Guide - EVOLVE</title>
       
     
     
@@ -74,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#evolve-core" class="md-skip">
+        <a href="#developers-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Setup & Installation
+              Developers Guide
             
           </span>
         </div>
@@ -376,19 +374,17 @@
       
   
   
-    
   
   
-  
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
@@ -402,7 +398,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             EVOLVE Core
@@ -413,19 +409,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../evolve-core/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -434,7 +421,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -447,7 +433,7 @@
   
   
     <li class="md-nav__item">
-      <a href="solar/" class="md-nav__link">
+      <a href="../evolve-core/solar/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -468,7 +454,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ev/" class="md-nav__link">
+      <a href="../evolve-core/ev/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -493,10 +479,30 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../developers-guide/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Developers Guide
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -505,6 +511,44 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#code-organization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code Organization
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setting Up Environment
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -529,6 +573,32 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#code-organization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code Organization
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setting Up Environment
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -545,11 +615,24 @@
   
 
 
-<h1 id="evolve-core">EVOLVE Core</h1>
-<p><code>evolve-core</code> is a lightweight python package that allows users to play with distributed energy resource models within evolve such as solar, energy storage and electric vehicle.</p>
-<p>If you want to use evolve core package and run simulations purely in python environment without worrying about setting up frontend and backend. You can install this package and get started. </p>
-<p>To get started, you can install this package in any python environment ("&gt;=3.10") by runing following command.</p>
-<div class="highlight"><pre><span></span><code>pip install evolve-core
+<h1 id="developers-guide">Developers Guide</h1>
+<p>Greetings fellow developer, Please follow these instructions set up local environment in your computer.</p>
+<h2 id="code-organization">Code Organization</h2>
+<p><code>api:</code> The api directory manages REST API code.</p>
+<p><code>frontend:</code> The frontend directory manages user interface code.</p>
+<p><code>evolve-core:</code> Standalone python package for modeling distributed energy resources.</p>
+<p><code>agent</code>: Python package to take message from queue and simulate distributed energy resource scenario.</p>
+<p><code>common</code>: Collection of common data models for <code>api</code> and <code>agent</code> sub packages.</p>
+<p><code>docs</code>: Collection markdown documentation files.</p>
+<h2 id="setting-up-environment">Setting Up Environment</h2>
+<p>First step for local developement is to create python environment using using python 3.11 or more.</p>
+<div class="highlight"><pre><span></span><code>python -m venv env
+</code></pre></div>
+<p>Second step is to add <code>common</code> folder to python path. You can do this either in your code editor or by just setting <code>PYTHONPATH</code> in your operating system environment variable. </p>
+<p>Third step to install <code>evolve-core</code>, <code>agent</code> and <code>api</code>. Make sure to activate the environment before installing these.</p>
+<div class="highlight"><pre><span></span><code>pip install -e evolve-core
+pip install api/requirements.txt
+pip install -e agent
 </code></pre></div>
 
 
