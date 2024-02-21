@@ -1,7 +1,7 @@
 ### Evolution of Net Load Variation from Emerging Technologies (EVOLVE)
 
 <p align="center">
-<img src="docs/images/evolve_logo.svg" width="350" style="display:flex;justify-content:center;">
+<img src="evolve-docs/docs/images/evolve_logo.svg" width="350" style="display:flex;justify-content:center;">
 </p>
 
 ---
