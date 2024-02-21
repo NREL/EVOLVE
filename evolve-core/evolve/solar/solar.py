@@ -183,7 +183,6 @@ class SolarModel(ABC):
         )
         self._get_solar_location()
         self._add_temperature_data()
-        self.solar_basic_model.irradiance.to_csv("new_csv.csv")
 
 
 class FixedAxisSolarModel(SolarModel):

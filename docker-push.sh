@@ -1,18 +1,18 @@
 #!/bin/sh
 
-cd frontend
+cd evolve-ui
 docker build -t kapilduwadi/evolve_ui2:latest .
 
-cd ../api
-cp -r ../common .
+cd ../evolve-api
+cp -r ../evolve-common .
 docker build -t kapilduwadi/evolve_backend2:latest .
-rm -rf common
+rm -rf evolve-common
 
-cd ../agent
-cp -r ../common .
+cd ../evolve-agent
+cp -r ../evolve-common .
 cp -r ../evolve-core .
 docker build -t kapilduwadi/evolve_agent2:latest .
-rm -rf common
+rm -rf evolve-common
 rm -rf evolve-core
 
 docker system prune -f 

@@ -1,0 +1,66 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "evolve-api"
+dynamic = ["version"]
+description = "Rest API package for evolve."
+license = "BSD-3-Clause"
+requires-python = ">=3.10"
+authors = [
+    { name = "Kapil Duwadi", email = "kapil.duwadi@nrel.gov" },
+    {name = "Erik Pohl", email = "erik.pohl@nrel.gov"}
+]
+keywords = [
+    "Distribution",
+    "Electric",
+    "Energy",
+    "Net",
+    "PV",
+    "Storage",
+    "System",
+    "Vehicle",
+    "load",
+]
+classifiers = [
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "fastapi",
+    "pyjwt",
+    "tortoise-orm",
+    "uvicorn[standard]",
+    "passlib",
+    "bcrypt",
+    "pyjwt",
+    "python-multipart",
+    "python-dotenv",
+    "pytest",
+    "pydantic",
+    "mkdocs",
+    "pandas",
+    "aerich",
+    "polars",
+    "pika",
+    "tortoise-orm[asyncpg]",
+    "pyarrow"
+]
+
+[project.urls]
+Homepage = "https://github.com/NREL/evolve"
+
+[tool.hatch.version]
+path = "api/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/api",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "api"
+]
