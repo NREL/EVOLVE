@@ -14,7 +14,7 @@ WORKDIR /app/evolve-common
 RUN hatch build && \
     pip install dist/*.whl 
 
-WORKDIR /app/evolve-agent
+WORKDIR /app
 RUN pip install -e.
 RUN pip uninstall -y hatch
 

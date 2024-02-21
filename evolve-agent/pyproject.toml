@@ -50,3 +50,8 @@ path = "agent/__init__.py"
 include = [
     "/agent",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "agent"
+]
