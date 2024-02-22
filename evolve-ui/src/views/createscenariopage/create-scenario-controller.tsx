@@ -23,6 +23,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { StateModel } from "../../interfaces/redux-state";
 
+const FIELD_CLASS = 'text-blue-500 font-bold';
 
 export function CreateScenario(props: any) {
 
@@ -274,6 +275,44 @@ export function CreateScenario(props: any) {
                             <div>
                                 <p className='bg-blue-500 bg-blue-500 text-white rounded-md px-2 py-1 w-max'
                                     onClick={handleAddEV}> Add electric vehicle </p>
+                                  <p className='my-2'> For each electric vehicle, initial state of charge (SOC) is randomly 
+                                    selected within the range specified in <span className={FIELD_CLASS}> 
+                                    Initial SOCs Range </span> field. Energy capacity is randomly selected within the range specified in 
+                                    <span className={FIELD_CLASS}> Accepted kWh Range </span> field. Maximum accepted power capacity is 
+                                    randomly selected within the range specified in <span className={FIELD_CLASS}>Accepted kW Range</span> field.
+                                    Mile range on fully charged vehicle is selected randomly within the range specified in <span className={FIELD_CLASS}>
+                                    Mileage Range </span> field. Same type of home charger is used for all vehicles in the same group. 
+                                    Here are typical chargers for electric vehicles
+                                    
+                                    <br/> 
+                                    <p className='py-1 pl-5'> <span className={FIELD_CLASS}>Level I Charger: </span> Most modern electric vehicles ship with Level 1 Chargers which tend to be 
+                                    small, portable and slow charging. These chargers provide charging through 120 volt AC outlet. Typical power 
+                                    output of Level I charger vary from 1 to 2 kW. 
+                                    </p>
+                                    <p className='py-1 pl-5'> <span className={FIELD_CLASS}>Level II Charger: </span> These chargers provide charging through 240 volt AC outlet. 
+                                    Typical power output of Level II charger vary from 7 to 19 kW. 
+                                    </p>
+
+                                    <p className='py-1 pl-5'> <span className={FIELD_CLASS}>DC Fast Charging: </span> These chargers provide charging through 400 - 1000 volt AC outlet. 
+                                    Typical power output of DC fast chargers vary from 50 kW to 350 kW. These type of chargers are available only at charging stations and not common in residential homes. 
+                                    </p>
+
+                                    Default state of charge preference for each vehicle is between 40% and 80%. This means if state of charge falls below 40%, electric vehicle 
+                                    will attempt charging either at charging station or home dependening where the vehicle is currently. If state of charge goes above 80% the vehicle will stop 
+                                    charging. 
+
+                                    During a day, how many miles a vehicle will travel, how long will it take to travel and when will the vehicle 
+                                    travel is selected randonly using fields <span className={FIELD_CLASS}> Weekend Travel Range 
+                                    </span>, <span className={FIELD_CLASS}> Weekday Travel Range </span>
+                                    , <span className={FIELD_CLASS}> Average Mile Per Hour </span>, <span className={FIELD_CLASS}> Weekday Travel Hours </span> and 
+                                    <span className={FIELD_CLASS}> Weekend Travel Hours </span>.
+
+                                    By default charging location (whether to charge at charging station or at home) is randomly picked for each day. The state of charge 
+                                    based charging target used with default target of 80% for 
+                                    weekday and duration based charging target is used for weekend with default target of 8000 sec. In case of multiple type of stations, station preference is random by 
+                                    default. The preferred charge hour can be adjusted if you want electric vehicle to defer charging until particular hour for home charging.                             
+                                
+                                </p>
                                 <p className='text-sm text-gray-500 pb-2'> Add upto 5 Electric Vehicles </p>
                             </div>
                         }
@@ -308,6 +347,7 @@ export function CreateScenario(props: any) {
                             esFormDataArray.length <= 5 && <div>
                                 <p className='bg-blue-500 bg-blue-500 text-white rounded-md px-2 py-1 w-max'
                                     onClick={handleAddEnergyStorage}> Add energy storage </p>
+                                
                                 <p className='text-sm text-gray-500 pb-2'> Add upto 5 Energy Storage Systems </p>
                             </div>
                         }
