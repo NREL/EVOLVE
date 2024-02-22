@@ -37,22 +37,20 @@ export const ReportDashboardController: React.FC = () => {
 
 
     return (
-        <div className="mx-10 my-5">
-
-            {
-                <p className="text-blue-500 font-bold pb-3"> <span> Scenario {'>>'} </span>
-                    <span> {scenJSON?.basic?.scenarioName} {'>>'} </span>
-                    <span> Report {'>>'} </span>
-                    <span> Report 1 </span>
-                </p>
-            }
-
-            <div>
-                <p className='text-white px-2 rounded-md bg-orange-500 mb-5
-                w-max py-1 font-bold hover:cursor-pointer hover:bg-orange-700'
-                    onClick={() => handleDataDownload(id)}
-                > Download results !</p>
+        <div className="mx-20 my-5">
+            <div className='flex justify-between border-b border-gray-300 mb-5 pb-1'>
+                <p className='text-blue-500 text-xl font-bold'> 
+                Report for Scenario: {scenJSON?.basic?.scenarioName}</p>
+                
+                <div>
+                    <p className='text-white px-2 rounded-md bg-orange-500
+                    w-max py-1 font-bold hover:cursor-pointer hover:bg-orange-700'
+                        onClick={() => handleDataDownload(id)}
+                    > Download results !</p>
+                </div>
             </div>
+            
+            <p> </p>
 
             <div className="flex border-b border-blue-500 mb-5">
                 {

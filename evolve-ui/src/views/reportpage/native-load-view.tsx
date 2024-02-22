@@ -74,17 +74,25 @@ export const NativeLoadView: React.FC<NativeLoadViewProps> = ({
 
         return (
                 <div>
-                        <div className="grid grid-cols-2">
+                        <p className='text-gray-600 pb-3 '> The first two plots are aggreagted plots and their time axis will dynamically update 
+                           depending upon simulation duration. For e.g. if a simulation was ran for a day, it will show 
+                           energy and peak power breakdown by hours. If you are running simulation for a week, it will show 
+                           peak power breakdown by day. If you are running for a week it will show peak power breakdown by week.
+                           If you are running a simulation for a year, it will show energy and power breakdown by month.
+
+                        </p>
+                        <div className="grid grid-cols-2 gap-x-3">
                         {
                                 energyMetricsData.length >0 ? <Plot
                                         data={energyMetricsData}
                                         layout={{
                                                 barmode: 'group',
-                                                margin: {b:30, l:60, r:20, t:20},
+                                                margin: {b:10, l:60, r:20, t:50},
+                                                title: 'Timeseries Aggregated Energy',
                                                 yaxis: {title: "Energy (kWh)"},
-                                                legend: {"orientation": "h"}
+                                                legend: {"orientation": "h", x: 0, y:-0.2}
                                         }}
-                                        className="w-full h-[350px] mb-5 mr-5"
+                                        className="w-full h-[400px] mb-5 mr-5"
                                 />: <div className="w-full h-[250px] mb-5 mr-5
                                         bg-gray-200 animate-pulse flex justify-center items-center">
                                                 <div className="w-10 h-20 bg-gray-300 mr-3"></div>
@@ -97,11 +105,12 @@ export const NativeLoadView: React.FC<NativeLoadViewProps> = ({
                                         data={peakPowerMetricsData}
                                         layout={{
                                                 barmode: 'group',
-                                                margin: {b:30, l:60, r:20, t:20},
+                                                title: 'Timeseries Aggregated Peak Power',
+                                                margin: {b:10, l:60, r:20, t:50},
                                                 yaxis: {title: "Peak Power (kW)"},
-                                                legend: {"orientation": "h"}
+                                                legend: {"orientation": "h", x:0, y:-0.2}
                                         }}
-                                        className="w-full h-[350px] mb-5"
+                                        className="w-full h-[400px] mb-5"
                                 /> : <div className="w-full h-[250px] mb-5
                                 bg-gray-200 animate-pulse flex justify-center items-center">
                                         <div className="w-10 h-20 bg-gray-300 mr-3"></div>
@@ -109,16 +118,22 @@ export const NativeLoadView: React.FC<NativeLoadViewProps> = ({
                                         <div className="w-10 h-10 bg-gray-300"></div>
                                 </div>
                         }
+                        
                         </div>
+                        <p className='text-gray-600 pb-3'> This plot shows comparison between new loads (after adding DER's to base load profile) vs base loads. The number of data points 
+                                shown is limited to 2000 data points for each line. If your simulation has more data points, feel free to download results 
+                                and visualize them using excel or other tools of your choice.
+                        </p>
                         {
 
                                 loadTimeSeriesData.length >0 ? <Plot
                                         data={loadTimeSeriesData}
                                         className="w-[calc(100vw-6rem)] h-[350px]"
                                         layout={{
-                                                margin: {b:50, l:60, r:60, t:20},
+                                                margin: {b:50, l:60, r:60, t:50},
                                                 yaxis: {title: "Base kW Profile"},
-                                                legend: {"orientation": "h"}
+                                                title: "Time Series Power Profile before and after adding DER's",
+                                                legend: {"orientation": "h", x:0, y:-0.2}
                                         }}
                                 />: <div className="w-[calc(100vw-6rem)] h-[350px]
                                 bg-gray-200 animate-pulse flex justify-center items-center">

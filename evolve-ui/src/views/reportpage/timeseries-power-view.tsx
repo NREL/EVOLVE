@@ -29,9 +29,10 @@ export const TimeseriesPowerView: React.FC<TimeseriesPowerViewProps> = ({
                     data={timeSeriesData}
                     className="w-[calc(100vw-6rem)] h-[350px]"
                     layout={{
-                        margin: { b: 50, l: 60, r: 60, t: 20 },
+                        margin: { b: 50, l: 60, r: 60, t: 50 },
+                        title: title,
                         yaxis: { title: title },
-                        legend: { "orientation": "h" }
+                        legend: { "orientation": "h",x:0, y:-0.2 }
                     }}
                 />
             }

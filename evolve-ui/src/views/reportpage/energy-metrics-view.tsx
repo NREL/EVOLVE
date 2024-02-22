@@ -30,11 +30,12 @@ export const EnergyMetricsView: React.FC<EnergyMetricsViewProps> = ({
                     data={metricData}
                     layout={{
                         barmode: 'group',
-                        margin: {b:30, l:60, r:20, t:20},
+                        margin: {b:50, l:60, r:20, t:50},
+                        title: "Timeseries Aggregated Energy",
                         yaxis: {title: title},
-                        legend: {"orientation": "h"}
+                        legend: {"orientation": "h", x: 1, y:-0.2}
                     }}
-                className="w-full h-[250px] mb-5"
+                className="w-full h-[350px] mb-5"
                 />
             }
             {
