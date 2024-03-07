@@ -27,14 +27,21 @@ from evolve.battery.self_consumption_strategy import (
     SelfConsumptionCDStrategy,
 )
 from common.energy_storage import ESFormData
-from agent.helper_functions import populate_sliced_category, sort_metric_dataframe
+from agent.helper_functions import (
+    populate_sliced_category,
+    sort_metric_dataframe,
+)
 
 
 def default_discharge_func(time_: float):
     """Deafult discharge function for battery."""
     dischargecurve = np.polyfit([0, 24, 720], [0, 5, 7], 2)
 
-    return (dischargecurve[0] ** 2) * time_ + dischargecurve[1] * time_ + dischargecurve[2]
+    return (
+        (dischargecurve[0] ** 2) * time_
+        + dischargecurve[1] * time_
+        + dischargecurve[2]
+    )
 
 
 def time2num(time_str: str):
@@ -45,12 +52,17 @@ def time2num(time_str: str):
     if time_str == "12 PM":
         return 12
 
-    return int(time_str.split(" ")[0]) + 12 if "PM" \
-        in time_str else int(time_str.split(" ")[0])
+    return (
+        int(time_str.split(" ")[0]) + 12
+        if "PM" in time_str
+        else int(time_str.split(" ")[0])
+    )
 
 
 def process_self_discharging_es(
-    battery_instance: GenericBattery, battery: ESFormData, load_profiles: List[Dict]
+    battery_instance: GenericBattery,
+    battery: ESFormData,
+    load_profiles: List[Dict],
 ):
     """Process self discharging for battery."""
 
@@ -58,13 +70,19 @@ def process_self_discharging_es(
     selfconsumption_cd_instance.simulate(load_profiles, battery_instance)
 
     return {
-        "battery_power": [round(el, 3) for el in battery_instance.battery_power_profile],
-        "battery_soc": [round(el, 3) for el in battery_instance.battery_soc_profile],
+        "battery_power": [
+            round(el, 3) for el in battery_instance.battery_power_profile
+        ],
+        "battery_soc": [
+            round(el, 3) for el in battery_instance.battery_soc_profile
+        ],
     }
 
 
 def process_peak_shaving_es(
-    battery_instance: GenericBattery, battery: ESFormData, load_profiles: List[Dict]
+    battery_instance: GenericBattery,
+    battery: ESFormData,
+    load_profiles: List[Dict],
 ):
     """Process peak shaving strategy for battery."""
 
@@ -73,38 +91,56 @@ def process_peak_shaving_es(
         discharging_threshold=battery.dischargingPowerThreshold / 100,
     )
 
-    peakshaving_cd_instance = PeakShavingBasedCDStrategy(config=peakshavingcdmodel)
+    peakshaving_cd_instance = PeakShavingBasedCDStrategy(
+        config=peakshavingcdmodel
+    )
     peakshaving_cd_instance.simulate(load_profiles, battery_instance)
 
     return {
-        "battery_power": [round(el, 3) for el in battery_instance.battery_power_profile],
-        "battery_soc": [round(el, 3) for el in battery_instance.battery_soc_profile],
+        "battery_power": [
+            round(el, 3) for el in battery_instance.battery_power_profile
+        ],
+        "battery_soc": [
+            round(el, 3) for el in battery_instance.battery_soc_profile
+        ],
     }
 
 
 def process_time_based_es(
-    battery_instance: GenericBattery, battery: ESFormData, timestamps: List[datetime.datetime]
+    battery_instance: GenericBattery,
+    battery: ESFormData,
+    timestamps: List[datetime.datetime],
 ):
     """Process a single battery."""
 
     timecdmodel = TimeBasedCDStrategyInputModel(
         charging_hours=[time2num(el) for el in battery.chargingHours],
         discharging_hours=[time2num(el) for el in battery.disChargingHours],
-        c_rate_charging=1 / battery.esChargingRate if battery.esChargingRate else 0.25,
-        c_rate_discharging=1 / battery.esDischargingRate if battery.esDischargingRate else 0.25,
+        c_rate_charging=(
+            1 / battery.esChargingRate if battery.esChargingRate else 0.25
+        ),
+        c_rate_discharging=(
+            1 / battery.esDischargingRate if battery.esDischargingRate else 0.25
+        ),
     )
 
     time_based_cd_instance = TimeBasedCDStrategy(config=timecdmodel)
     time_based_cd_instance.simulate(timestamps, battery_instance)
 
     return {
-        "battery_power": [round(el, 3) for el in battery_instance.battery_power_profile],
-        "battery_soc": [round(el, 3) for el in battery_instance.battery_soc_profile],
+        "battery_power": [
+            round(el, 3) for el in battery_instance.battery_power_profile
+        ],
+        "battery_soc": [
+            round(el, 3) for el in battery_instance.battery_soc_profile
+        ],
     }
 
 
-def compute_es_energy_metric(battery_power_df: polars.DataFrame, resolution: int):
-    """ Compute energy storage metric. """
+def compute_es_energy_metric(
+    battery_power_df: polars.DataFrame, resolution: int
+):
+    """Compute energy storage metric."""
     df = populate_sliced_category(battery_power_df)
 
     charging_new_df = polars.DataFrame()
@@ -115,24 +151,30 @@ def compute_es_energy_metric(battery_power_df: polars.DataFrame, resolution: int
             charging_df = (
                 df.filter(polars.col(column) < 0)
                 .groupby("category")
-                .agg(polars.col(column).sum())
-                .with_columns((polars.col(column) * (-resolution / 60)).alias(column))
-                .select([column, "category"])
+                .agg([polars.col(column).sum(), polars.col("timestamp").min()])
+                .with_columns(
+                    (polars.col(column) * (-resolution / 60)).alias(column)
+                )
+                .select([column, "category", "timestamp"])
             )
 
             discharging_df = (
                 df.filter(polars.col(column) > 0)
                 .groupby("category")
-                .agg(polars.col(column).sum())
-                .with_columns((polars.col(column) * (resolution / 60)).alias(column))
-                .select([column, "category"])
+                .agg([polars.col(column).sum(), polars.col("timestamp").min()])
+                .with_columns(
+                    (polars.col(column) * (resolution / 60)).alias(column)
+                )
+                .select([column, "category", "timestamp"])
             )
 
             if not len(charging_new_df):
                 charging_new_df = charging_df
                 discharging_new_df = discharging_df
             else:
-                charging_new_df = charging_df.join(charging_new_df, on="category", how="left")
+                charging_new_df = charging_df.join(
+                    charging_new_df, on="category", how="left"
+                )
                 discharging_new_df = discharging_df.join(
                     discharging_new_df, on="category", how="left"
                 )
@@ -148,8 +190,12 @@ def compute_energy_storage_metrics(
 
     charging_energy_df_sorted = sort_metric_dataframe(charging_energy_df)
     discharging_energy_df_sorted = sort_metric_dataframe(discharging_energy_df)
-    charging_energy_df_sorted.write_csv(base_path / "es_charging_energy_metrics.csv")
-    discharging_energy_df_sorted.write_csv(base_path / "es_discharging_energy_metrics.csv")
+    charging_energy_df_sorted.write_csv(
+        base_path / "es_charging_energy_metrics.csv"
+    )
+    discharging_energy_df_sorted.write_csv(
+        base_path / "es_discharging_energy_metrics.csv"
+    )
 
 
 def process_energy_storage(
@@ -168,8 +214,12 @@ def process_energy_storage(
             energy_capacity_kwhr=battery.esEnergyCapacity,
             initial_soc=battery.esInitialSOC if battery.esInitialSOC else 1.0,
             discharge_func=default_discharge_func,
-            charging_efficiency=battery.esChargingEff if battery.esChargingEff else 1,
-            discharging_efficiency=battery.esDischargingEff if battery.esDischargingEff else 1,
+            charging_efficiency=(
+                battery.esChargingEff if battery.esChargingEff else 1
+            ),
+            discharging_efficiency=(
+                battery.esDischargingEff if battery.esDischargingEff else 1
+            ),
         )
         battery_instance = GenericBattery(battery_params)
 
@@ -191,11 +241,15 @@ def process_energy_storage(
     timestamps = load_df["timestamp"].to_list()
     timestamps.sort()
 
-    battery_power_dict = {bname: bdict["battery_power"] for bname, bdict in battery_output.items()}
+    battery_power_dict = {
+        bname: bdict["battery_power"] for bname, bdict in battery_output.items()
+    }
     battery_power_dict.update({"timestamp": timestamps})
     battery_power_df = polars.from_dict(battery_power_dict)
 
-    battery_soc_dict = {bname: bdict["battery_soc"] for bname, bdict in battery_output.items()}
+    battery_soc_dict = {
+        bname: bdict["battery_soc"] for bname, bdict in battery_output.items()
+    }
     battery_soc_dict.update({"timestamp": timestamps})
     battery_soc_df = polars.from_dict(battery_soc_dict)
 

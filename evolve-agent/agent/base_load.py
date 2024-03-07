@@ -29,17 +29,16 @@ def compute_energy_metric(df: polars.DataFrame, resolution: int, column_name="kW
     import_df = (
         df.filter(polars.col(column_name) > 0)
         .groupby("category")
-        .agg(polars.col(column_name).sum())
+        .agg([polars.col(column_name).sum(), polars.col("timestamp").min()])
         .with_columns((polars.col(column_name) * resolution / 60).alias("import_kWh"))
-        .select(["import_kWh", "category"])
+        .select(["import_kWh", "category", "timestamp"])
     )
-
     export_df = (
         df.filter(polars.col(column_name) <= 0)
         .groupby("category")
-        .agg(polars.col(column_name).sum())
+        .agg([polars.col(column_name).sum(), polars.col("timestamp").min()])
         .with_columns((polars.col(column_name) * resolution / 60).alias("export_kWh"))
-        .select(["export_kWh", "category"])
+        .select(["export_kWh", "category", "timestamp"])
     )
 
     return import_df.join(export_df, on="category", how="left")
@@ -53,17 +52,17 @@ def compute_max_power(df: polars.DataFrame, column_name="kW"):
     import_df = (
         df.filter(polars.col(column_name) > 0)
         .groupby("category")
-        .agg(polars.col(column_name).max())
+        .agg([polars.col(column_name).max(), polars.col("timestamp").min()])
         .with_columns((polars.col(column_name)).alias("import_peak_kW"))
-        .select(["import_peak_kW", "category"])
+        .select(["import_peak_kW", "category", "timestamp"])
     )
 
     export_df = (
         df.filter(polars.col(column_name) <= 0)
         .groupby("category")
-        .agg(polars.col(column_name).max())
+        .agg([polars.col(column_name).max(), polars.col("timestamp").min()])
         .with_columns((polars.col(column_name)).alias("export_peak_kW"))
-        .select(["export_peak_kW", "category"])
+        .select(["export_peak_kW", "category", "timestamp"])
     )
 
     return import_df.join(export_df, on="category", how="left")

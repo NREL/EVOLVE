@@ -19,9 +19,9 @@ def compute_ev_energy_metric(ev_power_df: polars.DataFrame, resolution: int):
         if column not in ["timestamp", "category"]:
             df_ = (
                 df.groupby("category")
-                .agg(polars.col(column).sum())
+                .agg([polars.col(column).sum(), polars.col("timestamp").min()])
                 .with_columns((polars.col(column) * (resolution / 60)).alias(column))
-                .select([column, "category"])
+                .select([column, "category", "timestamp"])
             )
 
             if not len(ev_metric_df):

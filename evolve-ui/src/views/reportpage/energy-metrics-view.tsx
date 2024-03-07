@@ -13,9 +13,9 @@ export const EnergyMetricsView: React.FC<EnergyMetricsViewProps> = ({
 
     const metric_ = SortObject(metric);
     const metricData = metric_ ? Object.keys(metric_).filter(
-        (item:string)=> item !== 'category').map((item:string)=> {
+        (item:string)=> !['category', 'timestamp'].includes(item)).map((item:string)=> {
             return {
-                x: metric_.category,
+                x: metric_ && metric_?.timestamp ? metric_.timestamp : metric_.category,
                 y: metric_[item].map((val:number)=> Math.abs(val) ),
                 type: 'bar',
                 name: item

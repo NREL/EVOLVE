@@ -81,9 +81,9 @@ def compute_solar_energy_metric(solar_power_df: polars.DataFrame, resolution: in
         if column not in ["timestamp", "category"]:
             df_ = (
                 df.groupby("category")
-                .agg(polars.col(column).sum())
+                .agg([polars.col(column).sum(), polars.col("timestamp").min()])
                 .with_columns((polars.col(column) * (-resolution / 60)).alias(column))
-                .select([column, "category"])
+                .select([column, "category", "timestamp"])
             )
 
             if not len(solar_metric_df):

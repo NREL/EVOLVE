@@ -17,7 +17,8 @@ export const NativeLoadView: React.FC<NativeLoadViewProps> = ({
         netLoad, netEnergyMetrics, netPeakPowerMetrics
 }) => {
 
-        const baseEnergyMetrics_ = SortObject(baseEnergyMetrics);
+        const columnVar =  baseEnergyMetrics && "timestamp" in baseEnergyMetrics ? "timestamp" : "category";
+        const baseEnergyMetrics_ = SortObject(baseEnergyMetrics) ;
         const netEnergyMetrics_ = SortObject(netEnergyMetrics);
         const basePeakPowerMetrics_ = SortObject(basePeakPowerMetrics);
         const netPeakPowerMetrics_ = SortObject(netPeakPowerMetrics)
@@ -31,41 +32,42 @@ export const NativeLoadView: React.FC<NativeLoadViewProps> = ({
                         marker: {color: 'blue'},name: 'Net Load'}: null
         const loadTimeSeriesData = [baseloadTimeSeriesData, netloadTimeSeriesData].filter((el:any)=> el)
 
+
         const energyMetricsData = [
-                baseEnergyMetrics_?.category.length? {
-                        x: baseEnergyMetrics_.category,y: baseEnergyMetrics_.import_kWh,
+                baseEnergyMetrics_?.[columnVar].length? {
+                        x: baseEnergyMetrics_[columnVar],y: baseEnergyMetrics_.import_kWh,
                         type: 'bar',name: 'Imported kWh (Base)'
                 }: null,
-                baseEnergyMetrics_?.category.length? {
-                        x: baseEnergyMetrics_.category,y: baseEnergyMetrics_.export_kWh,
+                baseEnergyMetrics_?.[columnVar].length? {
+                        x: baseEnergyMetrics_[columnVar],y: baseEnergyMetrics_.export_kWh,
                         type: 'bar',name: 'Exported kWh (Base)'
                 }: null,
-                netEnergyMetrics_?.category.length? {
-                        x: netEnergyMetrics_.category,y: netEnergyMetrics_.import_kWh,
+                netEnergyMetrics_?.[columnVar].length? {
+                        x: netEnergyMetrics_[columnVar],y: netEnergyMetrics_.import_kWh,
                         type: 'bar',name: 'Imported kWh (Net)'
                 }: null,
-                netEnergyMetrics_?.category.length? {
-                        x: netEnergyMetrics_.category,y: netEnergyMetrics_.export_kWh,
+                netEnergyMetrics_?.[columnVar].length? {
+                        x: netEnergyMetrics_[columnVar],y: netEnergyMetrics_.export_kWh,
                         type: 'bar',name: 'Exported kWh (Net)'
                 }: null
         ].filter((el:any)=> el)
 
 
         const peakPowerMetricsData = [
-                basePeakPowerMetrics_?.category.length? {
-                        x: basePeakPowerMetrics_.category,y: basePeakPowerMetrics_.import_peak_kW,
+                basePeakPowerMetrics_?.[columnVar].length? {
+                        x: basePeakPowerMetrics_[columnVar],y: basePeakPowerMetrics_.import_peak_kW,
                         type: 'bar', name: 'Imported kW (Base)'
                 }: null,
-                basePeakPowerMetrics_?.category.length? {
-                        x: basePeakPowerMetrics_.category,y: basePeakPowerMetrics_.export_peak_kW,
+                basePeakPowerMetrics_?.[columnVar].length? {
+                        x: basePeakPowerMetrics_[columnVar],y: basePeakPowerMetrics_.export_peak_kW,
                         type: 'bar',name: 'Exported kW (Base)'
                 }: null,
-                netPeakPowerMetrics_?.category.length? {
-                        x: netPeakPowerMetrics_.category,y: netPeakPowerMetrics_.import_peak_kW,
+                netPeakPowerMetrics_?.[columnVar].length? {
+                        x: netPeakPowerMetrics_[columnVar],y: netPeakPowerMetrics_.import_peak_kW,
                         type: 'bar', name: 'Imported kW (Net)'
                 }: null,
-                netPeakPowerMetrics_?.category.length? {
-                        x: netPeakPowerMetrics_.category,y: netPeakPowerMetrics_.export_peak_kW,
+                netPeakPowerMetrics_?.[columnVar].length? {
+                        x: netPeakPowerMetrics_[columnVar],y: netPeakPowerMetrics_.export_peak_kW,
                         type: 'bar',name: 'Exported kW (Net)'
                 }: null,
         ].filter((el:any)=> el)
