@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { TextField } from '../../components/text-field';
-import { debounce } from "lodash";
 import {HiOutlineInformationCircle} from 'react-icons/hi';
 import { SearchDataView } from './search-data-view';
 import { useDebouncedSearch } from '../../hooks/use-debounced-search-create-scenarios';
 import { DataFilingStrategyDesc } from './descriptions/load-filling-strategy-desc';
+import { ColoredHeaderSection } from './header-section';
 
 
 export function BaseSettingsView(props: any) {
@@ -29,17 +29,20 @@ export function BaseSettingsView(props: any) {
         <React.Fragment>
             {!closeDesView && descriptionComp}
             <div className="bg-gray-300 w-full my-10 pb-5">
-                <div className="bg-blue-500 h-8 flex items-center px-2">
-                    <img src="./images/solar_icon.svg" width="25" />
-                    <p className="text-white pl-2"> Basic settings </p>
-                </div>
+                
+                <ColoredHeaderSection 
+                    title='Simulation Settings'
+                    description='Select load profile, simulation time as well as 
+                    resolution for the simulation.'
+                    image='./images/timeseries_data.svg'
+                />
 
                 <div className="grid grid-cols-2 md:grid-cols-3 mx-10 my-3 gap-y-2 gap-x-5">
 
                     <div className='relative'>
-                        <p> Load profile </p>
+                        <p> Load Profile </p>
 
-                        <p className='text-sm text-gray-500 pb-2'> Search for a profle and select one.
+                        <p className='text-sm text-gray-500 pb-2'> Select a load profile by typing name.
                             {
                                 loadProfileExist.length === 0 && <span className="text-red-500 pl-1 ">
                                     Note Load profile does not exist yet consider uploading data first.
@@ -80,7 +83,7 @@ export function BaseSettingsView(props: any) {
                     </div>
 
                     <div>
-                        <p> Start date </p>
+                        <p> Start Date </p>
                         <p className='text-sm text-gray-500 pb-2'> Allowed date range is {dateRange.min} - {dateRange.max}</p>
                         <TextField
                             error={errors.startDate}
@@ -94,7 +97,7 @@ export function BaseSettingsView(props: any) {
                     </div>
 
                     <div>
-                        <p> End date </p>
+                        <p> End Date </p>
                         <p className='text-sm text-gray-500 pb-2'> Allowed date range is {dateRange.min} - {dateRange.max}</p>
                         <TextField
                             error={errors.endDate}
@@ -108,8 +111,9 @@ export function BaseSettingsView(props: any) {
                     </div>
 
                     <div>
-                        <p> Data resolution </p>
-                        <p className='text-sm text-gray-500 pb-2'> Choose data resolution in minute. </p>
+                        <p> Time Resolution </p>
+                        <p className='text-sm text-gray-500 pb-2'> Input time resolution for analysis (minutes). Note if time resolution does not match data 
+                        you selected you would have to also select appropriate interpolation method. </p>
                         <TextField
                             error={errors.resolution}
                             name="resolution"

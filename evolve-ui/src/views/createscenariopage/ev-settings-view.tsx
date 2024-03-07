@@ -16,7 +16,7 @@ export function EVSettingsView(props: any) {
             evtype: "vehicle"
         },
         {
-            label: 'Number of vehicles',
+            label: 'Number of Vehicles',
             description: `Estimated number
             of electric vehicles.`,
             error: errors?.numberOfEV,
@@ -26,9 +26,9 @@ export function EVSettingsView(props: any) {
             evtype: "vehicle"
         },
         {
-            label: 'Accepted kW Range',
-            description: `Exact accepted kw for each vehicle will be randomly sampled
-            to fall within the range you specified. e.g. 6,9`,
+            label: 'Accepted kW Span',
+            description: `Accepted kw for each vehicle will be randomly sampled
+            to fall within the span you specified. e.g. 6,9`,
             error: errors?.acceptedkW,
             name: "acceptedkW",
             type: "text",
@@ -36,9 +36,9 @@ export function EVSettingsView(props: any) {
             evtype: "vehicle"
         },
         {
-            label: 'Accepted kWh Range',
-            description: `Exact energy capacity (kwh) for each vehicle will be randomly sampled
-            to fall within the range you specified. e.g. 30, 60`,
+            label: 'Accepted kWh Span',
+            description: `Energy capacity (kwh) for each vehicle in the simulation will be randomly sampled
+            to fall within the span you specified. e.g. 30, 60`,
             error: errors?.acceptedkWh,
             name: "acceptedkWh",
             type: "text",
@@ -46,10 +46,9 @@ export function EVSettingsView(props: any) {
             evtype: "vehicle"
         },
         {
-            label: 'Mileage Range',
-            description: `Exact mileage (how many miles can be 
-                driven with fully charged battery) for each vehicle will be randomly sampled
-                to fall within the range you specified. e.g. 60, 250`,
+            label: 'Mileage Span',
+            description: `Mileage range (on a fully charged battery) for each vehicle in the simulation
+             will be randomly sampled to fall within the span you specified. e.g. 60, 250`,
             error: errors?.mileage,
             name: "mileage",
             type: "text",
@@ -57,9 +56,9 @@ export function EVSettingsView(props: any) {
             evtype: "vehicle"
         },
         {
-            label: 'Weekday Travel Miles Range',
-            description: `Miles travelled during weekday. Specific miles for each vehicle is 
-                determined using random sampling. `,
+            label: 'Weekday Travel Miles Span',
+            description: `Miles travelled by each vehicle in the simulation 
+            will be randomly assigned within the specified span.`,
             error: errors?.weekdayMiles,
             name: "weekdayMiles",
             type: "text",
@@ -67,9 +66,9 @@ export function EVSettingsView(props: any) {
             evtype: "vehicle"
         },
         {
-            label: 'Weekend Travel Miles Range',
-            description: `Miles travelled during weekend. Specific miles for each vehicle is 
-                determined using random sampling. `,
+            label: 'Weekend Travel Miles Span',
+            description: `Miles travelled by each vehicle in the simulation 
+            will be randomly assigned within the specified span. `,
             error: errors?.weekendMiles,
             name: "weekendMiles",
             type: "text",
@@ -87,7 +86,7 @@ export function EVSettingsView(props: any) {
         },
         {
             label: 'Average Mile Per Hour',
-            description: `Average mile travelled per hour`,
+            description: `Average speed of vehicles during trips.`,
             error: errors?.avergeMileage,
             name: "avergeMileage",
             type: "number",
@@ -96,7 +95,7 @@ export function EVSettingsView(props: any) {
         },
         {
             label: 'Weekday Travel Hours',
-            description: `Travel hours for weekday. Please use numbers between 0 and 23. e.g. 9, 17`,
+            description: `Travel departure and return hours. Use input between 0 and 23. e.g. 9, 17`,
             error: errors?.weekdayTravelHours,
             name: "weekdayTravelHours",
             type: "text",
@@ -105,8 +104,7 @@ export function EVSettingsView(props: any) {
         },
         {
             label: 'Weekend Travel Hours',
-            description: `Travel hours for weekend. Please use numbers 
-            between 0 and 23. e.g. 12, 18`,
+            description: `Travel departure and return hours. Use input between 0 and 23. e.g. 12, 18`,
             error: errors?.weekendTravelHours,
             name: "weekendTravelHours",
             type: "text",
@@ -114,8 +112,9 @@ export function EVSettingsView(props: any) {
             evtype: "vehicle"
         },
         {
-            label: 'Initial SOCs Range',
-            description: `Range of initial state of charges (SOCs)`,
+            label: 'Initial SOCs Span',
+            description: `Initial battery state of charge (SOC) for each vehicle in the simulation 
+            will be randomly assigned within the specified span.`,
             error: errors?.intialSocs,
             name: "intialSocs",
             type: "text",
@@ -132,8 +131,8 @@ export function EVSettingsView(props: any) {
             evtype: "charging_station"
         },
         {
-            label: 'Number of Stations',
-            description: `Specify number of stations of this type.`,
+            label: 'Number of Public Charging Stations',
+            description: `Specify number of public charging stations of this type.`,
             error: errors?.numberOfStations,
             name: "numberOfStations",
             type: "number",
@@ -141,8 +140,9 @@ export function EVSettingsView(props: any) {
             evtype: "charging_station"
         },
         {
-            label: 'Number of Slots Range',
-            description: `Range of number of slots. e.g. 3, 6 per station.`,
+            label: 'Number of Vehicle Charging Slots Per Station Span',
+            description: `Number of available vehicle charging slots for each public 
+            charging stations in the simulation will be randomly assigned within the specified span.`,
             error: errors?.numberOfSlots,
             name: "numberOfSlots",
             type: "text",
@@ -150,8 +150,8 @@ export function EVSettingsView(props: any) {
             evtype: "charging_station"
         },
         {
-            label: 'Maximum Charger kW Per Slot',
-            description: `Maximum accepted kW for station.`,
+            label: 'Maximum Vehicle Charger kW Output Per Slot',
+            description: `Maximum kW output for the public charging station.`,
             error: errors?.maxSlotkW,
             name: "maxSlotkW",
             type: "number",
@@ -168,7 +168,7 @@ export function EVSettingsView(props: any) {
             evtype: "vehicle"
         },
         {
-            label: 'Percentage vehicles for preferred hours.',
+            label: 'Percentage Vehicles for Preferred Hours.',
             description: `Percentage vehicles adopting preferred hours.`,
             error: errors?.pctVehiclesForPreferredHour,
             name: "pctVehiclesForPreferredHour",
@@ -200,12 +200,12 @@ export function EVSettingsView(props: any) {
 
                 <div className='px-10'>
                     <div className="flex items-center mt-5 ">
-                        <p className="pr-2"> Select Vehicle or Charging Station </p>
+                        <p className="pr-2"> Create </p>
                         <select className="rounded-md h-8 w-32 px-2"
                             name="evType" value={formData.evType}
                             onChange={handleChange}>
                             <option value="vehicle">Vehicle</option>
-                            <option value="charging_station">Charging Station</option>
+                            <option value="charging_station">Public Charging Station</option>
                         </select>
                     </div>
                     <p className='text-sm text-gray-500 pb-2'>

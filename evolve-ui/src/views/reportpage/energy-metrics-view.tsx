@@ -40,7 +40,7 @@ export const EnergyMetricsView: React.FC<EnergyMetricsViewProps> = ({
             }
             {
 
-                !metricData && <div className="w-[calc(100vw-6rem)] h-[350px]
+                !metricData && <div className="w-full h-[350px]
                                         bg-gray-200 animate-pulse flex justify-center items-center">
                     <div className="w-10 h-20 bg-gray-300 mr-3"></div>
                     <div className="w-10 h-40 bg-gray-300 mr-3"></div>

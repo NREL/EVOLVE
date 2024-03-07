@@ -1,35 +1,62 @@
 import React from 'react';
 import { SelectField } from '../../components/select-field';
+import { HeaderSection } from './header-section';
+
+interface TechOption {
+    id: number;
+    name: string;
+    displayName: string;
+    image: string;
+}
 
 export function TechnologiesView(props: any) {
 
     const { handleChange, technologies } = props;
+    const techOptions: TechOption[] = [
+        {
+            id: 1,
+            name: "solar",
+            displayName: "Solar",
+            image: "./images/solar_icon.svg"
+        },
+        {
+            id: 2,
+            name: "ev",
+            displayName: "Electric Vehicle",
+            image: "./images/ev_icon.svg"
+        },
+        {
+            id: 3,
+            name: "energy_storage",
+            displayName: "Energy Storage",
+            image: "./images/storage_icon.svg"
+        }
+    ]
     return (
         <React.Fragment>
-            <p className="text-blue-500 font-bold text-xl border-b-2 
-                    w-max my-5"> Select technologies </p>
 
-            <div className="flex">
-                <div className="flex items-center pr-5">
-                    <SelectField name="technologies" value="solar" onChange={handleChange} checked={technologies.includes('solar')} />
-                    <img src="./images/solar_icon.svg" width="30" className="mx-3" />
-                    <p> Solar </p>
+            <HeaderSection
+                title='Select Technologies'
+                description='Check the technologies you want 
+                to model to see the relevant fields.'
+            />
 
-                </div>
-
-                <div className="flex items-center pr-5">
-                    <SelectField name="technologies" value="ev" onChange={handleChange} checked={technologies.includes('ev')} />
-                    <img src="./images/ev_icon.svg" width="35" className="mx-3" />
-                    <p> Electric vehicle </p>
-                </div>
-
-                <div className="flex items-center">
-
-                    <SelectField name="technologies" value="energy_storage" onChange={handleChange} checked={technologies.includes('energy_storage')} />
-                    <img src="./images/storage_icon.svg" width="35" className="mx-3" />
-                    <p> Energy Storage </p>
-
-                </div>
+            <div className="flex mb-5 gap-x-5">
+                {
+                    techOptions.map((techOption: TechOption) => {
+                        return (
+                            <div key={techOption.id} className='flex items-center'>
+                                <SelectField 
+                                    name="technologies" 
+                                    value={techOption.name} 
+                                    onChange={handleChange} 
+                                    checked={technologies.includes(techOption.name)} />
+                                <img src={techOption.image} width="30" className="mx-3" />
+                                <p className='capitalize'> {techOption.displayName} </p>
+                            </div>
+                        )
+                    })
+                }
             </div>
         </React.Fragment>
     )

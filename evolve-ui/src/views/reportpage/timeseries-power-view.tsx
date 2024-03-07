@@ -27,7 +27,7 @@ export const TimeseriesPowerView: React.FC<TimeseriesPowerViewProps> = ({
 
                 timeSeriesData && <Plot
                     data={timeSeriesData}
-                    className="w-[calc(100vw-6rem)] h-[350px]"
+                    className="w-full h-[350px]"
                     layout={{
                         margin: { b: 50, l: 60, r: 60, t: 50 },
                         title: title,
@@ -38,7 +38,7 @@ export const TimeseriesPowerView: React.FC<TimeseriesPowerViewProps> = ({
             }
             {
 
-                !timeSeriesData && <div className="w-[calc(100vw-6rem)] h-[350px]
+                !timeSeriesData && <div className="w-full h-[350px]
                                         bg-gray-200 animate-pulse flex justify-center items-center">
                     <div className="w-10 h-20 bg-gray-300 mr-3"></div>
                     <div className="w-10 h-40 bg-gray-300 mr-3"></div>

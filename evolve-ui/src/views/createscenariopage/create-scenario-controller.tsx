@@ -22,6 +22,7 @@ import { useFormValidation } from '../../hooks/createscenariopage/use-form-valid
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { StateModel } from "../../interfaces/redux-state";
+import { HeaderSection } from './header-section';
 
 const FIELD_CLASS = 'text-blue-500 font-bold';
 
@@ -191,44 +192,38 @@ export function CreateScenario(props: any) {
             <form onSubmit={handleFormSubmit}>
 
                 {
-
-                    props.updateFlag ? <p className="text-blue-500 font-bold text-xl border-b-2 
-                    w-max mb-3"> Update Scenario </p> :
-                        <p className="text-blue-500 font-bold text-xl border-b-2 
-                    w-max mb-3"> Create Scenario </p>
+                    props.updateFlag ? <HeaderSection
+                        title='Update scenario' description='Double check the fields before updating existing fields.'
+                    /> : <HeaderSection title='Create scenario' description='A scenario is a collection of one or more DER technologies and one load profile. Give scenario a friendly name and description to make 
+                    it easier to search for it in the future.'/>
+                    
                 }
 
                 <div className='flex gap-x-10'>
-                    <div className="flex">
+                    <div className="flex w-full">
                         <p className="pr-3"> Name </p>
                         <TextField
                             error={errors.scenarioName}
                             name="scenarioName"
                             type="text"
-                            placeholder="Enter scenario name"
+                            placeholder="Provide a friendly scenario name."
                             value={formData.scenarioName}
                             onChange={(e: any) => handleChange(e, formData, setFormData)}
                         />
                     </div>
                     
-                    <div className="flex">
+                    <div className="flex w-full">
                         <p className="pr-3"> Scenario Description </p>
                         <TextField
                             error={errors.scenarioDescription}
                             name="scenarioDescription"
                             type="textarea"
-                            placeholder="Enter scenario description"
+                            placeholder="Provide a scenario description."
                             value={formData.scenarioDescription}
                             onChange={(e: any) => handleChange(e, formData, setFormData)}
                         />
                     </div>
                 </div>
-
-                <TechnologiesView
-                    handleChange={(e: any) => handleChange(e, formData, setFormData)}
-                    technologies={formData.technologies}
-                />
-
 
                 <BaseSettingsView
                     handleChange={(e: any) => handleChange(e, formData, setFormData)}
@@ -241,12 +236,18 @@ export function CreateScenario(props: any) {
                     fillData={fillData}
                     updateFlag={props.updateFlag}
                 />
+                
+                <TechnologiesView
+                    handleChange={(e: any) => handleChange(e, formData, setFormData)}
+                    technologies={formData.technologies}
+                />
+
                 {
                     formData.technologies.includes('solar') && <div>
                         {
                             solarFormDataArray.length <= 5 && <div>
                                 <p className='bg-blue-500 bg-blue-500 text-white rounded-md px-2 w-max py-1'
-                                    onClick={handleAddSolar}> Add solar </p>
+                                    onClick={handleAddSolar}> Add Solar </p>
                                 <p className='text-sm text-gray-500 pb-2'> Add upto 5 PV systems. </p>
                             </div>
                         }
@@ -274,7 +275,7 @@ export function CreateScenario(props: any) {
                         {evFormDataArray.length <= 5 &&
                             <div>
                                 <p className='bg-blue-500 bg-blue-500 text-white rounded-md px-2 py-1 w-max'
-                                    onClick={handleAddEV}> Add electric vehicle </p>
+                                    onClick={handleAddEV}> Add Electric Vehicle </p>
                                   <p className='my-2'> For each electric vehicle, initial state of charge (SOC) is randomly 
                                     selected within the range specified in <span className={FIELD_CLASS}> 
                                     Initial SOCs Range </span> field. Energy capacity is randomly selected within the range specified in 
@@ -313,7 +314,8 @@ export function CreateScenario(props: any) {
                                     default. The preferred charge hour can be adjusted if you want electric vehicle to defer charging until particular hour for home charging.                             
                                 
                                 </p>
-                                <p className='text-sm text-gray-500 pb-2'> Add upto 5 Electric Vehicles </p>
+                                <p className='text-sm text-gray-500 pb-2'> Add electric vehicle and/or charging station. You need to specify at least one electric vehicle and one charging 
+                                station for simulation to work. You can add upto 5 of them. </p>
                             </div>
                         }
                         {
@@ -346,7 +348,7 @@ export function CreateScenario(props: any) {
                         {
                             esFormDataArray.length <= 5 && <div>
                                 <p className='bg-blue-500 bg-blue-500 text-white rounded-md px-2 py-1 w-max'
-                                    onClick={handleAddEnergyStorage}> Add energy storage </p>
+                                    onClick={handleAddEnergyStorage}> Add Energy Storage </p>
                                 
                                 <p className='text-sm text-gray-500 pb-2'> Add upto 5 Energy Storage Systems </p>
                             </div>

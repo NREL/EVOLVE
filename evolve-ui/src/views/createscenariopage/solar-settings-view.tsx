@@ -102,7 +102,7 @@ export function SolarSettingsView(props: any) {
                             </div>
 
                             <div>
-                                <p> Irradiance data </p>
+                                <p> Irradiance Data </p>
                                 <p className='text-sm text-gray-500 pb-2'> Search for solar profile and select one.
                                     {
                                         irrProfileExist.length === 0 && <span className="text-red-500 pl-1 ">
@@ -151,7 +151,7 @@ export function SolarSettingsView(props: any) {
 
 
                         <div className="flex items-center mt-5 mx-10">
-                            <p className="pr-2"> Solar installation type </p>
+                            <p className="pr-2"> Solar Installation Type </p>
                             <select className="rounded-md h-8 w-40 px-2" name="solarInstallationStrategy"
                                 value={formData.solarInstallationStrategy}
                                 onChange={handleChange}
